@@ -22,7 +22,7 @@ package interactive.mnist
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
-import _root_.util._
+import _root_.util.{MindsEyeNotebook, _}
 import com.simiacryptus.mindseye.layers.NNLayer
 import com.simiacryptus.mindseye.layers.activation._
 import com.simiacryptus.mindseye.layers.loss.EntropyLossLayer
@@ -36,7 +36,6 @@ import com.simiacryptus.util.io.{HtmlNotebookOutput, MarkdownNotebookOutput}
 import com.simiacryptus.util.ml.Tensor
 import com.simiacryptus.util.test.MNIST
 import com.simiacryptus.util.text.TableOutput
-import interactive.MindsEyeNotebook
 
 import scala.collection.JavaConverters._
 import scala.util.Random
@@ -45,6 +44,7 @@ import scala.util.Random
 object MnistDemo extends ServiceNotebook {
 
   def main(args: Array[String]): Unit = {
+    HtmlNotebookOutput.DEFAULT_ROOT = "https://github.com/SimiaCryptus/mindseye-scala/tree/master/"
     report((s,log)⇒new MnistDemo(s,log).run)
     System.exit(0)
   }
@@ -113,7 +113,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     log.p("A second phase of training:")
     log.eval {
       val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(model, new EntropyLossLayer)
-      val trainable = new StochasticArrayTrainable(data.toArray, trainingNetwork, 1000)
+      val trainable = new StochasticArrayTrainable(data.toArray, trainingNetwork, 10000)
       val trainer = new com.simiacryptus.mindseye.opt.IterativeTrainer(trainable)
       trainer.setMonitor(monitor)
       trainer.setCurrentIteration(iterationCounter)

@@ -17,28 +17,26 @@
  * under the License.
  */
 
-package interactive
+package util
 
 import java.io._
 import java.util.concurrent.{Semaphore, TimeUnit}
-
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.simiacryptus.mindseye.opt.{IterativeTrainer, TrainingMonitor}
-import com.simiacryptus.util.io.{HtmlNotebookOutput, IOUtil, KryoUtil, TeeOutputStream}
-import com.simiacryptus.util.text.TableOutput
-import com.simiacryptus.util.{ArrayUtil, MonitoredObject, StreamNanoHTTPD, TimerText}
-import fi.iki.elonen.NanoHTTPD.IHTTPSession
-import smile.plot.{PlotCanvas, ScatterPlot}
-import util.{Java8Util, ScalaNotebookOutput}
 import java.{lang, util}
 
 import com.aparapi.internal.kernel.KernelManager
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.{GsonBuilder, JsonObject}
 import com.simiacryptus.mindseye.layers.NNLayer
 import com.simiacryptus.mindseye.network.graph.DAGNetwork
+import com.simiacryptus.mindseye.opt.{IterativeTrainer, TrainingMonitor}
 import com.simiacryptus.util.ArrayUtil._
+import com.simiacryptus.util.io.{HtmlNotebookOutput, IOUtil, KryoUtil, TeeOutputStream}
+import com.simiacryptus.util.text.TableOutput
+import com.simiacryptus.util.{MonitoredObject, StreamNanoHTTPD, TimerText}
 import fi.iki.elonen.NanoHTTPD
+import fi.iki.elonen.NanoHTTPD.IHTTPSession
 import org.apache.commons.io.IOUtils
+import smile.plot.{PlotCanvas, ScatterPlot}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -116,7 +114,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
 
   def defineHeader(log: HtmlNotebookOutput with ScalaNotebookOutput = out): Unit = {
 
-    log.p("Reports: <a href='/model.json'>Model Json</a>, <a href='/metricsHistory.html'>Metrics Plots</a>, <a href='/mobility.html'>Mobility</a>, <a href='/log.txt'>Optimization Log</a>, or <a href='/metrics.csv'>Metrics Data</a>")
+    log.p("Reports: <a href='model.json'>Model Json</a>, <a href='metricsHistory.html'>Metrics Plots</a>, <a href='mobility.html'>Mobility</a>, <a href='log.txt'>Optimization Log</a>, or <a href='metrics.csv'>Metrics Data</a>")
     server.addSyncHandler("model.json", "application/json", Java8Util.cvt(out ⇒ {
       out.write(new GsonBuilder().setPrettyPrinting().create().toJson(getModelCheckpoint.getJson).getBytes)
     }), false)
