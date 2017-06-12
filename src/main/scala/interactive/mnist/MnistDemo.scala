@@ -65,7 +65,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
   val outputSize = Array[Int](10)
   val iterationCounter = new AtomicInteger(0)
 
-  lazy val data = {
+  lazy val trainingData = {
     log.p("Load the MNIST training dataset: ")
     val data: Seq[Array[Tensor]] = log.eval {
       MNIST.trainingDataStream().iterator().asScala.toStream.map(labeledObj ⇒ {
@@ -85,12 +85,13 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
   def phase1() = phase({
     log.p("We construct a new model:")
     log.eval {
+      def wrap(n:NNLayer) = new MonitoringWrapper(n).addTo(monitoringRoot)
       var model: PipelineNetwork = new PipelineNetwork
-      model.add(new MonitoringWrapper(new BiasLayer(inputSize: _*)).addTo(monitoringRoot, "inbias"))
-      model.add(new MonitoringWrapper(new DenseSynapseLayer(inputSize, outputSize)
-        .setWeights(Java8Util.cvt(() ⇒ 0.001 * (Random.nextDouble() - 0.5)))).addTo(monitoringRoot, "synapse"))
-      model.add(new MonitoringWrapper(new ReLuActivationLayer).addTo(monitoringRoot, "relu"))
-      model.add(new MonitoringWrapper(new BiasLayer(outputSize: _*)).addTo(monitoringRoot, "outbias"))
+      model.add(wrap(new BiasLayer(inputSize: _*).setName("inbias")))
+      model.add(wrap(new DenseSynapseLayer(inputSize, outputSize)
+        .setWeights(Java8Util.cvt(() ⇒ 0.001 * (Random.nextDouble() - 0.5))).setName("synapse")))
+      model.add(wrap(new ReLuActivationLayer().setName("relu")))
+      model.add(wrap(new BiasLayer(outputSize: _*).setName("outbias")))
       model.add(new SoftmaxActivationLayer)
       model.asInstanceOf[NNLayer]
     }
@@ -98,7 +99,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     log.p("The model is pre-trained with some data before being saved:")
     log.eval {
       val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(model, new EntropyLossLayer)
-      val trainable = new StochasticArrayTrainable(data.toArray, trainingNetwork, 1000)
+      val trainable = new StochasticArrayTrainable(trainingData.toArray, trainingNetwork, 1000)
       val trainer = new com.simiacryptus.mindseye.opt.IterativeTrainer(trainable)
       trainer.setMonitor(monitor)
       trainer.setCurrentIteration(iterationCounter)
@@ -113,7 +114,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     log.p("A second phase of training:")
     log.eval {
       val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(model, new EntropyLossLayer)
-      val trainable = new StochasticArrayTrainable(data.toArray, trainingNetwork, 10000)
+      val trainable = new StochasticArrayTrainable(trainingData.toArray, trainingNetwork, 10000)
       val trainer = new com.simiacryptus.mindseye.opt.IterativeTrainer(trainable)
       trainer.setMonitor(monitor)
       trainer.setCurrentIteration(iterationCounter)
