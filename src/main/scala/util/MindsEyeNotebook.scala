@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.{GsonBuilder, JsonObject}
 import com.simiacryptus.mindseye.layers.NNLayer
 import com.simiacryptus.mindseye.network.graph.DAGNetwork
-import com.simiacryptus.mindseye.opt.{IterativeTrainer, TrainingMonitor}
+import com.simiacryptus.mindseye.opt.{IterativeTrainer, Step, TrainingMonitor}
 import com.simiacryptus.util.ArrayUtil._
 import com.simiacryptus.util.io.{HtmlNotebookOutput, IOUtil, KryoUtil, TeeOutputStream}
 import com.simiacryptus.util.text.TableOutput
@@ -46,7 +46,7 @@ import scala.concurrent.{Await, Future}
 
 abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput with ScalaNotebookOutput) {
 
-  val history = new scala.collection.mutable.ArrayBuffer[IterativeTrainer.Step]()
+  val history = new scala.collection.mutable.ArrayBuffer[Step]()
   val logOut = new TeeOutputStream(out.file("../log.txt"), true)
   val logPrintStream = new PrintStream(logOut)
   val monitoringRoot = new MonitoredObject()
@@ -57,7 +57,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   def getModelCheckpoint = Option(modelCheckpoint).getOrElse(model)
   val pauseSemaphore = new Semaphore(1)
 
-  def onStepComplete(currentPoint: IterativeTrainer.Step): Unit = {}
+  def onStepComplete(currentPoint: Step): Unit = {}
   val monitor = new TrainingMonitor {
     val timer = new TimerText
     override def log(msg: String): Unit = {
@@ -65,7 +65,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
       logPrintStream.println(timer + " " + msg)
     }
 
-    override def onStepComplete(currentPoint: IterativeTrainer.Step): Unit = {
+    override def onStepComplete(currentPoint: Step): Unit = {
       try {
         history += currentPoint
         if(0 == currentPoint.iteration % checkpointFrequency) {
@@ -314,7 +314,9 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   }
 
   def write(name: String, model: NNLayer) = {
-    IOUtil.writeString(model.getJsonString, new FileOutputStream(nextFile(name)))
+    val file = nextFile(name)
+    out.p(s"Saving $file")
+    IOUtil.writeString(model.getJsonString, new FileOutputStream(file))
   }
 
   def nextFile(name: String): String = Stream.from(1).map(name + "." + _ + ".json").find(!new File(_).exists).get
@@ -322,6 +324,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
 
   def read(name: String): NNLayer = {
     findFile(name).map(inputFile⇒{
+      out.p(s"Loading $inputFile")
       NNLayer.fromJson(new GsonBuilder().create().fromJson(IOUtils.toString(new FileInputStream(inputFile), "UTF-8"), classOf[JsonObject]))
     }).getOrElse(throw new RuntimeException(s"Could not find any files named $name.*.json"))
   }

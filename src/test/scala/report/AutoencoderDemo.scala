@@ -49,13 +49,13 @@ import scala.util.Random
 class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
 
   var data: Array[Tensor] = null
-  val history = new mutable.ArrayBuffer[com.simiacryptus.mindseye.opt.IterativeTrainer.Step]
+  val history = new mutable.ArrayBuffer[com.simiacryptus.mindseye.opt.Step]
   var monitor = new TrainingMonitor {
     override def log(msg: String): Unit = {
       System.err.println(msg)
     }
 
-    override def onStepComplete(currentPoint: IterativeTrainer.Step): Unit = {
+    override def onStepComplete(currentPoint: Step): Unit = {
       history += currentPoint
     }
   }
