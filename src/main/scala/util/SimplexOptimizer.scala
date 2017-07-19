@@ -8,13 +8,13 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv._
 import scala.reflect.runtime.universe
 import scala.reflect.runtime.universe._
 
-trait OptimizationParameters {
-  def optimize(fn : this.type ⇒ Double) = {
-    Optimizer[this.type](this, fn)
+trait SimplexOptimization {
+  def optimize(fn : this.type ⇒ Double)(implicit ev1 : scala.reflect.ClassTag[this.type]) : this.type = {
+    SimplexOptimizer.apply[this.type](this, fn)
   }
 }
 
-object Optimizer {
+object SimplexOptimizer {
 
   def apply[T:TypeTag](initial : T, fitnessFunction: T ⇒ Double)(implicit ev1 : scala.reflect.ClassTag[T]): T = {
     val classSymbol = typeOf[T].typeSymbol.asClass
