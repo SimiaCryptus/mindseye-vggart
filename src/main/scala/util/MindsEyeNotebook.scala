@@ -297,20 +297,24 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     onExit.acquire()
   }
 
-  def phase[T](inputFile: String, fn: NNLayer ⇒ T): Unit = {
+  def phase[T>:Null](inputFile: String, fn: NNLayer ⇒ T): T = {
+    var result : Option[T] = None
     phase(read(inputFile),
       layer ⇒ {
-        fn(layer)
+        result = Option(fn(layer))
         layer
       }, model ⇒ {})
+    result.orNull
   }
 
-  def phase[T](inputFile: String, fn: NNLayer ⇒ T, outputFile: String): Unit = {
+  def phase[T>:Null](inputFile: String, fn: NNLayer ⇒ T, outputFile: String): T = {
+    var result : Option[T] = None
     phase(read(inputFile),
       layer ⇒ {
-        fn(layer)
+        result = Option(fn(layer))
         layer
       }, model ⇒ write(outputFile, model))
+    result.orNull
   }
 
   def write(name: String, model: NNLayer) = {
@@ -329,7 +333,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     }).getOrElse(throw new RuntimeException(s"Could not find any files named $name.*.json"))
   }
 
-  def phase[T](input: ⇒ NNLayer, fn: NNLayer ⇒ T, outputFile: String): T = {
+  def phase[T>:Null](input: ⇒ NNLayer, fn: NNLayer ⇒ T, outputFile: String): T = {
     phase(input,
       layer ⇒ {
         val result = fn(layer)
