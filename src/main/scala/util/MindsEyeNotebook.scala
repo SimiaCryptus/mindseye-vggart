@@ -19,8 +19,6 @@
 
 package util
 
-import java.awt.image.BufferedImage
-import java.awt.{Graphics2D, RenderingHints}
 import java.io._
 import java.util.concurrent.{Semaphore, TimeUnit}
 import java.{lang, util}
@@ -29,18 +27,10 @@ import com.aparapi.internal.kernel.KernelManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.{GsonBuilder, JsonObject}
 import com.simiacryptus.mindseye.layers.NNLayer
-import com.simiacryptus.mindseye.layers.loss.{EntropyLossLayer, MeanSqLossLayer}
-import com.simiacryptus.mindseye.layers.reducers.{ProductInputsLayer, SumInputsLayer}
-import com.simiacryptus.mindseye.layers.util.ConstNNLayer
-import com.simiacryptus.mindseye.network.PipelineNetwork
 import com.simiacryptus.mindseye.network.graph.DAGNetwork
-import com.simiacryptus.mindseye.opt.line.ArmijoWolfeSearch
-import com.simiacryptus.mindseye.opt.orient.LBFGS
-import com.simiacryptus.mindseye.opt.trainable.ArrayTrainable
-import com.simiacryptus.mindseye.opt.{IterativeTrainer, Step, TrainingMonitor}
+import com.simiacryptus.mindseye.opt.{Step, TrainingMonitor}
 import com.simiacryptus.util.ArrayUtil._
 import com.simiacryptus.util.io.{HtmlNotebookOutput, IOUtil, KryoUtil, TeeOutputStream}
-import com.simiacryptus.util.ml.Tensor
 import com.simiacryptus.util.text.TableOutput
 import com.simiacryptus.util.{MonitoredObject, StreamNanoHTTPD, TimerText}
 import fi.iki.elonen.NanoHTTPD
@@ -106,6 +96,11 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
         case e : Throwable ⇒ e.printStackTrace()
       }
     }
+
+    override def clear(): Unit = {
+      history.clear();
+      dataTable.clear();
+    }
   }
   monitoringRoot.addField("openCL",Java8Util.cvt(()⇒{
     val sb = new java.lang.StringBuilder()
@@ -123,7 +118,8 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
 
 
   def defineHeader(log: HtmlNotebookOutput with ScalaNotebookOutput = out): Unit = {
-
+    log.h1(getClass.getSimpleName)
+    log.p(s"Generated on ${new java.util.Date()}")
     log.p("Reports: <a href='model.json'>Model Json</a>, <a href='metricsHistory.html'>Metrics Plots</a>, <a href='mobility.html'>Mobility</a>, <a href='log.txt'>Optimization Log</a>, or <a href='metrics.csv'>Metrics Data</a>")
     server.addSyncHandler("model.json", "application/json", Java8Util.cvt(out ⇒ {
       out.write(new GsonBuilder().setPrettyPrinting().create().toJson(getModelCheckpoint.getJson).getBytes)

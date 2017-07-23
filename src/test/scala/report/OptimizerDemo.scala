@@ -138,7 +138,7 @@ class OptimizerDemo extends WordSpec with MustMatchers with ReportNotebook {
           val trainer = new com.simiacryptus.mindseye.opt.IterativeTrainer(trainable)
           trainer.setOrientation(new OwlQn())
           // Not needed, just for illustration:
-          trainer.setLineSearchFactory(()⇒new ArmijoWolfeSearch().setC2(0.8).setAlpha(1e-6))
+          trainer.setLineSearchFactory((s:String)⇒new ArmijoWolfeSearch().setC2(0.8).setAlpha(1e-6))
           trainer
         })
       })
