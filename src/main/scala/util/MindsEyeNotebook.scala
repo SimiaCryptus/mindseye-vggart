@@ -19,6 +19,8 @@
 
 package util
 
+import java.awt.image.BufferedImage
+import java.awt.{Graphics2D, RenderingHints}
 import java.io._
 import java.util.concurrent.{Semaphore, TimeUnit}
 import java.{lang, util}
@@ -27,10 +29,18 @@ import com.aparapi.internal.kernel.KernelManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.{GsonBuilder, JsonObject}
 import com.simiacryptus.mindseye.layers.NNLayer
+import com.simiacryptus.mindseye.layers.loss.{EntropyLossLayer, MeanSqLossLayer}
+import com.simiacryptus.mindseye.layers.reducers.{ProductInputsLayer, SumInputsLayer}
+import com.simiacryptus.mindseye.layers.util.ConstNNLayer
+import com.simiacryptus.mindseye.network.PipelineNetwork
 import com.simiacryptus.mindseye.network.graph.DAGNetwork
+import com.simiacryptus.mindseye.opt.line.ArmijoWolfeSearch
+import com.simiacryptus.mindseye.opt.orient.LBFGS
+import com.simiacryptus.mindseye.opt.trainable.ArrayTrainable
 import com.simiacryptus.mindseye.opt.{IterativeTrainer, Step, TrainingMonitor}
 import com.simiacryptus.util.ArrayUtil._
 import com.simiacryptus.util.io.{HtmlNotebookOutput, IOUtil, KryoUtil, TeeOutputStream}
+import com.simiacryptus.util.ml.Tensor
 import com.simiacryptus.util.text.TableOutput
 import com.simiacryptus.util.{MonitoredObject, StreamNanoHTTPD, TimerText}
 import fi.iki.elonen.NanoHTTPD
@@ -70,7 +80,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
         history += currentPoint
         if(0 == currentPoint.iteration % checkpointFrequency) {
           modelCheckpoint = KryoUtil.kryo().copy(model)
-          IOUtil.writeString(model.getJsonString, out.file("../model.json"))
+          if(null != model) IOUtil.writeString(model.getJsonString, out.file("../model.json"))
         }
         val iteration = currentPoint.iteration
         if(shouldReplotMetrics(iteration)) regenerateReports()
@@ -359,5 +369,10 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
       Await.result(regenerateReports, Duration(10,TimeUnit.MINUTES))
     }
   }
+
+  def loadModel(discriminatorFile: String) = {
+    NNLayer.fromJson(new GsonBuilder().create().fromJson(IOUtils.toString(new FileInputStream(findFile(discriminatorFile).orNull), "UTF-8"), classOf[JsonObject]))
+  }
+
 
 }

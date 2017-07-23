@@ -22,19 +22,7 @@ object SimplexOptimizer {
                         relativeTolerance: Double = 1e-2,
                         absoluteTolerance: Double = 1
                        )(implicit ev1: scala.reflect.ClassTag[T]): T = {
-    val classSymbol = typeOf[T].typeSymbol.asClass
-    val classMirror = scala.reflect.runtime.currentMirror.reflectClass(classSymbol)
-    val primaryConstructor = classSymbol.primaryConstructor.asMethod
-    val constructorMirror = classMirror.reflectConstructor(primaryConstructor)
-    val factory: Array[Double] ⇒ T = args ⇒ {
-      constructorMirror(args: _*).asInstanceOf[T]
-    }
-    val toArray: T ⇒ Array[Double] = obj ⇒ {
-      primaryConstructor.paramLists.head.map(arg ⇒ {
-        val reflect: universe.InstanceMirror = scala.reflect.runtime.currentMirror.reflect(obj)
-        reflect.reflectField(typeOf[T].decl(arg.name).asTerm).get.asInstanceOf[Double]
-      }).toArray
-    }
+    val (factory, toArray) = buildAdapters[T]
     val optimizer = new SimplexOptimizer(relativeTolerance, absoluteTolerance)
     optimizer.getConvergenceChecker
     val dimensions = toArray(initial).length
@@ -55,4 +43,20 @@ object SimplexOptimizer {
     optimalMetaparameters
   }
 
+  def buildAdapters[T: TypeTag](implicit ev1: scala.reflect.ClassTag[T]) = {
+    val classSymbol = typeOf[T].typeSymbol.asClass
+    val classMirror = scala.reflect.runtime.currentMirror.reflectClass(classSymbol)
+    val primaryConstructor = classSymbol.primaryConstructor.asMethod
+    val constructorMirror = classMirror.reflectConstructor(primaryConstructor)
+    val factory: Array[Double] ⇒ T = args ⇒ {
+      constructorMirror(args: _*).asInstanceOf[T]
+    }
+    val toArray: T ⇒ Array[Double] = obj ⇒ {
+      primaryConstructor.paramLists.head.map(arg ⇒ {
+        val reflect: universe.InstanceMirror = scala.reflect.runtime.currentMirror.reflect(obj)
+        reflect.reflectField(typeOf[T].decl(arg.name).asTerm).get.asInstanceOf[Double]
+      }).toArray
+    }
+    (factory, toArray)
+  }
 }

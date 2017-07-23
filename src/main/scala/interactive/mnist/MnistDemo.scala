@@ -42,7 +42,7 @@ import scala.collection.JavaConverters._
 import scala.util.Random
 
 
-object MnistDemo extends ServiceNotebook {
+object MnistDemo extends Report {
 
   def main(args: Array[String]): Unit = {
     HtmlNotebookOutput.DEFAULT_ROOT = "https://github.com/SimiaCryptus/mindseye-scala/tree/master/"

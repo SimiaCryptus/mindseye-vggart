@@ -26,7 +26,7 @@ import java.util.{Date, UUID}
 import com.simiacryptus.util.io.HtmlNotebookOutput
 import com.simiacryptus.util.{StreamNanoHTTPD, Util}
 
-trait ServiceNotebook {
+trait Report {
   def report[T](fn: (StreamNanoHTTPD, HtmlNotebookOutput with ScalaNotebookOutput) ⇒ T,
                 port: Int = 1024 + (Math.random() * 0x700).toInt): T = try {
     val directoryName = new SimpleDateFormat("YYYY-MM-dd-HH-mm").format(new Date())
