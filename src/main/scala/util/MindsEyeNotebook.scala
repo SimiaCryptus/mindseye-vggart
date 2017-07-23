@@ -335,7 +335,8 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   def read(name: String): NNLayer = {
     findFile(name).map(inputFile⇒{
       out.p(s"Loading $inputFile")
-      NNLayer.fromJson(new GsonBuilder().create().fromJson(IOUtils.toString(new FileInputStream(inputFile), "UTF-8"), classOf[JsonObject]))
+      val jsonSrc = IOUtils.toString(new FileInputStream(inputFile), "UTF-8")
+      if(null==jsonSrc) null else NNLayer.fromJson(new GsonBuilder().create().fromJson(jsonSrc, classOf[JsonObject]))
     }).getOrElse(throw new RuntimeException(s"Could not find any files named $name.*.json"))
   }
 
