@@ -395,7 +395,7 @@ class MindsEyeDemo extends WordSpec with MustMatchers with ReportNotebook {
           blurredImage.toRgbImage()
         }
 
-        val inputSize: Array[Int] = idealImageTensor.getDims
+        val inputSize: Array[Int] = idealImageTensor.getDimensions
         val zeroInput = new Tensor(inputSize: _*)
 
         log.p("Now we define a reconstruction network, which adapts a bias id to find the source image" +

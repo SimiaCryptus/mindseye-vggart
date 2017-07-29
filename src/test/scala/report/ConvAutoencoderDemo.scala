@@ -261,10 +261,10 @@ class ConvAutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook
 
   private def reportMatrix(log: ScalaNotebookOutput, encoder: NNLayer, decoder: NNLayer, band: Int = 0) = {
     val inputPrototype = data.head
-    val dims = inputPrototype.getDims()
+    val dims = inputPrototype.getDimensions()
     val encoded = encoder.eval(inputPrototype).data.head
-    val width = encoded.getDims()(0)
-    val height = encoded.getDims()(1)
+    val width = encoded.getDimensions()(0)
+    val height = encoded.getDimensions()(1)
     log.draw(gfx ⇒ {
       (0 until width).foreach(x ⇒ {
         (0 until height).foreach(y ⇒ {
@@ -275,7 +275,7 @@ class ConvAutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook
           val min = tensor.getData.min
           val max = tensor.getData.max
           var getPixel: (Int, Int) ⇒ Color = null
-          val dims = tensor.getDims
+          val dims = tensor.getDimensions
           if (3 == dims.length) {
             if (3 == dims(2)) {
               getPixel = (xx: Int, yy: Int) ⇒ {
@@ -310,7 +310,7 @@ class ConvAutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook
 
   private def preview(log: ScalaNotebookOutput, width: Int, height: Int) = {
     val inputPrototype = data.head
-    val dims = inputPrototype.getDims
+    val dims = inputPrototype.getDimensions
     log.draw(gfx ⇒ {
       (0 until width).foreach(x ⇒ {
         (0 until height).foreach(y ⇒ {
