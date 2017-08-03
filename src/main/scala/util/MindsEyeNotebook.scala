@@ -324,9 +324,11 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   }
 
   def write(name: String, model: NNLayer) = {
-    val file = nextFile(name)
-    out.p(s"Saving $file")
-    IOUtil.writeString(model.getJsonString, new FileOutputStream(file))
+    if(null == name) model else {
+      val file = nextFile(name)
+      out.p(s"Saving $file")
+      IOUtil.writeString(model.getJsonString, new FileOutputStream(file))
+    }
   }
 
   def nextFile(name: String): String = Stream.from(1).map(name + "." + _ + ".json").find(!new File(_).exists).get
