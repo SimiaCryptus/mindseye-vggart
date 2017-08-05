@@ -27,10 +27,11 @@ import com.aparapi.internal.kernel.KernelManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.{GsonBuilder, JsonObject}
 import com.simiacryptus.mindseye.layers.NNLayer
+import com.simiacryptus.mindseye.layers.cudnn.{CuDNN, CudaPtr}
 import com.simiacryptus.mindseye.network.graph.DAGNetwork
 import com.simiacryptus.mindseye.opt.{Step, TrainingMonitor}
 import com.simiacryptus.util.ArrayUtil._
-import com.simiacryptus.util.io.{HtmlNotebookOutput, IOUtil, KryoUtil, TeeOutputStream}
+import com.simiacryptus.util.io._
 import com.simiacryptus.util.text.TableOutput
 import com.simiacryptus.util.{MonitoredObject, StreamNanoHTTPD, TimerText}
 import fi.iki.elonen.NanoHTTPD
@@ -120,7 +121,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   def defineHeader(log: HtmlNotebookOutput with ScalaNotebookOutput = out): Unit = {
     log.h1(getClass.getSimpleName)
     log.p(s"Generated on ${new java.util.Date()}")
-    log.p("Reports: <a href='model.json'>Model Json</a>, <a href='metricsHistory.html'>Metrics Plots</a>, <a href='mobility.html'>Mobility</a>, <a href='log.txt'>Optimization Log</a>, or <a href='metrics.csv'>Metrics Data</a>")
+    log.p("Reports: <a href='model.json'>Model Json</a>, <a href='metricsHistory.html'>Metrics Plots</a>, <a href='mobility.html'>Mobility</a>, <a href='log.txt'>Optimization Log</a>, <a href='cuda.json'>Cuda Stats</a>, or <a href='metrics.csv'>Metrics Data</a>")
     server.addSyncHandler("model.json", "application/json", Java8Util.cvt(out ⇒ {
       out.write(new GsonBuilder().setPrettyPrinting().create().toJson(getModelCheckpoint.getJson).getBytes)
     }), false)
@@ -131,10 +132,17 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
       IOUtils.write(dataTable.toCSV(false), out, "UTF-8")
     }), false)
     server.addSyncHandler("netmon.json", "application/json", Java8Util.cvt(out ⇒ {
-      val mapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
-      val buffer = new ByteArrayOutputStream()
-      mapper.writeValue(buffer, monitoringRoot.getMetrics)
-      out.write(buffer.toByteArray)
+      JsonUtil.writeJson(out, monitoringRoot.getMetrics)
+    }), false)
+    server.addSyncHandler("cuda.json", "application/json", Java8Util.cvt(out ⇒ {
+      JsonUtil.writeJson(out, new java.util.HashMap[Integer, util.HashMap[String, Long]](CudaPtr.METRICS.asMap().asScala.mapValues(metrics => {
+        new java.util.HashMap[String, Long](Map(
+          "usedMemory" -> metrics.usedMemory.get(),
+          "peakMemory" -> metrics.peakMemory.get(),
+          "memoryReads" -> metrics.memoryReads.get(),
+          "memoryWrites" -> metrics.memoryWrites.get()
+        ).asJava)
+      }).asJava))
     }), false)
 
 
