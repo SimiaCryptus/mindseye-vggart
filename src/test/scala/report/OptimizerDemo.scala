@@ -23,6 +23,7 @@ import java.lang
 import java.util.concurrent.TimeUnit
 import java.util.function.{IntToDoubleFunction, ToDoubleFunction}
 
+import com.simiacryptus.mindseye.layers.NNLayer.NNExecutionContext
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
 import util.Java8Util._
 import util.{ReportNotebook, ScalaNotebookOutput}
@@ -176,7 +177,7 @@ class OptimizerDemo extends WordSpec with MustMatchers with ReportNotebook {
 
   private def getBlankDeltaSet(model: PipelineNetwork) = {
     val set = new DeltaSet()
-    model.eval(new Tensor(inputSize: _*)).accumulate(set, Array(new Tensor(outputSize: _*)))
+    model.eval(new NNExecutionContext {}, new Tensor(inputSize: _*)).accumulate(set, new TensorArray(new Tensor(outputSize: _*)))
     set
   }
 

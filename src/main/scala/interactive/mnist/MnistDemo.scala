@@ -97,7 +97,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
       model.asInstanceOf[NNLayer]
     }
   }, (model: NNLayer) ⇒ {
-    log.p("The model is pre-trained with some data before being saved:")
+    log.p("The model is pre-trained map some data before being saved:")
     log.eval {
       val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(model, new EntropyLossLayer)
       val trainable = new StochasticArrayTrainable(trainingData.toArray, trainingNetwork, 1000)

@@ -22,11 +22,13 @@ package report
 import java.awt.Color
 import java.lang
 import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
 import javax.imageio.ImageIO
 
+import com.simiacryptus.mindseye.layers.NNLayer.NNExecutionContext
 import com.simiacryptus.mindseye.network._
 import com.simiacryptus.mindseye.network.graph._
-import com.simiacryptus.mindseye.layers.NNLayer
+import com.simiacryptus.mindseye.layers.{NNLayer, NNResult, TensorArray, TensorList}
 import com.simiacryptus.mindseye.layers.activation.SoftmaxActivationLayer
 import com.simiacryptus.mindseye.layers.loss.EntropyLossLayer
 import com.simiacryptus.mindseye.layers.synapse.DenseSynapseLayer
@@ -49,7 +51,7 @@ import scala.util.Random
 
 class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
 
-  var data: Array[Tensor] = null
+  var data: TensorList = null
   val history = new mutable.ArrayBuffer[com.simiacryptus.mindseye.opt.Step]
   var monitor = new TrainingMonitor {
     override def log(msg: String): Unit = {
@@ -67,7 +69,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
     "MNIST" in {
       report("mnist_sparse", log ⇒ {
         data = log.eval {
-          MNIST.trainingDataStream().iterator().asScala.toStream.map(labeledObj ⇒ labeledObj.data).toArray
+          new TensorArray(MNIST.trainingDataStream().iterator().asScala.toStream.map(labeledObj ⇒ labeledObj.data).toArray:_*)
         }
         preview(log, 10, 10)
 
@@ -166,7 +168,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
         data = log.eval {
           var data = ImageTiles.tilesRgb(ImageIO.read(getClass.getClassLoader.getResourceAsStream("monkey1.jpg")), 10, 10, 10, 10)
           data = Random.shuffle(data.toList).toArray
-          data
+          new TensorArray(data:_*)
         }
         preview(log, 100, 60)
 
@@ -230,7 +232,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
       log.p("The (mis)categorization matrix displays a count matrix for every actual/predicted category: ")
       val categorizationMatrix: Map[Int, Map[Int, Int]] = log.eval {
         MNIST.validationDataStream().iterator().asScala.toStream.map(testObj ⇒ {
-          val result = categorizationNetwork.eval(testObj.data).data.head
+          val result = categorizationNetwork.eval(new NNExecutionContext {}, testObj.data).data.get(0)
           val prediction: Int = (0 to 9).maxBy(i ⇒ result.get(i))
           val actual: Int = toOut(testObj.label)
           actual → prediction
@@ -260,9 +262,9 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
   }
 
   private def representationMatrix(log: ScalaNotebookOutput, encoder: NNLayer, decoder: NNLayer, band: Int = 0, probeIntensity : Double = 255.0) = {
-    val inputPrototype = data.head
+    val inputPrototype = data.get(0)
     val dims = inputPrototype.getDimensions()
-    val encoded: Tensor = encoder.eval(inputPrototype).data.head
+    val encoded: Tensor = encoder.eval(new NNExecutionContext {}, inputPrototype).data.get(0)
     val width = encoded.getDimensions()(0)
     val height = encoded.getDimensions()(1)
     log.draw(gfx ⇒ {
@@ -270,7 +272,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
         (0 until height).foreach(y ⇒ {
           encoded.fill(cvt((i: Int) ⇒ 0.0))
           encoded.set(Array(x, y, band), probeIntensity)
-          val tensor: Tensor = decoder.eval(encoded).data.head
+          val tensor: Tensor = decoder.eval(new NNExecutionContext {}, encoded).data.get(0)
           val min: Double = tensor.getData.min
           val max: Double = tensor.getData.max
           if(min != max) {
@@ -311,12 +313,12 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
   }
 
   private def preview(log: ScalaNotebookOutput, width: Int, height: Int) = {
-    val inputPrototype = data.head
+    val inputPrototype = data.get(0)
     val dims = inputPrototype.getDimensions
     log.draw(gfx ⇒ {
       (0 until width).foreach(x ⇒ {
         (0 until height).foreach(y ⇒ {
-          val tensor = data((y * width + x) % data.length)
+          val tensor = data.get((y * width + x) % data.length)
           val min = 0 // tensor.getData.min
           val max = 255 // tensor.getData.max
           var getPixel: (Int, Int) ⇒ Color = null
@@ -354,11 +356,11 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
 
   private def reportTable(log: ScalaNotebookOutput, encoder: NNLayer, decoder: NNLayer) = {
     log.eval {
-      TableOutput.create(data.take(20).map(testObj ⇒ {
+      TableOutput.create(data.stream().collect(Collectors.toList()).asScala.take(20).map((testObj: Tensor) ⇒ {
         var evalModel: PipelineNetwork = new PipelineNetwork
         evalModel.add(encoder)
         evalModel.add(decoder)
-        val result = evalModel.eval(testObj).data.head
+        val result = evalModel.eval(new NNExecutionContext {}, testObj).data.get(0)
         Map[String, AnyRef](
           "Input" → log.image(testObj.toImage(), "Input"),
           "Output" → log.image(result.toImage(), "Autoencoder Output")
