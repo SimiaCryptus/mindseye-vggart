@@ -219,7 +219,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
       log.out("<table>")
       layers.foreach(layer ⇒ {
         try {
-          val transcript: List[Array[Double]] = history.map(_.point.weights.map.get(layer).delta).toList
+          val transcript: List[Array[Double]] = history.map(_.point.weights.map.get(layer).getDelta).toList
           log.out("<tr><td>")
           log.p(s"${layer.getName}")
           List(1, 5, 20).foreach(lag ⇒ {
