@@ -21,6 +21,7 @@ package util
 
 import java.io._
 import java.util.concurrent.{Semaphore, TimeUnit}
+import java.util.zip.{GZIPInputStream, GZIPOutputStream}
 import java.{lang, util}
 
 import com.aparapi.internal.kernel.KernelManager
@@ -48,6 +49,7 @@ import scala.concurrent.{Await, Future}
 abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput with ScalaNotebookOutput) {
 
   val history = new scala.collection.mutable.ArrayBuffer[Step]()
+  val valuesHistory = new scala.collection.mutable.ArrayBuffer[(Long,Double)]()
   val logOut = new TeeOutputStream(out.file("../log.txt"), true)
   val logPrintStream = new PrintStream(logOut)
   val monitoringRoot = new MonitoredObject()
@@ -57,6 +59,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   var modelCheckpoint : NNLayer = null
   def getModelCheckpoint = Option(modelCheckpoint).getOrElse(model)
   val pauseSemaphore = new Semaphore(1)
+  var recordMetrics: Boolean = true
 
   def onStepComplete(currentPoint: Step): Unit = {}
   val monitor = new TrainingMonitor {
@@ -66,12 +69,18 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
       logPrintStream.println(timer + " " + msg)
     }
 
+
     override def onStepComplete(currentPoint: Step): Unit = {
       try {
         history += currentPoint
+        if(history.size > 10) history.remove(0)
+        valuesHistory += ((currentPoint.iteration, currentPoint.point.value))
         if(0 == currentPoint.iteration % checkpointFrequency) {
           modelCheckpoint = KryoUtil.kryo().copy(model)
-          if(null != model) IOUtil.writeString(model.getJsonString, out.file("../model.json"))
+          if(null != model) {
+            IOUtil.writeString(model.getJsonString, new GZIPOutputStream(out.file("../model.json.gz")))
+            IOUtil.writeString(model.getJsonString, new GZIPOutputStream(out.file("../model.json.gz")))
+          }
         }
         val iteration = currentPoint.iteration
         if(shouldReplotMetrics(iteration)) regenerateReports()
@@ -85,7 +94,9 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
             }
           }).map(e⇒(if(e._1.startsWith(".")) e._1.substring(1) else e._1)→e._2)
         }
-        dataTable.putRow((flatten(".",monitoringRoot.getMetrics.asScala.toMap)++Map(
+
+        lazy val metrics = if(recordMetrics) flatten(".", monitoringRoot.getMetrics.asScala.toMap) else Map.empty
+        dataTable.putRow((metrics++Map(
           "epoch" → currentPoint.iteration.asInstanceOf[lang.Long],
           "time" → currentPoint.time.asInstanceOf[lang.Long],
           "value" → currentPoint.point.value.asInstanceOf[lang.Double]
@@ -100,6 +111,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
 
     override def clear(): Unit = {
       history.clear();
+      valuesHistory.clear();
       dataTable.clear();
     }
   }
@@ -175,10 +187,10 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   }
 
   def summarizeHistory(log: ScalaNotebookOutput = out) = {
-    if (!history.isEmpty) {
+    if (!valuesHistory.isEmpty) {
       log.eval {
-        val plot: PlotCanvas = ScatterPlot.plot(history.map(item ⇒ Array[Double](
-          item.iteration, Math.log(item.point.value)
+        val plot: PlotCanvas = ScatterPlot.plot(valuesHistory.map(item ⇒ Array[Double](
+          item._1, Math.log(item._2)
         )).toArray: _*)
         plot.setTitle("Convergence Plot")
         plot.setAxisLabels("Iteration", "log(Fitness)")
@@ -335,19 +347,19 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     if(null == name) model else {
       val file = nextFile(name)
       out.p(s"Saving $file")
-      IOUtil.writeString(model.getJsonString, new FileOutputStream(file))
+      IOUtil.writeString(model.getJsonString, new GZIPOutputStream(new FileOutputStream(file)))
     }
   }
 
-  def nextFile(name: String): String = Stream.from(1).map(name + "." + _ + ".json").find(!new File(_).exists).get
-  def findFile(name: String): Option[String] = Stream.from(1).map(name + "." + _ + ".json").takeWhile(new File(_).exists).lastOption
+  def nextFile(name: String): String = Stream.from(1).map(name + "." + _ + ".json.gz").find(!new File(_).exists).get
+  def findFile(name: String): Option[String] = Stream.from(1).map(name + "." + _ + ".json.gz").takeWhile(new File(_).exists).lastOption
 
   def read(name: String): NNLayer = {
     findFile(name).map(inputFile⇒{
       out.p(s"Loading $inputFile")
-      val jsonSrc = IOUtils.toString(new FileInputStream(inputFile), "UTF-8")
+      val jsonSrc = IOUtils.toString(new GZIPInputStream(new FileInputStream(inputFile)), "UTF-8")
       if(null==jsonSrc) null else NNLayer.fromJson(new GsonBuilder().create().fromJson(jsonSrc, classOf[JsonObject]))
-    }).getOrElse(throw new RuntimeException(s"Could not find any files named $name.*.json"))
+    }).getOrElse(throw new RuntimeException(s"Could not find any files named $name.*.json.gz"))
   }
 
   def phase[T>:Null](input: ⇒ NNLayer, fn: NNLayer ⇒ T, outputFile: String): T = {
