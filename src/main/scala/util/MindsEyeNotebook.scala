@@ -187,7 +187,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   }
 
   def summarizeHistory(log: ScalaNotebookOutput = out) = {
-    if (!valuesHistory.isEmpty) {
+    if (!valuesHistory.isEmpty) try {
       log.eval {
         val plot: PlotCanvas = ScatterPlot.plot(valuesHistory.map(item ⇒ Array[Double](
           item._1, Math.log(item._2)
@@ -197,6 +197,8 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
         plot.setSize(600, 400)
         plot
       }
+    } catch {
+      case e => e.printStackTrace(System.err)
     }
   }
 
@@ -377,7 +379,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     out.p("Model Loaded")
     try {
       model.asInstanceOf[DAGNetwork].attach(monitoringRoot)
-      val result = fn(model)
+      val result: T = fn(model)
       onComplete(model)
       out.p("Training Phase Complete")
       result
