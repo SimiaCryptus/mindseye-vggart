@@ -19,7 +19,7 @@
 
 package util
 
-import java.util.function.{Consumer, DoubleSupplier, DoubleUnaryOperator, Function, IntToDoubleFunction, Supplier, ToDoubleBiFunction, ToDoubleFunction}
+import java.util.function.{BiFunction, BinaryOperator, Consumer, DoubleSupplier, DoubleUnaryOperator, Function, IntToDoubleFunction, Supplier, ToDoubleBiFunction, ToDoubleFunction}
 
 object Java8Util {
 
@@ -32,6 +32,18 @@ object Java8Util {
   implicit def cvt[T <: AnyRef](fn: () ⇒ T): Supplier[T] = {
     new Supplier[T] {
       override def get(): T = fn.apply()
+    }
+  }
+
+  implicit def cvt[T <: AnyRef,U<:AnyRef,R<:AnyRef](fn: (T,U) ⇒ R): BiFunction[T,U,R] = {
+    new BiFunction[T,U,R] {
+      override def apply(t: T, u: U) = fn.apply(t,u)
+    }
+  }
+
+  implicit def cvt[T <: AnyRef](fn: (T,T) ⇒ T): BinaryOperator[T] = {
+    new BinaryOperator[T]{
+      override def apply(t: T, u: T) = fn.apply(t,u)
     }
   }
 
