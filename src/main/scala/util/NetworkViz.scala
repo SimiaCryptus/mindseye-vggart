@@ -39,8 +39,8 @@ object NetworkViz {
     val graphNodes: Map[UUID, MutableNode] = nodes.map(node ⇒ {
       node.getId() → guru.nidi.graphviz.model.Factory.mutNode((node match {
         case n: InnerNode ⇒
-          n.layer match {
-            case _ ⇒ n.layer.getClass.getSimpleName
+          n.getLayer match {
+            case _ ⇒ n.getLayer.getClass.getSimpleName
           }
         case _ ⇒ node.getClass.getSimpleName
       }) + "\n" + node.getId.toString)
