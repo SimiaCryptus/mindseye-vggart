@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 import _root_.util.{MindsEyeNotebook, _}
+import com.simiacryptus.mindseye.data.{MNIST, Tensor}
 import com.simiacryptus.mindseye.layers.NNLayer
 import com.simiacryptus.mindseye.layers.activation._
 import com.simiacryptus.mindseye.layers.loss.EntropyLossLayer
@@ -34,8 +35,6 @@ import com.simiacryptus.mindseye.opt.orient.LBFGS
 import com.simiacryptus.mindseye.opt.orient.{GradientDescent, LBFGS}
 import com.simiacryptus.util.StreamNanoHTTPD
 import com.simiacryptus.util.io.{HtmlNotebookOutput, MarkdownNotebookOutput}
-import com.simiacryptus.util.ml.Tensor
-import com.simiacryptus.util.test.MNIST
 import com.simiacryptus.util.text.TableOutput
 
 import scala.collection.JavaConverters._

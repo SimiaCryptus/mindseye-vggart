@@ -25,10 +25,11 @@ import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import javax.imageio.ImageIO
 
+import com.simiacryptus.mindseye.data._
 import com.simiacryptus.mindseye.layers.NNLayer.NNExecutionContext
 import com.simiacryptus.mindseye.network._
 import com.simiacryptus.mindseye.network.graph._
-import com.simiacryptus.mindseye.layers.{NNLayer, NNResult, TensorArray, TensorList}
+import com.simiacryptus.mindseye.layers.{NNLayer, NNResult}
 import com.simiacryptus.mindseye.layers.activation.SoftmaxActivationLayer
 import com.simiacryptus.mindseye.layers.loss.EntropyLossLayer
 import com.simiacryptus.mindseye.layers.synapse.DenseSynapseLayer
@@ -36,8 +37,6 @@ import com.simiacryptus.mindseye.opt._
 import com.simiacryptus.mindseye.opt.orient.LBFGS
 import com.simiacryptus.mindseye.opt.trainable.StochasticArrayTrainable
 import com.simiacryptus.util.io.IOUtil
-import com.simiacryptus.util.ml.{Coordinate, Tensor}
-import com.simiacryptus.util.test.{ImageTiles, MNIST}
 import com.simiacryptus.util.text.TableOutput
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport
 import org.scalatest.{MustMatchers, WordSpec}

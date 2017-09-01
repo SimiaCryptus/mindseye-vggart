@@ -23,6 +23,7 @@ import java.lang
 import java.util.concurrent.TimeUnit
 import java.util.function.{IntToDoubleFunction, ToDoubleFunction}
 
+import com.simiacryptus.mindseye.data.{Coordinate, MNIST, Tensor, TensorArray}
 import com.simiacryptus.mindseye.layers.NNLayer.NNExecutionContext
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
 import util.Java8Util._
@@ -36,8 +37,6 @@ import com.simiacryptus.mindseye.opt.line.ArmijoWolfeSearch
 import com.simiacryptus.mindseye.opt.orient.{GradientDescent, LBFGS, OwlQn}
 import com.simiacryptus.mindseye.opt.trainable.{ConstL12Normalizer, StochasticArrayTrainable, Trainable}
 import com.simiacryptus.util.Util
-import com.simiacryptus.util.ml.{Coordinate, Tensor}
-import com.simiacryptus.util.test.MNIST
 import com.simiacryptus.util.text.TableOutput
 import org.scalatest.{MustMatchers, WordSpec}
 import smile.plot.{PlotCanvas, ScatterPlot}
