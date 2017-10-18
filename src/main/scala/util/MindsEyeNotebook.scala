@@ -27,7 +27,7 @@ import java.{lang, util}
 import com.aparapi.internal.kernel.KernelManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.{GsonBuilder, JsonObject}
-import com.simiacryptus.mindseye.layers.NNLayer
+import com.simiacryptus.mindseye.lang.NNLayer
 import com.simiacryptus.mindseye.layers.cudnn.{CuDNN, CudaPtr}
 import com.simiacryptus.mindseye.network.graph.DAGNetwork
 import com.simiacryptus.mindseye.opt.{Step, TrainingMonitor}

@@ -19,7 +19,7 @@
 
 package util
 
-import com.simiacryptus.mindseye.layers.NNLayer
+import com.simiacryptus.mindseye.lang.NNLayer
 import com.simiacryptus.mindseye.layers.activation.{LinearActivationLayer, NthPowerActivationLayer, SqActivationLayer}
 import com.simiacryptus.mindseye.layers.meta.{AvgMetaLayer, BiasMetaLayer, ScaleMetaLayer, ScaleUniformMetaLayer}
 import com.simiacryptus.mindseye.layers.reducers.AvgReducerLayer

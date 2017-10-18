@@ -25,9 +25,9 @@ import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
 
 import com.simiacryptus.mindseye.data._
+import com.simiacryptus.mindseye.lang._
 import com.simiacryptus.mindseye.network._
-import com.simiacryptus.mindseye.layers.{NNLayer}
-import com.simiacryptus.mindseye.layers.NNLayer.NNExecutionContext
+import com.simiacryptus.mindseye.lang.NNLayer.NNExecutionContext
 import com.simiacryptus.mindseye.layers.activation.SoftmaxActivationLayer
 import com.simiacryptus.mindseye.layers.loss.EntropyLossLayer
 import com.simiacryptus.mindseye.layers.synapse.DenseSynapseLayer

@@ -19,7 +19,7 @@
 
 package util
 
-import com.simiacryptus.mindseye.layers.NNLayer
+import com.simiacryptus.mindseye.lang.NNLayer
 import com.simiacryptus.mindseye.layers.util.MonitoringWrapper
 import com.simiacryptus.util.MonitoredObject
 

@@ -23,8 +23,9 @@ import java.lang
 import java.util.concurrent.TimeUnit
 import java.util.function.{IntToDoubleFunction, ToDoubleFunction}
 
-import com.simiacryptus.mindseye.data.{Coordinate, MNIST, Tensor, TensorArray}
-import com.simiacryptus.mindseye.layers.NNLayer.NNExecutionContext
+import com.simiacryptus.mindseye.data.{Coordinate, MNIST, TensorArray}
+import com.simiacryptus.mindseye.lang.{Coordinate, DeltaSet, Tensor, TensorArray}
+import com.simiacryptus.mindseye.lang.NNLayer.NNExecutionContext
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
 import util.Java8Util._
 import util.{ReportNotebook, ScalaNotebookOutput}
