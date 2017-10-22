@@ -55,8 +55,8 @@ object SimplexOptimizer {
       GoalType.MINIMIZE, new MaxIter(maxIterations), new MaxEval(maxIterations),
       new MultiDirectionalSimplex(dimensions)
 //      new SimpleBounds(
-//        (0 until dimensions).map(d ⇒ min).toArray,
-//        (0 until dimensions).map(d ⇒ max).toArray
+//        (0 until dimensions).mapCoords(d ⇒ min).toArray,
+//        (0 until dimensions).mapCoords(d ⇒ max).toArray
 //      )
     ).getPoint)
     optimalMetaparameters
