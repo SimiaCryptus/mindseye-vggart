@@ -24,13 +24,13 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import _root_.util.{MindsEyeNotebook, _}
 import com.simiacryptus.mindseye.data.MNIST
+import com.simiacryptus.mindseye.eval.StochasticArrayTrainable
 import com.simiacryptus.mindseye.lang.{NNLayer, Tensor}
 import com.simiacryptus.mindseye.layers.activation._
 import com.simiacryptus.mindseye.layers.loss.EntropyLossLayer
 import com.simiacryptus.mindseye.layers.synapse.{BiasLayer, DenseSynapseLayer}
 import com.simiacryptus.mindseye.layers.util.MonitoringWrapper
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
-import com.simiacryptus.mindseye.opt.trainable.StochasticArrayTrainable
 import com.simiacryptus.mindseye.opt.orient.LBFGS
 import com.simiacryptus.mindseye.opt.orient.{GradientDescent, LBFGS}
 import com.simiacryptus.util.StreamNanoHTTPD
