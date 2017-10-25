@@ -74,7 +74,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
       try {
         history += currentPoint
         if(history.size > 10) history.remove(0)
-        valuesHistory += ((currentPoint.iteration, currentPoint.point.value))
+        valuesHistory += ((currentPoint.iteration, currentPoint.point.sum))
         if(0 == currentPoint.iteration % checkpointFrequency) {
           modelCheckpoint = KryoUtil.kryo().copy(model)
           if(null != model) {
@@ -99,7 +99,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
         dataTable.putRow((metrics++Map(
           "epoch" → currentPoint.iteration.asInstanceOf[lang.Long],
           "time" → currentPoint.time.asInstanceOf[lang.Long],
-          "value" → currentPoint.point.value.asInstanceOf[lang.Double]
+          "value" → currentPoint.point.sum.asInstanceOf[lang.Double]
         )).asJava)
         MindsEyeNotebook.this.onStepComplete(currentPoint)
         pauseSemaphore.acquire()
