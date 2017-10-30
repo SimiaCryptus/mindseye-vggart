@@ -24,6 +24,7 @@ import java.awt.{Graphics2D, RenderingHints}
 import java.util.function.Supplier
 
 import com.simiacryptus.util.io.NotebookOutput
+import com.simiacryptus.util.lang.UncheckedSupplier
 
 /**
   * Created by Andrew Charneski on 5/14/2017.
@@ -33,19 +34,19 @@ trait ScalaNotebookOutput extends NotebookOutput {
   private val default_max_log: Int = 64 * 1024
 
   def eval[T](fn: => T): T = {
-    code(new Supplier[T] {
+    code(new UncheckedSupplier[T] {
       override def get(): T = fn
     }, default_max_log, 4)
   }
 
   def code[T](fn: () => T): T = {
-    code(new Supplier[T] {
+    code(new UncheckedSupplier[T] {
       override def get(): T = fn()
     }, default_max_log, 4)
   }
 
   def draw[T](fn: (Graphics2D) ⇒ Unit, width: Int = 600, height: Int = 400): BufferedImage = {
-    code(new Supplier[BufferedImage] {
+    code(new UncheckedSupplier[BufferedImage] {
       override def get(): BufferedImage = {
         val image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
         val graphics = image.getGraphics.asInstanceOf[Graphics2D]
