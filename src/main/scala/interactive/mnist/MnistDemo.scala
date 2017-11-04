@@ -35,7 +35,7 @@ import com.simiacryptus.mindseye.opt.orient.LBFGS
 import com.simiacryptus.mindseye.opt.orient.{GradientDescent, LBFGS}
 import com.simiacryptus.util.StreamNanoHTTPD
 import com.simiacryptus.util.io.{HtmlNotebookOutput, MarkdownNotebookOutput}
-import com.simiacryptus.util.text.TableOutput
+import com.simiacryptus.text.TableOutput
 
 import scala.collection.JavaConverters._
 import scala.util.Random

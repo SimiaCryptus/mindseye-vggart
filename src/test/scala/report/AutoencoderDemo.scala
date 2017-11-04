@@ -36,7 +36,7 @@ import com.simiacryptus.mindseye.layers.synapse.DenseSynapseLayer
 import com.simiacryptus.mindseye.opt._
 import com.simiacryptus.mindseye.opt.orient.LBFGS
 import com.simiacryptus.util.io.IOUtil
-import com.simiacryptus.util.text.TableOutput
+import com.simiacryptus.text.TableOutput
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport
 import org.scalatest.{MustMatchers, WordSpec}
 import smile.plot.{PlotCanvas, ScatterPlot}

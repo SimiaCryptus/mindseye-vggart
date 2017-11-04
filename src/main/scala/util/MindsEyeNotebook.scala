@@ -33,7 +33,7 @@ import com.simiacryptus.mindseye.network.graph.DAGNetwork
 import com.simiacryptus.mindseye.opt.{Step, TrainingMonitor}
 import com.simiacryptus.util.ArrayUtil._
 import com.simiacryptus.util.io._
-import com.simiacryptus.util.text.TableOutput
+import com.simiacryptus.text.TableOutput
 import com.simiacryptus.util.{MonitoredObject, StreamNanoHTTPD, TimerText}
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.IHTTPSession
