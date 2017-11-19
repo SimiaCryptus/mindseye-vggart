@@ -27,11 +27,8 @@ import javax.imageio.ImageIO
 import com.simiacryptus.mindseye.data._
 import com.simiacryptus.mindseye.eval.StochasticArrayTrainable
 import com.simiacryptus.mindseye.lang._
+import com.simiacryptus.mindseye.layers.java.{DenseSynapseLayer, EntropyLossLayer, SoftmaxActivationLayer}
 import com.simiacryptus.mindseye.network._
-import com.simiacryptus.mindseye.lang.NNLayer.NNExecutionContext
-import com.simiacryptus.mindseye.layers.activation.SoftmaxActivationLayer
-import com.simiacryptus.mindseye.layers.loss.EntropyLossLayer
-import com.simiacryptus.mindseye.layers.synapse.DenseSynapseLayer
 import com.simiacryptus.mindseye.opt._
 import com.simiacryptus.mindseye.opt.orient.LBFGS
 import com.simiacryptus.util.io.IOUtil

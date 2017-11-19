@@ -216,12 +216,12 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
 
   def generateMobilityReport(log: ScalaNotebookOutput = out): Future[Unit] = Future {
     if (!history.isEmpty) {
-      val layers: Array[NNLayer] = history.flatMap(_.point.weights.map.asScala.keySet).distinct.toArray
+      val layers: Array[NNLayer] = history.flatMap(_.point.weights.getMap.asScala.keySet).distinct.toArray
       val outputTable = new mutable.HashMap[Int, mutable.Map[String, AnyRef]]()
       log.out("<table>")
       layers.foreach(layer ⇒ {
         try {
-          val transcript: List[Array[Double]] = history.map(_.point.weights.map.get(layer).getDelta).toList
+          val transcript: List[Array[Double]] = history.map(_.point.weights.getMap.get(layer).getDelta).toList
           log.out("<tr><td>")
           log.p(s"${layer.getName}")
           List(1, 5, 20).foreach(lag ⇒ {

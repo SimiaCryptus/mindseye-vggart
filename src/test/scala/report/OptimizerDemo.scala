@@ -25,11 +25,8 @@ import java.util.function.{IntToDoubleFunction, ToDoubleFunction}
 
 import com.simiacryptus.mindseye.data.MNIST
 import com.simiacryptus.mindseye.eval.{ConstL12Normalizer, StochasticArrayTrainable, Trainable}
-import com.simiacryptus.mindseye.lang.NNLayer.NNExecutionContext
-import com.simiacryptus.mindseye.lang.{Coordinate, DeltaSet, Tensor, TensorArray}
-import com.simiacryptus.mindseye.layers.activation.{ReLuActivationLayer, SoftmaxActivationLayer}
-import com.simiacryptus.mindseye.layers.loss.EntropyLossLayer
-import com.simiacryptus.mindseye.layers.synapse.{BiasLayer, DenseSynapseLayer}
+import com.simiacryptus.mindseye.lang._
+import com.simiacryptus.mindseye.layers.java._
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
 import com.simiacryptus.mindseye.opt._
 import com.simiacryptus.mindseye.opt.line.ArmijoWolfeSearch
@@ -85,7 +82,7 @@ class OptimizerDemo extends WordSpec with MustMatchers with ReportNotebook {
         trainer.run()
       }
       log.eval {
-        getBlankDeltaSet(model).map.asScala.map(ent ⇒ {
+        getBlankDeltaSet(model).getMap.asScala.map(ent ⇒ {
           val (layer, buffer) = ent
           Map(
             "layer" → layer.getClass.getSimpleName,

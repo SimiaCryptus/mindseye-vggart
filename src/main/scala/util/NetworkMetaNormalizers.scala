@@ -19,10 +19,7 @@
 
 package util
 
-import com.simiacryptus.mindseye.lang.NNLayer
-import com.simiacryptus.mindseye.layers.activation.{LinearActivationLayer, NthPowerActivationLayer, SqActivationLayer}
-import com.simiacryptus.mindseye.layers.meta.{AvgMetaLayer, BiasMetaLayer, ScaleMetaLayer, ScaleUniformMetaLayer}
-import com.simiacryptus.mindseye.layers.reducers.AvgReducerLayer
+import com.simiacryptus.mindseye.layers.java._
 import com.simiacryptus.mindseye.network.PipelineNetwork
 
 object NetworkMetaNormalizers {
