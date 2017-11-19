@@ -81,10 +81,10 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
   def phase1() = phase({
     log.p("We construct a new model:")
     log.eval {
-      def wrap(n:NNLayer) = new MonitoringWrapper(n).addTo(monitoringRoot)
+      def wrap(n:NNLayer) = new MonitoringWrapperLayer(n).addTo(monitoringRoot)
       var model: PipelineNetwork = new PipelineNetwork
       model.add(wrap(new BiasLayer(inputSize: _*).setName("inbias")))
-      model.add(wrap(new DenseSynapseLayer(inputSize, outputSize)
+      model.add(wrap(new FullyConnectedLayer(inputSize, outputSize)
         .setWeights(Java8Util.cvt(() ⇒ 0.001 * (Random.nextDouble() - 0.5))).setName("synapse")))
       model.add(wrap(new ReLuActivationLayer().setName("relu")))
       model.add(wrap(new BiasLayer(outputSize: _*).setName("outbias")))

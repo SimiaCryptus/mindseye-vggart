@@ -20,7 +20,7 @@
 package util
 
 import com.simiacryptus.mindseye.lang.NNLayer
-import com.simiacryptus.mindseye.layers.java.MonitoringWrapper
+import com.simiacryptus.mindseye.layers.java.MonitoringWrapperLayer
 import com.simiacryptus.util.MonitoredObject
 
 /**
@@ -31,6 +31,6 @@ object NNLayerUtil {
 }
 
 case class NNLayerUtil(inner:NNLayer) {
-  def withMonitor = new MonitoringWrapper(inner)
+  def withMonitor = new MonitoringWrapperLayer(inner)
   def addTo(monitor: MonitoredObject) = withMonitor.addTo(monitor)
 }
