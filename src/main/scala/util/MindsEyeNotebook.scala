@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.{GsonBuilder, JsonObject}
 import com.simiacryptus.mindseye.lang.NNLayer
 import com.simiacryptus.mindseye.layers.cudnn.{CuDNN, CudaPtr}
-import com.simiacryptus.mindseye.network.graph.DAGNetwork
+import com.simiacryptus.mindseye.network.DAGNetwork
 import com.simiacryptus.mindseye.opt.{Step, TrainingMonitor}
 import com.simiacryptus.util.ArrayUtil._
 import com.simiacryptus.util.io._
@@ -88,7 +88,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
           data.flatMap({
             case (key, value) ⇒ value match {
               case value : Number ⇒ Map((prefix + key) → value)
-              case value : util.List[String] ⇒ Map.empty[String,AnyRef]
+              case value : util.List[_] ⇒ Map.empty[String,AnyRef]
               case value : util.Map[String,AnyRef] ⇒ flatten(prefix+key+".", value.asScala.toMap)
               case value : Map[String,AnyRef] ⇒ flatten(prefix+key, value)
             }
@@ -198,7 +198,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
         plot
       }
     } catch {
-      case e => e.printStackTrace(System.err)
+      case e : Throwable => e.printStackTrace(System.err)
     }
   }
 
@@ -364,14 +364,8 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     }).getOrElse(throw new RuntimeException(s"Could not find any files named $name.*.json.gz"))
   }
 
-  def phase[T>:Null](input: ⇒ NNLayer, fn: NNLayer ⇒ T, outputFile: String): T = {
-    phase(input,
-      layer ⇒ {
-        val result = fn(layer)
-        layer
-        result
-      }, model ⇒ write(outputFile, model))
-  }
+  def phase[T>:Null](input: ⇒ NNLayer, fn: NNLayer ⇒ T, outputFile: String): T = phase(input,
+    layer ⇒ fn(layer), model ⇒ write(outputFile, model))
 
   private def phase[T](initializer: ⇒ NNLayer, fn: NNLayer ⇒ T, onComplete: NNLayer ⇒ Unit): T = {
     out.p("Loading Model")

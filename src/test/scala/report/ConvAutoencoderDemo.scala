@@ -21,27 +21,19 @@ package report
 
 import java.awt.Color
 import java.lang
-import java.util.concurrent.TimeUnit
-import javax.imageio.ImageIO
 
+import _root_.util.Java8Util._
+import _root_.util.{ReportNotebook, ScalaNotebookOutput}
 import com.simiacryptus.mindseye.data._
-import com.simiacryptus.mindseye.eval.StochasticArrayTrainable
 import com.simiacryptus.mindseye.lang._
-import com.simiacryptus.mindseye.layers.java.{FullyConnectedLayer, EntropyLossLayer, SoftmaxActivationLayer}
 import com.simiacryptus.mindseye.network._
 import com.simiacryptus.mindseye.opt._
-import com.simiacryptus.mindseye.opt.orient.LBFGS
-import com.simiacryptus.util.io.IOUtil
 import com.simiacryptus.text.TableOutput
-import de.javakaffee.kryoserializers.KryoReflectionFactorySupport
 import org.scalatest.{MustMatchers, WordSpec}
 import smile.plot.{PlotCanvas, ScatterPlot}
-import util.Java8Util._
-import util.{ReportNotebook, ScalaNotebookOutput}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.util.Random
 
 class ConvAutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
 

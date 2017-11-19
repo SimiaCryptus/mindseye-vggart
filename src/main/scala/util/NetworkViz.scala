@@ -21,7 +21,7 @@ package util
 
 import java.util.UUID
 
-import com.simiacryptus.mindseye.network.graph.{DAGNetwork, DAGNode, InnerNode}
+import com.simiacryptus.mindseye.network.{DAGNetwork, DAGNode, InnerNode}
 import guru.nidi.graphviz.attribute.RankDir
 import guru.nidi.graphviz.model.{Link, LinkSource, MutableNode}
 
@@ -38,7 +38,7 @@ object NetworkViz {
     val nodes: List[DAGNode] = network.getNodes.asScala.toList
     val graphNodes: Map[UUID, MutableNode] = nodes.map(node ⇒ {
       node.getId() → guru.nidi.graphviz.model.Factory.mutNode((node match {
-        case n: InnerNode ⇒
+        case n: DAGNode ⇒
           n.getLayer match {
             case _ ⇒ n.getLayer.getClass.getSimpleName
           }
