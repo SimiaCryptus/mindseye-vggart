@@ -26,7 +26,7 @@ import java.util.stream.Collectors
 import javax.imageio.ImageIO
 
 import com.simiacryptus.mindseye.data._
-import com.simiacryptus.mindseye.eval.StochasticArrayTrainable
+import com.simiacryptus.mindseye.eval.SampledArrayTrainable
 import com.simiacryptus.mindseye.lang._
 import com.simiacryptus.mindseye.layers.java.{EntropyLossLayer, FullyConnectedLayer, SoftmaxActivationLayer}
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
@@ -128,7 +128,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
           categorizationNetwork.add(categorizationAdapter)
           categorizationNetwork.add(new SoftmaxActivationLayer)
           val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(categorizationNetwork, new EntropyLossLayer)
-          val trainable = new StochasticArrayTrainable(trainingData.toArray, trainingNetwork, 100)
+          val trainable = new SampledArrayTrainable(trainingData.toArray, trainingNetwork, 100)
           val trainer = new com.simiacryptus.mindseye.opt.IterativeTrainer(trainable)
           trainer.setOrientation(new LBFGS())
           trainer.setMonitor(monitor)
@@ -145,7 +145,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
           categorizationNetwork.add(categorizationAdapter)
           categorizationNetwork.add(new SoftmaxActivationLayer)
           val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(categorizationNetwork, new EntropyLossLayer)
-          val trainable = new StochasticArrayTrainable(trainingData.toArray, trainingNetwork, 100)
+          val trainable = new SampledArrayTrainable(trainingData.toArray, trainingNetwork, 100)
           val trainer = new com.simiacryptus.mindseye.opt.IterativeTrainer(trainable)
           trainer.setOrientation(new LBFGS())
           trainer.setMonitor(monitor)

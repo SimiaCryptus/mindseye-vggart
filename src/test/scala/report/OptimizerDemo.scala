@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 import java.util.function.{IntToDoubleFunction, ToDoubleFunction}
 
 import com.simiacryptus.mindseye.data.MNIST
-import com.simiacryptus.mindseye.eval.{ConstL12Normalizer, StochasticArrayTrainable, Trainable}
+import com.simiacryptus.mindseye.eval.{ConstL12Normalizer, SampledArrayTrainable, Trainable}
 import com.simiacryptus.mindseye.lang._
 import com.simiacryptus.mindseye.layers.java._
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
@@ -74,7 +74,7 @@ class OptimizerDemo extends WordSpec with MustMatchers with ReportNotebook {
       log.eval {
         System.out.println(scheduledStep)
         val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(model, lossLayer)
-        val trainable: StochasticArrayTrainable = new StochasticArrayTrainable(trainingData.toArray, trainingNetwork, scheduledStep.sampleSize)
+        val trainable: SampledArrayTrainable = new SampledArrayTrainable(trainingData.toArray, trainingNetwork, scheduledStep.sampleSize)
         val trainer: IterativeTrainer = optimizer.apply(trainable)
         trainer.setMonitor(monitor)
         trainer.setTimeout(scheduledStep.timeoutMinutes, TimeUnit.MINUTES)

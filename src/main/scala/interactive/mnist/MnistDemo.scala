@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import _root_.util.{MindsEyeNotebook, _}
 import com.simiacryptus.mindseye.data.MNIST
-import com.simiacryptus.mindseye.eval.StochasticArrayTrainable
+import com.simiacryptus.mindseye.eval.SampledArrayTrainable
 import com.simiacryptus.mindseye.lang.{NNExecutionContext, NNLayer, Tensor}
 import com.simiacryptus.mindseye.layers.java._
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
@@ -95,7 +95,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     log.p("The model is pre-trained mapCoords some data before being saved:")
     log.eval {
       val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(model, new EntropyLossLayer)
-      val trainable = new StochasticArrayTrainable(trainingData.toArray, trainingNetwork, 1000)
+      val trainable = new SampledArrayTrainable(trainingData.toArray, trainingNetwork, 1000)
       val trainer = new com.simiacryptus.mindseye.opt.IterativeTrainer(trainable)
       trainer.setMonitor(monitor)
       trainer.setCurrentIteration(iterationCounter)
@@ -110,7 +110,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     log.p("A second phase of training:")
     log.eval {
       val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(model, new EntropyLossLayer)
-      val trainable = new StochasticArrayTrainable(trainingData.toArray, trainingNetwork, 10000)
+      val trainable = new SampledArrayTrainable(trainingData.toArray, trainingNetwork, 10000)
       val trainer = new com.simiacryptus.mindseye.opt.IterativeTrainer(trainable)
       trainer.setMonitor(monitor)
       trainer.setCurrentIteration(iterationCounter)

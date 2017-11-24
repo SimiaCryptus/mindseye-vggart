@@ -97,7 +97,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
 
         lazy val metrics = if(recordMetrics) flatten(".", monitoringRoot.getMetrics.asScala.toMap) else Map.empty
         dataTable.putRow((metrics++Map(
-          "epoch" → currentPoint.iteration.asInstanceOf[lang.Long],
+          "runPhase" → currentPoint.iteration.asInstanceOf[lang.Long],
           "time" → currentPoint.time.asInstanceOf[lang.Long],
           "value" → currentPoint.point.sum.asInstanceOf[lang.Double]
         )).asJava)
@@ -268,7 +268,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
             try {
               val data = dataAsScala.map(row ⇒ {
                 val v = row(key).toString.toDouble
-                val i = row("epoch").toString.toInt
+                val i = row("runPhase").toString.toInt
                 outputTable.getOrElseUpdate(i, new mutable.HashMap[String,AnyRef]())(key) = v.asInstanceOf[Object]
                 Array[Double](
                   i.toDouble, v
