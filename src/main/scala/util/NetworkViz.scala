@@ -23,7 +23,7 @@ import java.util.UUID
 
 import com.simiacryptus.mindseye.network.{DAGNetwork, DAGNode, InnerNode}
 import guru.nidi.graphviz.attribute.RankDir
-import guru.nidi.graphviz.model.{Link, LinkSource, MutableNode}
+import guru.nidi.graphviz.model.{Graph, Link, LinkSource, MutableNode}
 
 import scala.collection.JavaConverters._
 
@@ -34,7 +34,7 @@ object NetworkViz {
     case _ ⇒ List(node)
   }
 
-  def toGraph(network: DAGNetwork) = {
+  def toGraph(network: DAGNetwork): Graph = {
     val nodes: List[DAGNode] = network.getNodes.asScala.toList
     val graphNodes: Map[UUID, MutableNode] = nodes.map(node ⇒ {
       node.getId() → guru.nidi.graphviz.model.Factory.mutNode((node match {
