@@ -33,8 +33,8 @@ import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, Su
 import com.simiacryptus.mindseye.network.util.AutoencoderNetwork
 import com.simiacryptus.mindseye.opt._
 import com.simiacryptus.mindseye.opt.orient.LBFGS
+import com.simiacryptus.util.TableOutput
 import com.simiacryptus.util.io.IOUtil
-import com.simiacryptus.text.TableOutput
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport
 import org.scalatest.{MustMatchers, WordSpec}
 import smile.plot.{PlotCanvas, ScatterPlot}

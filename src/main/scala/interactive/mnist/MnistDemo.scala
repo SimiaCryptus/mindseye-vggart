@@ -29,8 +29,7 @@ import com.simiacryptus.mindseye.lang.{NNExecutionContext, NNLayer, Tensor}
 import com.simiacryptus.mindseye.layers.java._
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
 import com.simiacryptus.mindseye.opt.orient.{GradientDescent, LBFGS}
-import com.simiacryptus.text.TableOutput
-import com.simiacryptus.util.StreamNanoHTTPD
+import com.simiacryptus.util.{StreamNanoHTTPD, TableOutput}
 import com.simiacryptus.util.io.{HtmlNotebookOutput, MarkdownNotebookOutput}
 
 import scala.collection.JavaConverters._
