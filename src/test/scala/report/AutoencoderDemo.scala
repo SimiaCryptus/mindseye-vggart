@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import javax.imageio.ImageIO
 
-import com.simiacryptus.mindseye.data._
+import com.simiacryptus.mindseye.test.data._
 import com.simiacryptus.mindseye.eval.SampledArrayTrainable
 import com.simiacryptus.mindseye.lang._
 import com.simiacryptus.mindseye.layers.java.{EntropyLossLayer, FullyConnectedLayer, SoftmaxActivationLayer}

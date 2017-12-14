@@ -24,7 +24,7 @@ import java.lang
 
 import _root_.util.Java8Util._
 import _root_.util.{ReportNotebook, ScalaNotebookOutput}
-import com.simiacryptus.mindseye.data._
+import com.simiacryptus.mindseye.test.data._
 import com.simiacryptus.mindseye.lang._
 import com.simiacryptus.mindseye.network._
 import com.simiacryptus.mindseye.opt._
