@@ -49,7 +49,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
 
   def run {
     defineHeader()
-    log.p("In this demo we train a simple neural network against the MNIST handwritten digit dataset")
+    log.p("In this demo we trainCjGD a simple neural network against the MNIST handwritten digit dataset")
     phase1()
     phase2()
     validateModel(log, model)
