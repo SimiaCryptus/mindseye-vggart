@@ -33,7 +33,7 @@ trait Report {
     val path = new File(Util.mkString(File.separator, "www", directoryName))
     path.mkdirs
     val logFile = new File(path, "index.html")
-    //val port: Int = 0x1FF + (Math.random() * 0x700).toInt
+    //val port: Int = 0x1FF + (Math.randomize() * 0x700).toInt
     println(s"Starting service on port $port")
     val server = new StreamNanoHTTPD(port, "text/html", logFile).init()
     val log = new HtmlNotebookOutput(path, server.dataReciever) with ScalaNotebookOutput
