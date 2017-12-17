@@ -24,10 +24,10 @@ import java.lang
 
 import _root_.util.Java8Util._
 import _root_.util.{ReportNotebook, ScalaNotebookOutput}
-import com.simiacryptus.mindseye.test.data._
 import com.simiacryptus.mindseye.lang._
 import com.simiacryptus.mindseye.network._
 import com.simiacryptus.mindseye.opt._
+import com.simiacryptus.mindseye.test.data._
 import com.simiacryptus.util.TableOutput
 import org.scalatest.{MustMatchers, WordSpec}
 import smile.plot.{PlotCanvas, ScatterPlot}
@@ -94,7 +94,7 @@ class ConvAutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook
     log.draw(gfx ⇒ {
       (0 until width).foreach(x ⇒ {
         (0 until height).foreach(y ⇒ {
-          encoded.fill(cvt((i: Int) ⇒ 0.0))
+          encoded.set(cvt((i: Int) ⇒ 0.0))
           encoded.set(Array(x, y, band), 1.0)
           val tensor = decoder.eval(new NNExecutionContext {}, encoded).getData.get(0)
           val sum = tensor.getData.sum
