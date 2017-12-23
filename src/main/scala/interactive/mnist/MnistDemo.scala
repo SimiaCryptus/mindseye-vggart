@@ -23,14 +23,14 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 import _root_.util.{MindsEyeNotebook, _}
-import com.simiacryptus.mindseye.test.data.MNIST
 import com.simiacryptus.mindseye.eval.SampledArrayTrainable
 import com.simiacryptus.mindseye.lang.{NNExecutionContext, NNLayer, Tensor}
 import com.simiacryptus.mindseye.layers.java._
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
 import com.simiacryptus.mindseye.opt.orient.{GradientDescent, LBFGS}
-import com.simiacryptus.util.{StreamNanoHTTPD, TableOutput}
+import com.simiacryptus.mindseye.test.data.MNIST
 import com.simiacryptus.util.io.{HtmlNotebookOutput, MarkdownNotebookOutput}
+import com.simiacryptus.util.{StreamNanoHTTPD, TableOutput}
 
 import scala.collection.JavaConverters._
 import scala.util.Random
@@ -84,7 +84,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
       var model: PipelineNetwork = new PipelineNetwork
       model.add(wrap(new BiasLayer(inputSize: _*).setName("inbias")))
       model.add(wrap(new FullyConnectedLayer(inputSize, outputSize)
-        .setWeights(Java8Util.cvt(() ⇒ 0.001 * (Random.nextDouble() - 0.5))).setName("synapse")))
+        .set(Java8Util.cvt(() ⇒ 0.001 * (Random.nextDouble() - 0.5))).setName("synapse")))
       model.add(wrap(new ReLuActivationLayer().setName("relu")))
       model.add(wrap(new BiasLayer(outputSize: _*).setName("outbias")))
       model.add(new SoftmaxActivationLayer)
@@ -178,7 +178,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
         actual → (categorizationMatrix.getOrElse(actual, Map.empty).getOrElse(actual, 0) * 100.0 / categorizationMatrix.getOrElse(actual, Map.empty).values.sum)
       }).toMap
     }
-    log.p("The accuracy, summarized over the entire validation set: ")
+    log.p("The accuracy, summarized over the entire validation setByCoord: ")
     log.eval {
       (0 to 9).map(actual ⇒ {
         categorizationMatrix.getOrElse(actual, Map.empty).getOrElse(actual, 0)

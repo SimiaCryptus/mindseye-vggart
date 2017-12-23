@@ -76,7 +76,7 @@ class ConvAutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook
           actual → (categorizationMatrix.getOrElse(actual, Map.empty).getOrElse(actual, 0) * 100.0 / categorizationMatrix.getOrElse(actual, Map.empty).values.sum)
         }).toMap
       }
-      log.p("The accuracy, summarized over the entire validation set: ")
+      log.p("The accuracy, summarized over the entire validation setByCoord: ")
       log.eval {
         (0 to 9).map(actual ⇒ {
           categorizationMatrix.getOrElse(actual, Map.empty).getOrElse(actual, 0)
