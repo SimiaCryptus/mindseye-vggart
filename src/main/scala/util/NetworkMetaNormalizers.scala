@@ -41,15 +41,15 @@ object NetworkMetaNormalizers {
     model
   }
 
-  def scaleNormalizer2 = {
-    var model: PipelineNetwork = new PipelineNetwork
-    val input = model.getInput(0)
-    model.add(new SqActivationLayer(), input)
-    model.add(new AvgReducerLayer())
-    val variances = model.add(new AvgMetaLayer())
-    model.add(new ScaleUniformMetaLayer(), input, model.add(new NthPowerActivationLayer().setPower(-0.5), variances))
-    model
-  }
+  //  def scaleNormalizer2 = {
+  //    var model: PipelineNetwork = new PipelineNetwork
+  //    val input = model.getInput(0)
+  //    model.add(new SqActivationLayer(), input)
+  //    model.add(new AvgReducerLayer())
+  //    val variances = model.add(new AvgMetaLayer())
+  //    model.add(new ScaleUniformMetaLayer(), input, model.add(new NthPowerActivationLayer().setPower(-0.5), variances))
+  //    model
+  //  }
 
   def scaleNormalizer = {
     var model: PipelineNetwork = new PipelineNetwork
