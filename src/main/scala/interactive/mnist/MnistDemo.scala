@@ -49,7 +49,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
 
   def run {
     defineHeader()
-    log.p("In this demo we trainCjGD a simple neural network against the MNIST handwritten digit dataset")
+    log.p("In this run we trainCjGD a simple neural network against the MNIST handwritten digit dataset")
     phase1()
     phase2()
     validateModel(log, model)
@@ -121,8 +121,8 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
   }, "mnist_trained")
 
   override def defineReports(log: HtmlNotebookOutput with ScalaNotebookOutput) = {
-    log.p("Interactive Reports: <a href='/history.html'>Convergence History</a> <a href='/test.html'>Model Validation</a>")
-    server.addSyncHandler("test.html", "text/html", Java8Util.cvt(out ⇒ {
+    log.p("Interactive Reports: <a href='/history.html'>Convergence History</a> <a href='/run.html'>Model Validation</a>")
+    server.addSyncHandler("run.html", "text/html", Java8Util.cvt(out ⇒ {
       Option(new HtmlNotebookOutput(log.workingDir, out) with ScalaNotebookOutput).foreach(log ⇒ {
         validateModel(log, getModelCheckpoint)
       })

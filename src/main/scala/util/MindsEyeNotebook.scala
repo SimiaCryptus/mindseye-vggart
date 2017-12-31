@@ -25,10 +25,9 @@ import java.util.zip.{GZIPInputStream, GZIPOutputStream}
 import java.{lang, util}
 
 import com.aparapi.internal.kernel.KernelManager
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.{GsonBuilder, JsonObject}
 import com.simiacryptus.mindseye.lang.NNLayer
-import com.simiacryptus.mindseye.layers.cudnn.{CuDNN, CudaPtr}
+import com.simiacryptus.mindseye.layers.cudnn.CudaPtr
 import com.simiacryptus.mindseye.network.DAGNetwork
 import com.simiacryptus.mindseye.opt.{Step, TrainingMonitor}
 import com.simiacryptus.util.ArrayUtil._
@@ -134,7 +133,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     log.p(s"Generated on ${new java.util.Date()}")
     log.p("Reports: <a href='model.json'>Model Json</a>, <a href='metricsHistory.html'>Metrics Plots</a>, <a href='mobility.html'>Mobility</a>, <a href='log.txt'>Optimization Log</a>, <a href='cuda.json'>Cuda Stats</a>, or <a href='metrics.csv'>Metrics Data</a>")
     server.addSyncHandler("model.json", "application/json", Java8Util.cvt(out ⇒ {
-      out.write(new GsonBuilder().setPrettyPrinting().create().toJson(getModelCheckpoint.getJson).getBytes)
+      out.write(new GsonBuilder().setPrettyPrinting().create().toJson(getModelCheckpoint.getJson()).getBytes)
     }), false)
     server.addSessionHandler("log.txt", Java8Util.cvt((session : IHTTPSession)⇒{
       NanoHTTPD.newChunkedResponse(NanoHTTPD.Response.Status.OK, "text/plain", logOut.newInputStream())
