@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@ package util
 
 import java.awt.image.BufferedImage
 import java.awt.{Graphics2D, RenderingHints}
-import java.util.function.Supplier
 
 import com.simiacryptus.util.io.NotebookOutput
 import com.simiacryptus.util.lang.UncheckedSupplier

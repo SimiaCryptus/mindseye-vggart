@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ package util
 
 import java.util.UUID
 
-import com.simiacryptus.mindseye.network.{DAGNetwork, DAGNode, InnerNode}
+import com.simiacryptus.mindseye.network.{DAGNetwork, DAGNode}
 import guru.nidi.graphviz.attribute.RankDir
 import guru.nidi.graphviz.model.{Graph, Link, LinkSource, MutableNode}
 
