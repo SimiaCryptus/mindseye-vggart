@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import _root_.util.{MindsEyeNotebook, _}
 import com.simiacryptus.mindseye.eval.SampledArrayTrainable
-import com.simiacryptus.mindseye.lang.{NNExecutionContext, NNLayer, Tensor}
+import com.simiacryptus.mindseye.lang.{NNLayer, Tensor}
 import com.simiacryptus.mindseye.layers.java._
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
 import com.simiacryptus.mindseye.opt.orient.{GradientDescent, LBFGS}
@@ -49,7 +49,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
 
   def run {
     defineHeader()
-    log.p("In this run we trainCjGD a simple neural network against the MNIST handwritten digit dataset")
+    log.p("In this apply we trainCjGD a simple neural network against the MNIST handwritten digit dataset")
     phase1()
     phase2()
     validateModel(log, model)
@@ -120,21 +120,12 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     }
   }, "mnist_trained")
 
-  override def defineReports(log: HtmlNotebookOutput with ScalaNotebookOutput) = {
-    log.p("Interactive Reports: <a href='/history.html'>Convergence History</a> <a href='/run.html'>Model Validation</a>")
-    server.addSyncHandler("run.html", "text/html", Java8Util.cvt(out ⇒ {
-      Option(new HtmlNotebookOutput(log.workingDir, out) with ScalaNotebookOutput).foreach(log ⇒ {
-        validateModel(log, getModelCheckpoint)
-      })
-    }), false)
-  }
-
   def validateModel(log: HtmlNotebookOutput with ScalaNotebookOutput, model: NNLayer) = {
     log.h2("Validation")
     log.p("Here we examine a sample of validation rows, randomly selected: ")
     log.eval {
       TableOutput.create(MNIST.validationDataStream().iterator().asScala.toStream.take(10).map(testObj ⇒ {
-        val result = model.eval(new NNExecutionContext() {}, testObj.data).getData.get(0)
+        val result = model.eval(testObj.data).getData.get(0)
         Map[String, AnyRef](
           "Input" → log.image(testObj.data.toGrayImage(), testObj.label),
           "Predicted Label" → (0 to 9).maxBy(i ⇒ result.get(i)).asInstanceOf[Integer],
@@ -146,12 +137,12 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     log.p("Validation rows that are mispredicted are also sampled: ")
     log.eval {
       TableOutput.create(MNIST.validationDataStream().iterator().asScala.toStream.filterNot(testObj ⇒ {
-        val result = model.eval(new NNExecutionContext() {}, testObj.data).getData.get(0)
+        val result = model.eval(testObj.data).getData.get(0)
         val prediction: Int = (0 to 9).maxBy(i ⇒ result.get(i))
         val actual = toOut(testObj.label)
         prediction == actual
       }).take(10).map(testObj ⇒ {
-        val result = model.eval(new NNExecutionContext() {}, testObj.data).getData.get(0)
+        val result = model.eval(testObj.data).getData.get(0)
         Map[String, AnyRef](
           "Input" → log.image(testObj.data.toGrayImage(), testObj.label),
           "Predicted Label" → (0 to 9).maxBy(i ⇒ result.get(i)).asInstanceOf[Integer],
@@ -164,7 +155,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     log.p("The (mis)categorization matrix displays a count matrix for every actual/predicted category: ")
     val categorizationMatrix: Map[Int, Map[Int, Int]] = log.eval {
       MNIST.validationDataStream().iterator().asScala.toStream.map(testObj ⇒ {
-        val result = model.eval(new NNExecutionContext() {}, testObj.data).getData.get(0)
+        val result = model.eval(testObj.data).getData.get(0)
         val prediction: Int = (0 to 9).maxBy(i ⇒ result.get(i))
         val actual: Int = toOut(testObj.label)
         actual → prediction
@@ -184,6 +175,15 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
         categorizationMatrix.getOrElse(actual, Map.empty).getOrElse(actual, 0)
       }).sum.toDouble * 100.0 / categorizationMatrix.values.flatMap(_.values).sum
     }
+  }
+
+  override def defineReports(log: HtmlNotebookOutput with ScalaNotebookOutput) = {
+    log.p("Interactive Reports: <a href='/history.html'>Convergence History</a> <a href='/apply.html'>Model Validation</a>")
+    server.addSyncHandler("apply.html", "text/html", Java8Util.cvt(out ⇒ {
+      Option(new HtmlNotebookOutput(log.workingDir, out) with ScalaNotebookOutput).foreach(log ⇒ {
+        validateModel(log, getModelCheckpoint)
+      })
+    }), false)
   }
 
   def writeMislassificationMatrix(log: HtmlNotebookOutput, categorizationMatrix: Map[Int, Map[Int, Int]]) = {
