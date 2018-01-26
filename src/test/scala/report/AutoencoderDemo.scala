@@ -65,7 +65,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
     "MNIST" in {
       report("mnist_sparse", log ⇒ {
         data = log.eval {
-          new TensorArray(MNIST.trainingDataStream().iterator().asScala.toStream.map(labeledObj ⇒ labeledObj.data).toArray:_*)
+          TensorArray.create(MNIST.trainingDataStream().iterator().asScala.toStream.map(labeledObj ⇒ labeledObj.data).toArray: _*)
         }
         preview(log, 10, 10)
 
@@ -164,7 +164,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
         data = log.eval {
           var data = ImageTiles.tilesRgb(ImageIO.read(getClass.getClassLoader.getResourceAsStream("monkey1.jpg")), 10, 10, 10, 10)
           data = Random.shuffle(data.toList).toArray
-          new TensorArray(data:_*)
+          TensorArray.create(data: _*)
         }
         preview(log, 100, 60)
 
