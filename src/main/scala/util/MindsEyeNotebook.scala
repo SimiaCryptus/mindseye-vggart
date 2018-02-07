@@ -74,7 +74,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
         if(history.size > 10) history.remove(0)
         valuesHistory += ((currentPoint.iteration, currentPoint.point.sum))
         if(0 == currentPoint.iteration % checkpointFrequency) {
-          modelCheckpoint = KryoUtil.kryo().copy(model)
+          modelCheckpoint = model.copy()
           if(null != model) {
             IOUtil.writeString(model.getJsonString, new GZIPOutputStream(out.file("../model.json.gz")))
             IOUtil.writeString(model.getJsonString, new GZIPOutputStream(out.file("../model.json.gz")))
