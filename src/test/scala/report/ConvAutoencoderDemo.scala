@@ -182,11 +182,18 @@ class ConvAutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook
         var evalModel: PipelineNetwork = new PipelineNetwork
         evalModel.add(encoder)
         evalModel.add(decoder)
-        val result = evalModel.eval(testObj).getData.get(0)
-        Map[String, AnyRef](
+        val result1 = evalModel.eval(testObj)
+        testObj.freeRef()
+        val data1 = result1.getData
+        val result = data1.get(0)
+        result1.freeRef()
+        data1.freeRef()
+        val java = Map[String, AnyRef](
           "Input" → log.image(testObj.toImage(), "Input"),
           "Output" → log.image(result.toImage(), "Autoencoder Output")
         ).asJava
+        result.freeRef()
+        java
       }): _*)
     }
   }

@@ -34,7 +34,7 @@ trait ReportNotebook {
     val path: File = new File(List("reports", className, methodName + ".md").mkString(File.separator))
     path.getParentFile.mkdirs
     val log = new MarkdownNotebookOutput(path, methodName) with ScalaNotebookOutput
-    log.addCopy(System.out)
+    //log.addCopy(System.out)
     try {
       fn.apply(log)
     } finally {

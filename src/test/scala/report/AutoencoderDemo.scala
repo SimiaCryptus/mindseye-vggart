@@ -357,10 +357,13 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
         evalModel.add(encoder)
         evalModel.add(decoder)
         val result = evalModel.eval(testObj).getData.get(0)
-        Map[String, AnyRef](
+        val java = Map[String, AnyRef](
           "Input" → log.image(testObj.toImage(), "Input"),
           "Output" → log.image(result.toImage(), "Autoencoder Output")
         ).asJava
+        testObj.freeRef()
+        result.freeRef()
+        java
       }): _*)
     }
   }
