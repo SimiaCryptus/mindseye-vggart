@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import _root_.util.{MindsEyeNotebook, _}
 import com.simiacryptus.mindseye.eval.SampledArrayTrainable
-import com.simiacryptus.mindseye.lang.{NNLayer, Tensor}
+import com.simiacryptus.mindseye.lang.{LayerBase, Tensor}
 import com.simiacryptus.mindseye.layers.java._
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
 import com.simiacryptus.mindseye.opt.orient.{GradientDescent, LBFGS}
@@ -80,7 +80,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
   def phase1() = phase({
     log.p("We construct a new model:")
     log.eval {
-      def wrap(n:NNLayer) = new MonitoringWrapperLayer(n).addTo(monitoringRoot)
+      def wrap(n: LayerBase) = new MonitoringWrapperLayer(n).addTo(monitoringRoot)
       var model: PipelineNetwork = new PipelineNetwork
       model.add(wrap(new BiasLayer(inputSize: _*).setName("inbias")))
       model.add(wrap(new FullyConnectedLayer(inputSize, outputSize)
@@ -88,9 +88,9 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
       model.add(wrap(new ReLuActivationLayer().setName("relu")))
       model.add(wrap(new BiasLayer(outputSize: _*).setName("outbias")))
       model.add(new SoftmaxActivationLayer)
-      model.asInstanceOf[NNLayer]
+      model.asInstanceOf[LayerBase]
     }
-  }, (model: NNLayer) ⇒ {
+  }, (model: LayerBase) ⇒ {
     log.p("The model is pre-trained mapCoords some data before being saved:")
     log.eval {
       val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(model, new EntropyLossLayer)
@@ -105,7 +105,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     }
   }, "mnist_initialized")
 
-  def phase2() = phase("mnist_initialized", (model: NNLayer) ⇒ {
+  def phase2() = phase("mnist_initialized", (model: LayerBase) ⇒ {
     log.p("A second phase of training:")
     log.eval {
       val trainingNetwork: SupervisedNetwork = new SimpleLossNetwork(model, new EntropyLossLayer)
@@ -120,7 +120,7 @@ class MnistDemo(server: StreamNanoHTTPD, log: HtmlNotebookOutput with ScalaNoteb
     }
   }, "mnist_trained")
 
-  def validateModel(log: HtmlNotebookOutput with ScalaNotebookOutput, model: NNLayer) = {
+  def validateModel(log: HtmlNotebookOutput with ScalaNotebookOutput, model: LayerBase) = {
     log.h2("Validation")
     log.p("Here we examine a sample of validation rows, randomly selected: ")
     log.eval {

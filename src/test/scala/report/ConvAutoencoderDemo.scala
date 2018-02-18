@@ -85,7 +85,7 @@ class ConvAutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook
     }
   }
 
-  private def reportMatrix(log: ScalaNotebookOutput, encoder: NNLayer, decoder: NNLayer, band: Int = 0) = {
+  private def reportMatrix(log: ScalaNotebookOutput, encoder: LayerBase, decoder: LayerBase, band: Int = 0) = {
     val inputPrototype = data.get(0)
     val dims = inputPrototype.getDimensions()
     val encoded = encoder.eval(inputPrototype).getData.get(0)
@@ -176,7 +176,7 @@ class ConvAutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook
     }, width = dims(0) * width, height = dims(1) * height)
   }
 
-  private def reportTable(log: ScalaNotebookOutput, encoder: NNLayer, decoder: NNLayer) = {
+  private def reportTable(log: ScalaNotebookOutput, encoder: LayerBase, decoder: LayerBase) = {
     log.eval {
       TableOutput.create(data.stream().iterator().asScala.toList.take(20).map(testObj ⇒ {
         var evalModel: PipelineNetwork = new PipelineNetwork

@@ -19,7 +19,7 @@
 
 package util
 
-import com.simiacryptus.mindseye.lang.NNLayer
+import com.simiacryptus.mindseye.lang.LayerBase
 import com.simiacryptus.mindseye.layers.java.MonitoringWrapperLayer
 import com.simiacryptus.util.MonitoredObject
 
@@ -27,10 +27,10 @@ import com.simiacryptus.util.MonitoredObject
   * Created by Andrew Charneski on 7/20/2017.
   */
 object NNLayerUtil {
-  implicit def cast(inner:NNLayer) = new NNLayerUtil(inner)
+  implicit def cast(inner: LayerBase) = new NNLayerUtil(inner)
 }
 
-case class NNLayerUtil(inner:NNLayer) {
+case class NNLayerUtil(inner: LayerBase) {
   def withMonitor = new MonitoringWrapperLayer(inner)
   def addTo(monitor: MonitoredObject) = withMonitor.addTo(monitor)
 }

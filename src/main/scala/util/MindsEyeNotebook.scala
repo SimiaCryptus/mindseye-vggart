@@ -26,7 +26,7 @@ import java.{lang, util}
 
 import com.aparapi.internal.kernel.KernelManager
 import com.google.gson.{GsonBuilder, JsonObject}
-import com.simiacryptus.mindseye.lang.NNLayer
+import com.simiacryptus.mindseye.lang.LayerBase
 import com.simiacryptus.mindseye.lang.cudnn.CudaPtr
 import com.simiacryptus.mindseye.network.DAGNetwork
 import com.simiacryptus.mindseye.opt.{Step, TrainingMonitor}
@@ -53,8 +53,8 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   val monitoringRoot = new MonitoredObject()
   val dataTable = new TableOutput()
   val checkpointFrequency = 10
-  var model: NNLayer = null
-  var modelCheckpoint : NNLayer = null
+  var model: LayerBase = null
+  var modelCheckpoint: LayerBase = null
   def getModelCheckpoint = Option(modelCheckpoint).getOrElse(model)
   val pauseSemaphore = new Semaphore(1)
   var recordMetrics: Boolean = true
@@ -214,7 +214,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
 
   def generateMobilityReport(log: ScalaNotebookOutput = out): Future[Unit] = Future {
     if (!history.isEmpty) {
-      val layers: Array[NNLayer] = history.flatMap(_.point.weights.getMap.asScala.keySet).distinct.toArray
+      val layers: Array[LayerBase] = history.flatMap(_.point.weights.getMap.asScala.keySet).distinct.toArray
       val outputTable = new mutable.HashMap[Int, mutable.Map[String, AnyRef]]()
       log.out("<table>")
       layers.foreach(layer ⇒ {
@@ -323,7 +323,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     onExit.acquire()
   }
 
-  def phase[T>:Null](inputFile: String, fn: NNLayer ⇒ T): T = {
+  def phase[T >: Null](inputFile: String, fn: LayerBase ⇒ T): T = {
     var result : Option[T] = None
     phase(read(inputFile),
       layer ⇒ {
@@ -333,7 +333,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     result.orNull
   }
 
-  def phase[T>:Null](inputFile: String, fn: NNLayer ⇒ T, outputFile: String): T = {
+  def phase[T >: Null](inputFile: String, fn: LayerBase ⇒ T, outputFile: String): T = {
     var result : Option[T] = None
     phase(read(inputFile),
       layer ⇒ {
@@ -343,7 +343,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     result.orNull
   }
 
-  def write(name: String, model: NNLayer) = {
+  def write(name: String, model: LayerBase) = {
     if(null == name) model else {
       val file = nextFile(name)
       out.p(s"Saving $file")
@@ -354,18 +354,15 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   def nextFile(name: String): String = Stream.from(1).map(name + "." + _ + ".json.gz").find(!new File(_).exists).get
   def findFile(name: String): Option[String] = Stream.from(1).map(name + "." + _ + ".json.gz").takeWhile(new File(_).exists).lastOption
 
-  def read(name: String): NNLayer = {
+  def read(name: String): LayerBase = {
     findFile(name).map(inputFile⇒{
       out.p(s"Loading $inputFile")
       val jsonSrc = IOUtils.toString(new GZIPInputStream(new FileInputStream(inputFile)), "UTF-8")
-      if(null==jsonSrc) null else NNLayer.fromJson(new GsonBuilder().create().fromJson(jsonSrc, classOf[JsonObject]))
+      if (null == jsonSrc) null else LayerBase.fromJson(new GsonBuilder().create().fromJson(jsonSrc, classOf[JsonObject]))
     }).getOrElse(throw new RuntimeException(s"Could not find any files named $name.*.json.gz"))
   }
 
-  def phase[T>:Null](input: ⇒ NNLayer, fn: NNLayer ⇒ T, outputFile: String): T = phase(input,
-    layer ⇒ fn(layer), model ⇒ write(outputFile, model))
-
-  private def phase[T](initializer: ⇒ NNLayer, fn: NNLayer ⇒ T, onComplete: NNLayer ⇒ Unit): T = {
+  private def phase[T](initializer: ⇒ LayerBase, fn: LayerBase ⇒ T, onComplete: LayerBase ⇒ Unit): T = {
     out.p("Loading Model")
     model = initializer
     out.p("Model Loaded")
@@ -383,8 +380,11 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     }
   }
 
+  def phase[T >: Null](input: ⇒ LayerBase, fn: LayerBase ⇒ T, outputFile: String): T = phase(input,
+    layer ⇒ fn(layer), model ⇒ write(outputFile, model))
+
   def loadModel(discriminatorFile: String) = {
-    NNLayer.fromJson(new GsonBuilder().create().fromJson(IOUtils.toString(new FileInputStream(findFile(discriminatorFile).orNull), "UTF-8"), classOf[JsonObject]))
+    LayerBase.fromJson(new GsonBuilder().create().fromJson(IOUtils.toString(new FileInputStream(findFile(discriminatorFile).orNull), "UTF-8"), classOf[JsonObject]))
   }
 
 

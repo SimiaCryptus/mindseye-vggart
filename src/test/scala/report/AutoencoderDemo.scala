@@ -257,7 +257,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
     }
   }
 
-  private def representationMatrix(log: ScalaNotebookOutput, encoder: NNLayer, decoder: NNLayer, band: Int = 0, probeIntensity : Double = 255.0) = {
+  private def representationMatrix(log: ScalaNotebookOutput, encoder: LayerBase, decoder: LayerBase, band: Int = 0, probeIntensity: Double = 255.0) = {
     val inputPrototype = data.get(0)
     val dims = inputPrototype.getDimensions()
     val encoded: Tensor = encoder.eval(inputPrototype).getData.get(0)
@@ -350,7 +350,7 @@ class AutoencoderDemo extends WordSpec with MustMatchers with ReportNotebook {
     }, width = dims(0) * width, height = dims(1) * height)
   }
 
-  private def reportTable(log: ScalaNotebookOutput, encoder: NNLayer, decoder: NNLayer) = {
+  private def reportTable(log: ScalaNotebookOutput, encoder: LayerBase, decoder: LayerBase) = {
     log.eval {
       TableOutput.create(data.stream().collect(Collectors.toList()).asScala.take(20).map((testObj: Tensor) ⇒ {
         var evalModel: PipelineNetwork = new PipelineNetwork
