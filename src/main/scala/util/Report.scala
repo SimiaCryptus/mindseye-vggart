@@ -37,7 +37,7 @@ trait Report {
     println(s"Starting service on port $port")
     val server = new StreamNanoHTTPD(port, "text/html", logFile).init()
     val log = new HtmlNotebookOutput(path, server.dataReciever) with ScalaNotebookOutput
-    //log.addCopy(System.out)
+    //_log.addCopy(System.out)
     try {
       fn(server, log)
     } finally {

@@ -26,8 +26,8 @@ import java.{lang, util}
 
 import com.aparapi.internal.kernel.KernelManager
 import com.google.gson.{GsonBuilder, JsonObject}
-import com.simiacryptus.mindseye.lang.LayerBase
-import com.simiacryptus.mindseye.lang.cudnn.CudaPtr
+import com.simiacryptus.mindseye.lang.Layer
+import com.simiacryptus.mindseye.lang.cudnn.CudaMemory
 import com.simiacryptus.mindseye.network.DAGNetwork
 import com.simiacryptus.mindseye.opt.{Step, TrainingMonitor}
 import com.simiacryptus.util.ArrayUtil._
@@ -48,13 +48,13 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
 
   val history = new scala.collection.mutable.ArrayBuffer[Step]()
   val valuesHistory = new scala.collection.mutable.ArrayBuffer[(Long,Double)]()
-  val logOut = new TeeOutputStream(out.file("../log.txt"), true)
+  val logOut = new TeeOutputStream(out.file("../_log.txt"), true)
   val logPrintStream = new PrintStream(logOut)
   val monitoringRoot = new MonitoredObject()
   val dataTable = new TableOutput()
   val checkpointFrequency = 10
-  var model: LayerBase = null
-  var modelCheckpoint: LayerBase = null
+  var model: Layer = null
+  var modelCheckpoint: Layer = null
   def getModelCheckpoint = Option(modelCheckpoint).getOrElse(model)
   val pauseSemaphore = new Semaphore(1)
   var recordMetrics: Boolean = true
@@ -131,11 +131,11 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
   def defineHeader(log: HtmlNotebookOutput with ScalaNotebookOutput = out): Unit = {
     log.h1(getClass.getSimpleName)
     log.p(s"Generated on ${new java.util.Date()}")
-    log.p("Reports: <a href='model.json'>Model Json</a>, <a href='metricsHistory.html'>Metrics Plots</a>, <a href='mobility.html'>Mobility</a>, <a href='log.txt'>Optimization Log</a>, <a href='cuda.json'>Cuda Stats</a>, or <a href='metrics.csv'>Metrics Data</a>")
+    log.p("Reports: <a href='model.json'>Model Json</a>, <a href='metricsHistory.html'>Metrics Plots</a>, <a href='mobility.html'>Mobility</a>, <a href='_log.txt'>Optimization Log</a>, <a href='cuda.json'>Cuda Stats</a>, or <a href='metrics.csv'>Metrics Data</a>")
     server.addSyncHandler("model.json", "application/json", Java8Util.cvt(out ⇒ {
       out.write(new GsonBuilder().setPrettyPrinting().create().toJson(getModelCheckpoint.getJson()).getBytes)
     }), false)
-    server.addSessionHandler("log.txt", Java8Util.cvt((session : IHTTPSession)⇒{
+    server.addSessionHandler("_log.txt", Java8Util.cvt((session: IHTTPSession) ⇒ {
       NanoHTTPD.newChunkedResponse(NanoHTTPD.Response.Status.OK, "text/plain", logOut.newInputStream())
     }))
     server.addSyncHandler("table.csv", "text/csv", Java8Util.cvt(out ⇒ {
@@ -145,7 +145,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
       JsonUtil.writeJson(out, monitoringRoot.getMetrics)
     }), false)
     server.addSyncHandler("cuda.json", "application/json", Java8Util.cvt(out ⇒ {
-      JsonUtil.writeJson(out, new java.util.HashMap[Integer, util.HashMap[String, Long]](CudaPtr.METRICS.asMap().asScala.mapValues(metrics => {
+      JsonUtil.writeJson(out, new java.util.HashMap[Integer, util.HashMap[String, Long]](CudaMemory.METRICS.asScala.mapValues(metrics => {
         new java.util.HashMap[String, Long](Map(
           "usedMemory" -> metrics.usedMemory.get(),
           "peakMemory" -> metrics.peakMemory.get(),
@@ -191,7 +191,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
           item._1, Math.log(item._2)
         )).toArray: _*)
         plot.setTitle("Convergence Plot")
-        plot.setAxisLabels("Iteration", "log(Fitness)")
+        plot.setAxisLabels("Iteration", "_log(Fitness)")
         plot.setSize(600, 400)
         plot
       }
@@ -214,7 +214,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
 
   def generateMobilityReport(log: ScalaNotebookOutput = out): Future[Unit] = Future {
     if (!history.isEmpty) {
-      val layers: Array[LayerBase] = history.flatMap(_.point.weights.getMap.asScala.keySet).distinct.toArray
+      val layers: Array[Layer] = history.flatMap(_.point.weights.getMap.asScala.keySet).distinct.toArray
       val outputTable = new mutable.HashMap[Int, mutable.Map[String, AnyRef]]()
       log.out("<table>")
       layers.foreach(layer ⇒ {
@@ -232,7 +232,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
             if (xy.size > 1) {
               val plot: PlotCanvas = ScatterPlot.plot(xy.map(xy ⇒ Array(xy._1.toDouble, xy._2)): _*)
               plot.setTitle(s"${layer.getName}")
-              plot.setAxisLabels("Epoch", s"log(dist(n,n-$lag)/$lag)")
+              plot.setAxisLabels("Epoch", s"_log(dist(n,n-$lag)/$lag)")
               plot.setSize(600, 400)
               log.eval {
                 plot
@@ -292,7 +292,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
               log.p(s"$key vs Log(Fitness)")
               if(data.size > 1) {
                 val plot: PlotCanvas = ScatterPlot.plot(data: _*)
-                plot.setAxisLabels("log(value)", key)
+                plot.setAxisLabels("_log(value)", key)
                 plot.setSize(600, 400)
                 log.eval {
                   plot
@@ -323,7 +323,7 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     onExit.acquire()
   }
 
-  def phase[T >: Null](inputFile: String, fn: LayerBase ⇒ T): T = {
+  def phase[T >: Null](inputFile: String, fn: Layer ⇒ T): T = {
     var result : Option[T] = None
     phase(read(inputFile),
       layer ⇒ {
@@ -333,36 +333,15 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     result.orNull
   }
 
-  def phase[T >: Null](inputFile: String, fn: LayerBase ⇒ T, outputFile: String): T = {
-    var result : Option[T] = None
-    phase(read(inputFile),
-      layer ⇒ {
-        result = Option(fn(layer))
-        layer
-      }, model ⇒ write(outputFile, model))
-    result.orNull
-  }
-
-  def write(name: String, model: LayerBase) = {
-    if(null == name) model else {
-      val file = nextFile(name)
-      out.p(s"Saving $file")
-      IOUtil.writeString(model.getJsonString, new GZIPOutputStream(new FileOutputStream(file)))
-    }
-  }
-
-  def nextFile(name: String): String = Stream.from(1).map(name + "." + _ + ".json.gz").find(!new File(_).exists).get
-  def findFile(name: String): Option[String] = Stream.from(1).map(name + "." + _ + ".json.gz").takeWhile(new File(_).exists).lastOption
-
-  def read(name: String): LayerBase = {
+  def read(name: String): Layer = {
     findFile(name).map(inputFile⇒{
       out.p(s"Loading $inputFile")
       val jsonSrc = IOUtils.toString(new GZIPInputStream(new FileInputStream(inputFile)), "UTF-8")
-      if (null == jsonSrc) null else LayerBase.fromJson(new GsonBuilder().create().fromJson(jsonSrc, classOf[JsonObject]))
+      if (null == jsonSrc) null else Layer.fromJson(new GsonBuilder().create().fromJson(jsonSrc, classOf[JsonObject]))
     }).getOrElse(throw new RuntimeException(s"Could not find any files named $name.*.json.gz"))
   }
 
-  private def phase[T](initializer: ⇒ LayerBase, fn: LayerBase ⇒ T, onComplete: LayerBase ⇒ Unit): T = {
+  private def phase[T](initializer: ⇒ Layer, fn: Layer ⇒ T, onComplete: Layer ⇒ Unit): T = {
     out.p("Loading Model")
     model = initializer
     out.p("Model Loaded")
@@ -380,11 +359,33 @@ abstract class MindsEyeNotebook(server: StreamNanoHTTPD, out: HtmlNotebookOutput
     }
   }
 
-  def phase[T >: Null](input: ⇒ LayerBase, fn: LayerBase ⇒ T, outputFile: String): T = phase(input,
+  def nextFile(name: String): String = Stream.from(1).map(name + "." + _ + ".json.gz").find(!new File(_).exists).get
+
+  def findFile(name: String): Option[String] = Stream.from(1).map(name + "." + _ + ".json.gz").takeWhile(new File(_).exists).lastOption
+
+  def phase[T >: Null](inputFile: String, fn: Layer ⇒ T, outputFile: String): T = {
+    var result: Option[T] = None
+    phase(read(inputFile),
+      layer ⇒ {
+        result = Option(fn(layer))
+        layer
+      }, model ⇒ write(outputFile, model))
+    result.orNull
+  }
+
+  def write(name: String, model: Layer) = {
+    if (null == name) model else {
+      val file = nextFile(name)
+      out.p(s"Saving $file")
+      IOUtil.writeString(model.getJsonString, new GZIPOutputStream(new FileOutputStream(file)))
+    }
+  }
+
+  def phase[T >: Null](input: ⇒ Layer, fn: Layer ⇒ T, outputFile: String): T = phase(input,
     layer ⇒ fn(layer), model ⇒ write(outputFile, model))
 
   def loadModel(discriminatorFile: String) = {
-    LayerBase.fromJson(new GsonBuilder().create().fromJson(IOUtils.toString(new FileInputStream(findFile(discriminatorFile).orNull), "UTF-8"), classOf[JsonObject]))
+    Layer.fromJson(new GsonBuilder().create().fromJson(IOUtils.toString(new FileInputStream(findFile(discriminatorFile).orNull), "UTF-8"), classOf[JsonObject]))
   }
 
 

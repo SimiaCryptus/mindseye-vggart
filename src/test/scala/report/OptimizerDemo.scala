@@ -171,7 +171,7 @@ class OptimizerDemo extends WordSpec with MustMatchers with ReportNotebook {
   }
 
   private def getBlankDeltaSet(model: PipelineNetwork) = {
-    val set = new DeltaSet[LayerBase]()
+    val set = new DeltaSet[Layer]()
     val tensorArray = TensorArray.create(new Tensor(outputSize: _*))
     model.eval(new Tensor(inputSize: _*)).accumulate(set, tensorArray)
     tensorArray.freeRef()
@@ -235,7 +235,7 @@ class OptimizerDemo extends WordSpec with MustMatchers with ReportNotebook {
         item.iteration, Math.log(item.point.sum)
       )).toArray: _*)
       plot.setTitle("Convergence Plot")
-      plot.setAxisLabels("Iteration", "log(Fitness)")
+      plot.setAxisLabels("Iteration", "_log(Fitness)")
       plot.setSize(600, 400)
       plot
     }
