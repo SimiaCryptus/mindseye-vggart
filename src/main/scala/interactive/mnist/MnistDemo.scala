@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import _root_.util.{MindsEyeNotebook, _}
 import com.simiacryptus.mindseye.eval.SampledArrayTrainable
-import com.simiacryptus.mindseye.lang.Tensor
+import com.simiacryptus.mindseye.lang.{Layer, Tensor}
 import com.simiacryptus.mindseye.layers.java._
 import com.simiacryptus.mindseye.network.{PipelineNetwork, SimpleLossNetwork, SupervisedNetwork}
 import com.simiacryptus.mindseye.opt.orient.{GradientDescent, LBFGS}
