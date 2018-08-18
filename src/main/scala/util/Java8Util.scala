@@ -21,6 +21,8 @@ package util
 
 import java.util.function.{BiFunction, BinaryOperator, Consumer, DoubleSupplier, DoubleUnaryOperator, Function, IntToDoubleFunction, Supplier, ToDoubleBiFunction, ToDoubleFunction}
 
+import com.simiacryptus.util.lang.UncheckedSupplier
+
 object Java8Util {
 
   implicit def cvt(fn: Int ⇒ Double): IntToDoubleFunction = {
@@ -29,9 +31,21 @@ object Java8Util {
     }
   }
 
+  implicit def cvtUnchecked[T <: AnyRef](fn: () ⇒ T): UncheckedSupplier[T] = {
+    new UncheckedSupplier[T] {
+      override def get(): T = fn.apply()
+    }
+  }
+
   implicit def cvt[T <: AnyRef](fn: () ⇒ T): Supplier[T] = {
     new Supplier[T] {
       override def get(): T = fn.apply()
+    }
+  }
+
+  implicit def cvt(fn: () ⇒ Unit): Runnable = {
+    new Runnable {
+      override def run(): Unit = fn.apply()
     }
   }
 
