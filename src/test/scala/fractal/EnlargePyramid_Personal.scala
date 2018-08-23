@@ -19,7 +19,10 @@
 
 package fractal
 
-object EnlargePyramid_Personal extends EC2Task[EnlargePyramid_Personal](classOf[EnlargePyramid_Personal]) {
+import com.simiacryptus.aws.exe.EC2NodeSettings
+import com.simiacryptus.sparkbook.EC2NotebookRunner
+
+object EnlargePyramid_Personal extends EC2NotebookRunner(EC2NodeSettings.DeepLearningAMI, classOf[EnlargePyramid_Personal]) {
 
 }
 

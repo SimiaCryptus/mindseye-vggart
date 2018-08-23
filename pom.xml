@@ -29,7 +29,7 @@
     </parent>
 
     <artifactId>mindseye-scala</artifactId>
-    <version>1.3</version>
+    <version>1.5.0</version>
     <description>Experiments with Image Analysis</description>
 
     <properties>
@@ -109,22 +109,27 @@
         <dependency>
             <groupId>com.simiacryptus</groupId>
             <artifactId>java-util</artifactId>
-            <version>1.4.23</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.simiacryptus</groupId>
             <artifactId>aws-utilities</artifactId>
-            <version>1.4.23</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.simiacryptus</groupId>
             <artifactId>mindseye</artifactId>
-            <version>1.4.23</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.simiacryptus</groupId>
             <artifactId>mindseye-art</artifactId>
-            <version>1.4.23</version>
+            <version>1.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.simiacryptus</groupId>
+            <artifactId>sparkbook</artifactId>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.georegression</groupId>
