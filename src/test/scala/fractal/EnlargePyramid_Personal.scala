@@ -27,9 +27,10 @@ object EnlargePyramid_Personal extends EC2NotebookRunner(EC2NodeSettings.DeepLea
 }
 
 class EnlargePyramid_Personal extends EnlargePyramid(
-  aspect = .59353,
-  localPrefix = "tile_1_",
+  imagePrefix = "tile_1_",
   reportPath = "reports/20180812222258",
   bucket = "mindseye-art-7f168",
   styleSources = Array("s3a://simiacryptus/photos/shutterstock_1065730331.jpg")
-)
+) {
+  override val aspect = .59353
+}

@@ -27,97 +27,112 @@ import com.simiacryptus.mindseye.lang.Tensor
 import com.simiacryptus.mindseye.lang.cudnn.Precision
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.mindseye.test.TestUtil
+import com.simiacryptus.sparkbook.Java8Util._
 import com.simiacryptus.util.io.NotebookOutput
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
-import scala.collection.immutable
 
-object InitialPainting {
-  def wrap(xx: List[CVPipe_VGG19.Layer]): List[List[CVPipe_VGG19.Layer]] = xx.map((x: CVPipe_VGG19.Layer) => List(x))
-
-  def join(a: List[List[CVPipe_VGG19.Layer]], b: List[List[CVPipe_VGG19.Layer]]): List[List[CVPipe_VGG19.Layer]] = a.flatMap((layerA: List[CVPipe_VGG19.Layer]) => b.map((layerB: List[CVPipe_VGG19.Layer]) => {
-    (layerA ++ layerB).distinct.sorted
-  }))
-
-  def reduce(combined: List[List[CVPipe_VGG19.Layer]], size: Int): List[List[CVPipe_VGG19.Layer]] = combined.map(_.distinct.sorted).distinct.filter(_.size >= size).sortWith((a, b) => {
-    var compare: Int = Integer.compare(a.size, b.size)
-    var i: Int = 0
-    while ( {
-      0 == compare && i < a.size
-    }) {
-      val _i: Int = {
-        i += 1;
-        i - 1
-      }
-      compare = a(_i).name.compareTo(b(_i).name)
-    }
-    compare < 0
-  })
-
-}
 
 abstract class InitialPainting(
-                                coeff_style_mean: Double = 1.0,
-                                coeff_style_cov: Double = 1.0,
-                                dreamCoeff: Double = 0.0,
-                                resolutionSchedule: Array[Int] = Array(200, 600),
-                                style_resolution: Int = 1200,
-                                aspect_ratio: Double = 1.0,
-                                plasma_magnitude: Double = 1.0,
-                                trainingMinutes: Int = 10,
-                                maxIterations: Int = 20,
-                                isVerbose: Boolean = false,
                                 styleSources: Seq[CharSequence]
                               ) extends Tendril.SerializableConsumer[NotebookOutput] {
-  def getLayers: List[List[CVPipe_VGG19.Layer]]
+
+  def coeff_style_mean: Double = 1.0
+
+  def coeff_style_cov: Double = 1.0
+
+  def dreamCoeff: Double = 0.0
 
   override def accept(log: NotebookOutput): Unit = {
-    val precision = Precision.Float
-    log.p("Style Source:")
+    TestUtil.addGlobalHandlers(log.getHttpd)
     for (styleSource <- styleSources) {
       log.p(log.png(ArtistryUtil.load(styleSource, style_resolution), "Style Image"))
     }
-    val canvas = new AtomicReference[Tensor](ArtistryUtil.paint_Plasma(3, 1000.0, 1.1, resolutionSchedule(0), (aspect_ratio * resolutionSchedule(0)).toInt).scale(plasma_magnitude))
-    canvas.set(log.subreport("Color_Space_Analog", (sublog: NotebookOutput) => {
-      val contentColorTransform: ColorTransfer[CVPipe_VGG19.Layer, CVPipe_VGG19] = new ColorTransfer.VGG19() {}.setOrtho(false).setUnit(true)
-      //colorSyncContentCoeffMap.set(CVPipe_VGG19.Layer.Layer_1a, 1e-1);
-      val colorSyncResolution: Int = 600
-      val resizedCanvas: Tensor = Tensor.fromRGB(TestUtil.resize(canvas.get.toImage, colorSyncResolution, (aspect_ratio * colorSyncResolution).toInt))
-      val styleSetup: ColorTransfer.StyleSetup[CVPipe_VGG19.Layer] = ImageArtUtil.getColorAnalogSetup(styleSources.toList.asJava, precision, resizedCanvas, ImageArtUtil.getStyleImages(styleSources.toArray, new java.util.HashMap[CharSequence, ColorTransfer[CVPipe_VGG19.Layer, CVPipe_VGG19]], colorSyncResolution, (aspect_ratio * colorSyncResolution).toInt), CVPipe_VGG19.Layer.Layer_0)
-      contentColorTransform.transfer(sublog, resizedCanvas, styleSetup, trainingMinutes, contentColorTransform.measureStyle(styleSetup), maxIterations, isVerbose)
-      contentColorTransform.forwardTransform(canvas.get)
-    }))
-    for (layers: immutable.Seq[CVPipe_VGG19.Layer] <- getLayers) {
-      val reportName = layers.map((x: CVPipe_VGG19.Layer) => x.name).reduce(_ + "_" + _)
-      log.h1(reportName)
-      val subresult: Tensor = log.subreport(reportName, (subreport: NotebookOutput) => {
-        val styles = {
-          val styleCoefficients: TextureGeneration.StyleCoefficients[CVPipe_VGG19.Layer] = new TextureGeneration.StyleCoefficients[CVPipe_VGG19.Layer](TextureGeneration.CenteringMode.Origin)
-          for (layer <- layers) {
-            styleCoefficients.set(layer, coeff_style_mean, coeff_style_cov, dreamCoeff)
-          }
-          Map(styleSources.toList.asJava -> styleCoefficients)
-        }
-        val styleSetup: TextureGeneration.StyleSetup[CVPipe_VGG19.Layer] = new TextureGeneration.StyleSetup[CVPipe_VGG19.Layer](precision,
-          mapAsJavaMap(styles.keySet.flatten.map(file => file -> ArtistryUtil.load(file, style_resolution)).toMap),
-          mapAsJavaMap(styles))
-        val canvasCopy: AtomicReference[Tensor] = new AtomicReference[Tensor](canvas.get.copy)
-        for (width <- resolutionSchedule) {
-          val textureGeneration: TextureGeneration.VGG19 = new TextureGeneration.VGG19
-          textureGeneration.parallelLossFunctions = true
-          val height = (aspect_ratio * width).toInt
-          textureGeneration.setTiling(Math.max(Math.min((2.0 * Math.pow(600, 2)) / (width * height), 9), 2).toInt)
-          canvasCopy.set(Tensor.fromRGB(TestUtil.resize(canvasCopy.get.toImage, width, height)))
-          subreport.p("Input Parameters:")
-          subreport.eval(() => {
-            ArtistryUtil.toJson(styleSetup)
-          })
-          canvasCopy.set(textureGeneration.generate(subreport, canvasCopy.get, trainingMinutes, textureGeneration.measureStyle(styleSetup), maxIterations, isVerbose, styleSetup.precision))
-        }
-        canvasCopy.get
-      })
-      log.p(log.png(subresult.toImage, reportName))
-    }
+    val colorAligned: Tensor = log.subreport("Init", (output: NotebookOutput) => init(output))
+    log.p(log.png(colorAligned.toImage, "Seed"))
+    val painting = log.subreport("Paint", (output: NotebookOutput) => paint(output, colorAligned, getStyleSetup()).toImage)
+    log.p(log.png(painting, layers.map(_.name).reduce(_ + "_" + _)))
   }
+
+  def layers: List[CVPipe_VGG19.Layer] = List(
+    CVPipe_VGG19.Layer.Layer_0,
+    CVPipe_VGG19.Layer.Layer_1a,
+    CVPipe_VGG19.Layer.Layer_1c
+  )
+
+  def init(log: NotebookOutput) = {
+    val width = resolutionSchedule(0)
+    val height = (aspect_ratio * width).toInt
+    colorAlign(log, ArtistryUtil.paint_Plasma(3, 1000.0, 1.1, width, height).scale(plasma_magnitude))
+  }
+
+  def plasma_magnitude: Double = 1.0
+
+  def colorAlign(log: NotebookOutput, inputCanvas: Tensor): Tensor = {
+    val contentColorTransform: ColorTransfer[CVPipe_VGG19.Layer, CVPipe_VGG19] = new ColorTransfer.VGG19() {}.setOrtho(false).setUnit(true)
+    val width = 600
+    val height = (aspect_ratio * width).toInt
+    val resizedCanvas: Tensor = Tensor.fromRGB(TestUtil.resize(inputCanvas.toImage, width, height))
+    val empty = new java.util.HashMap[CharSequence, ColorTransfer[CVPipe_VGG19.Layer, CVPipe_VGG19]]
+    val styleImages = ImageArtUtil.getStyleImages(styleSources.toArray, empty, width, height)
+    val styleSetup = ImageArtUtil.getColorAnalogSetup(styleSources.toList, precision, resizedCanvas, styleImages, CVPipe_VGG19.Layer.Layer_0)
+    val styleFingerprint = contentColorTransform.measureStyle(styleSetup)
+    contentColorTransform.transfer(log, resizedCanvas, styleSetup, trainingMinutes, styleFingerprint, maxIterations, isVerbose)
+    contentColorTransform.forwardTransform(inputCanvas)
+  }
+
+  def precision: Precision = Precision.Float
+
+  def getStyleSetup(layers: List[CVPipe_VGG19.Layer] = layers,
+                    sources: Seq[CharSequence] = styleSources,
+                    coeff_mean: Double = coeff_style_mean,
+                    coeff_cov: Double = coeff_style_cov,
+                    coeff_dream: Double = dreamCoeff
+                   ) = {
+    new TextureGeneration.StyleSetup[CVPipe_VGG19.Layer](
+      precision,
+      mapAsJavaMap(sources.toList.map(file => file -> ArtistryUtil.load(file, style_resolution)).toMap),
+      mapAsJavaMap({
+        val styleCoefficients: TextureGeneration.StyleCoefficients[CVPipe_VGG19.Layer] = new TextureGeneration.StyleCoefficients[CVPipe_VGG19.Layer](TextureGeneration.CenteringMode.Origin)
+        for (layer <- layers) {
+          styleCoefficients.set(layer, coeff_mean, coeff_cov, coeff_dream)
+        }
+        Map(styleSources.toList.asJava -> styleCoefficients)
+      }))
+  }
+
+  def style_resolution: Int = 1280
+
+  def paint(log: NotebookOutput,
+            inputCanvas: Tensor,
+            styleSetup: TextureGeneration.StyleSetup[CVPipe_VGG19.Layer]
+           ) = {
+    val canvasCopy: AtomicReference[Tensor] = new AtomicReference[Tensor](inputCanvas.copy)
+    for (width <- resolutionSchedule) {
+      val textureGeneration: TextureGeneration.VGG19 = new TextureGeneration.VGG19
+      textureGeneration.parallelLossFunctions = true
+      val height = (aspect_ratio * width).toInt
+      textureGeneration.setTiling(Math.max(Math.min((2.0 * Math.pow(600, 2)) / (width * height), 9), 2).toInt)
+      canvasCopy.set(Tensor.fromRGB(TestUtil.resize(canvasCopy.get.toImage, width, height)))
+      log.p("Input Parameters:")
+      log.eval(() => {
+        ArtistryUtil.toJson(styleSetup)
+      })
+      val fingerprint = textureGeneration.measureStyle(styleSetup)
+      val newImage = textureGeneration.generate(log, canvasCopy.get, trainingMinutes, fingerprint, maxIterations, isVerbose, styleSetup.precision)
+      canvasCopy.set(newImage)
+    }
+    canvasCopy.get
+  }
+
+  def resolutionSchedule: Array[Int] = Array(200, 600)
+
+  def aspect_ratio: Double = 1.0
+
+  def trainingMinutes: Int = 10
+
+  def maxIterations: Int = 20
+
+  def isVerbose: Boolean = false
 }

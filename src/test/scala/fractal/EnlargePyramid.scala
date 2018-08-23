@@ -23,22 +23,12 @@ import com.simiacryptus.aws.Tendril
 import com.simiacryptus.mindseye.pyramid.PyramidUtil
 import com.simiacryptus.mindseye.test.TestUtil
 import com.simiacryptus.util.io.{JsonUtil, MarkdownNotebookOutput, NotebookOutput}
-import util.Java8Util._
 
-class EnlargePyramid(var tileSize: Int = 512,
-                     var magLevels: Int = 1,
-                     var padding: Int = 20,
-                     val startLevel: Int = 3,
-                     val bucket: String,
+class EnlargePyramid(val bucket: String,
                      val reportPath: String,
-                     val localPrefix: String,
-                     val aspect: Double = 1.0,
-                     val styleSources: Array[CharSequence],
-                     val trainingMinutes: Int = 10,
-                     val maxIterations: Int = 20,
-                     var verbose: Boolean = false
+                     val imagePrefix: String,
+                     val styleSources: Array[CharSequence]
                     ) extends Tendril.SerializableConsumer[NotebookOutput] {
-
 
   override def accept(log: NotebookOutput): Unit = {
     TestUtil.addGlobalHandlers(log.getHttpd)
@@ -48,8 +38,8 @@ class EnlargePyramid(var tileSize: Int = 512,
     }: Unit)
     try {
       PyramidUtil.initJS(log)
-      val hrefPrefix: String = "https://" + bucket + ".s3.us-west-2.amazonaws.com/" + reportPath + "/etc/" + localPrefix
-      val hadoopPrefix: String = "s3a://" + bucket + "/" + reportPath + "/etc/" + localPrefix
+      val hrefPrefix: String = "https://" + bucket + ".s3.us-west-2.amazonaws.com/" + reportPath + "/etc/" + imagePrefix
+      val hadoopPrefix: String = "s3a://" + bucket + "/" + reportPath + "/etc/" + imagePrefix
       PyramidUtil.writeViewer(log, "source", PyramidUtil.getTilesource(tileSize, 0, startLevel, hrefPrefix, aspect))
       val imageFunction = PyramidUtil.getImageEnlargingFunction(log,
         ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt,
@@ -57,7 +47,7 @@ class EnlargePyramid(var tileSize: Int = 512,
         trainingMinutes, maxIterations, verbose, magLevels, padding, styleSources)
       PyramidUtil.buildNewImagePyramidLayer(startLevel, magLevels, padding, tileSize, hadoopPrefix, imageFunction, aspect, false)
       val totalSize: Double = tileSize * Math.pow(2, startLevel + magLevels)
-      PyramidUtil.writeViewer(log, localPrefix + "%d_%d".format(startLevel, magLevels + startLevel),
+      PyramidUtil.writeViewer(log, imagePrefix + "%d_%d".format(startLevel, magLevels + startLevel),
         s"""{
            |        height: ${(totalSize * aspect).toInt},
            |        width:  ${totalSize.toInt},
@@ -75,6 +65,22 @@ class EnlargePyramid(var tileSize: Int = 512,
         })
     }
   }
+
+  def tileSize: Int = 512
+
+  def magLevels: Int = 1
+
+  def padding: Int = 20
+
+  def startLevel: Int = 3
+
+  def aspect: Double = 1.0
+
+  def trainingMinutes: Int = 10
+
+  def maxIterations: Int = 20
+
+  def verbose: Boolean = false
 
 
 }
