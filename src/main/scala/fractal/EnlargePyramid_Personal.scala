@@ -20,17 +20,24 @@
 package fractal
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
-import com.simiacryptus.sparkbook.EC2NotebookRunner
+import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
-object EnlargePyramid_Personal extends EC2NotebookRunner(EC2NodeSettings.DeepLearningAMI, classOf[EnlargePyramid_Personal]) {
-
+object EnlargePyramid_Personal extends EnlargePyramid_Personal with EC2Runner with AWSNotebookRunner {
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.DeepLearningAMI
 }
 
 class EnlargePyramid_Personal extends EnlargePyramid(
-  imagePrefix = "tile_1_",
-  reportPath = "reports/20180812222258",
-  bucket = "mindseye-art-7f168",
   styleSources = Array("s3a://simiacryptus/photos/shutterstock_1065730331.jpg")
 ) {
   override val aspect = .59353
+
+  override def inputHref: String = "https://" + bucket + ".s3.us-west-2.amazonaws.com/" + reportPath + "/etc/" + imagePrefix
+
+  def imagePrefix: String = "tile_1_"
+
+  def reportPath: String = "reports/20180812222258"
+
+  def bucket: String = "mindseye-art-7f168"
+
+  override def inputHadoop: String = "s3a://" + bucket + "/" + reportPath + "/etc/" + imagePrefix
 }

@@ -20,18 +20,33 @@
 package fractal
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
-import com.simiacryptus.sparkbook.EC2NotebookRunner
+import com.simiacryptus.mindseye.models.CVPipe_VGG19
+import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
-object InitialPainting_Personal extends EC2NotebookRunner(EC2NodeSettings.DeepLearningAMI, classOf[InitialPainting_Personal])
 
-class InitialPainting_Personal extends InitialPainting(
+object InitialPainting_LayerSurvey_Personal extends InitialPainting_LayerSurvey_Personal with EC2Runner with AWSNotebookRunner {
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.DeepLearningAMI
+}
+
+class InitialPainting_LayerSurvey_Personal extends InitialPainting_LayerSurvey(
   styleSources = Seq("s3a://simiacryptus/photos/shutterstock_1073629553.jpg")
 ) {
-  override def dreamCoeff = 2e-1
-
   override def resolutionSchedule = Array[Int](200, 600)
 
   override def aspect_ratio = 0.61803398875
 
   override def plasma_magnitude = 1e-1
+
+  override def getLayers = {
+    InitialPainting_LayerSurvey.reduce((0 to 5).map(i =>
+      List(
+        CVPipe_VGG19.Layer.Layer_0,
+        CVPipe_VGG19.Layer.Layer_1a,
+        CVPipe_VGG19.Layer.Layer_1b,
+        CVPipe_VGG19.Layer.Layer_1c)
+    )
+      .map(InitialPainting_LayerSurvey.wrap)
+      .reduce(InitialPainting_LayerSurvey.join),
+      1)
+  }
 }
