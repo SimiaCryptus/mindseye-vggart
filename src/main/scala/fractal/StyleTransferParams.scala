@@ -29,8 +29,6 @@ import scala.collection.JavaConverters._
 trait StyleTransferParams {
 
   def getStyleSetup_TextureGeneration(precision: Precision, styleSources: Seq[CharSequence], style_resolution: Int): TextureGeneration.StyleSetup[CVPipe_VGG19.Layer] = {
-    val contentCoefficients: SegmentedStyleTransfer.ContentCoefficients[CVPipe_VGG19.Layer] = new SegmentedStyleTransfer.ContentCoefficients[CVPipe_VGG19.Layer]
-    CVPipe_VGG19.Layer.values().foreach((layer: CVPipe_VGG19.Layer) => contentCoefficients.set(CVPipe_VGG19.Layer.Layer_0, coeff_content(layer)))
     val styleCoefficients = new TextureGeneration.StyleCoefficients[CVPipe_VGG19.Layer](TextureGeneration.CenteringMode.Origin)
     CVPipe_VGG19.Layer.values().foreach((layer: CVPipe_VGG19.Layer) => styleCoefficients.set(layer, coeff_style_mean(layer), coeff_style_cov(layer), dreamCoeff(layer)))
     new TextureGeneration.StyleSetup[CVPipe_VGG19.Layer](

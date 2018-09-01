@@ -17,16 +17,43 @@
  * under the License.
  */
 
-package fractal
+package fractal.etc
 
+import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.applications.ArtistryUtil
 import com.simiacryptus.mindseye.lang.Tensor
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.mindseye.test.TestUtil
 import com.simiacryptus.sparkbook.Java8Util._
+import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 import com.simiacryptus.util.io.NotebookOutput
+import fractal.InitialPainting
 
-object InitialPainting_LayerSurvey {
+
+object InitialPainting_LayerSurvey extends InitialPainting_LayerSurvey(
+  styleSources = Seq("s3a://simiacryptus/photos/shutterstock_1073629553.jpg")
+) with EC2Runner with AWSNotebookRunner {
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.DeepLearningAMI
+
+  override def resolutionSchedule = Array[Int](200, 600)
+
+  override def aspect_ratio = 0.61803398875
+
+  override def plasma_magnitude = 1e-1
+
+  override def getLayers = {
+    InitialPainting_LayerSurvey.reduce((0 to 5).map(i =>
+      List(
+        CVPipe_VGG19.Layer.Layer_0,
+        CVPipe_VGG19.Layer.Layer_1a,
+        CVPipe_VGG19.Layer.Layer_1b,
+        CVPipe_VGG19.Layer.Layer_1c)
+    )
+      .map(InitialPainting_LayerSurvey.wrap)
+      .reduce(InitialPainting_LayerSurvey.join),
+      1)
+  }
+
   def wrap(xx: List[CVPipe_VGG19.Layer]): List[List[CVPipe_VGG19.Layer]] = xx.map((x: CVPipe_VGG19.Layer) => List(x))
 
   def join(a: List[List[CVPipe_VGG19.Layer]], b: List[List[CVPipe_VGG19.Layer]]): List[List[CVPipe_VGG19.Layer]] = a.flatMap((layerA: List[CVPipe_VGG19.Layer]) => b.map((layerB: List[CVPipe_VGG19.Layer]) => {

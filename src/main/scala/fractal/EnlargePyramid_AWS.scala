@@ -21,10 +21,27 @@ package fractal
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
-import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner, LocalRunner, NotebookRunner}
+import com.simiacryptus.sparkbook.Java8Util._
+import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
-object InitialPyramid_Personal extends InitialPyramid_Personal with EC2Runner with AWSNotebookRunner {
-  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.DeepLearningAMI
+object EnlargePyramid_AWS extends EnlargePyramid(
+  styleSources = Array("s3a://simiacryptus/photos/shutterstock_1065730331.jpg")
+) with EC2Runner with AWSNotebookRunner {
+
+  override val startLevel: Int = 1
+  override val style_resolution: Int = 1024
+  override val maxIterations: Int = 5
+  override val aspect = 632.0 / 1024.0
+  override val inputHref: String = "https://" + bucket + ".s3.us-west-2.amazonaws.com/" + reportPath + "/etc/" + imagePrefix
+  override val inputHadoop: String = "s3a://" + bucket + "/" + reportPath + "/etc/" + imagePrefix
+
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.DeepLearningAMI_P2
+
+  def imagePrefix: String = "tile_0_"
+
+  def bucket: String = "mindseye-art-7f168"
+
+  def reportPath: String = "reports/20180826125743"
 
   override def style_layers(layer: CVPipe_VGG19.Layer): Double = layer match {
     case CVPipe_VGG19.Layer.Layer_1a => 1e0
@@ -33,29 +50,15 @@ object InitialPyramid_Personal extends InitialPyramid_Personal with EC2Runner wi
   }
 
   override def coeff_content(layer: CVPipe_VGG19.Layer): Double = layer match {
-    case CVPipe_VGG19.Layer.Layer_0 => 1e0
+    case CVPipe_VGG19.Layer.Layer_0 => 1e-1
     case _ => 0e0
   }
 
   override def dreamCoeff(layer: CVPipe_VGG19.Layer): Double = layer match {
     case CVPipe_VGG19.Layer.Layer_0 => 0e0
     case CVPipe_VGG19.Layer.Layer_1a => 1e-1
-    case CVPipe_VGG19.Layer.Layer_1b => 1e1
+    case CVPipe_VGG19.Layer.Layer_1b => 4e-1
     case _ => 0e0
   }
 }
 
-object InitialPyramid_Personal_Local extends InitialPyramid_Personal with LocalRunner with NotebookRunner {
-
-  override def style_resolution: Int = 600
-
-  override def trainingMinutes: Int = 1
-
-  override def maxIterations: Int = 1
-
-}
-
-class InitialPyramid_Personal extends InitialPyramid(
-  initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/20180824155832/etc/fractal.InitialPainting_Personal.6.png",
-  styleSources = Array("s3a://simiacryptus/photos/shutterstock_1065730331.jpg")
-)

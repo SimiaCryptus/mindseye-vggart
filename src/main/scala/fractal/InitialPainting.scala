@@ -27,7 +27,7 @@ import com.simiacryptus.mindseye.lang.cudnn.Precision
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.mindseye.test.TestUtil
 import com.simiacryptus.sparkbook.Java8Util._
-import com.simiacryptus.util.io.NotebookOutput
+import com.simiacryptus.util.io.{MarkdownNotebookOutput, NotebookOutput, ScalaJson}
 import com.simiacryptus.util.lang.SerializableConsumer
 
 import scala.collection.JavaConversions._
@@ -43,8 +43,12 @@ abstract class InitialPainting
 
   override def accept(log: NotebookOutput): Unit = {
     TestUtil.addGlobalHandlers(log.getHttpd)
+    log.asInstanceOf[MarkdownNotebookOutput].setMaxImageSize(10000)
+    log.eval(() => {
+      ScalaJson.toJson(InitialPainting.this)
+    })
     for (styleSource <- styleSources) {
-      log.p(log.png(ArtistryUtil.load(styleSource, style_resolution), "Style Image"))
+      log.p(log.png(ArtistryUtil.load(styleSource, style_resolution), styleSource))
     }
     val colorAligned: Tensor = log.subreport("Init", (output: NotebookOutput) => init(output))
     log.p(log.png(colorAligned.toImage, "Seed"))
@@ -68,7 +72,8 @@ abstract class InitialPainting
       val textureGeneration: TextureGeneration.VGG19 = new TextureGeneration.VGG19
       textureGeneration.parallelLossFunctions = true
       val height = (aspect_ratio * width).toInt
-      textureGeneration.setTiling(Math.max(Math.min((2.0 * Math.pow(600, 2)) / (width * height), 9), 2).toInt)
+      val tiling = Math.max(Math.min((2.0 * Math.pow(600, 2)) / (width * height), 9), 2).toInt
+      textureGeneration.setTiling(tiling)
       canvasCopy.set(Tensor.fromRGB(TestUtil.resize(canvasCopy.get.toImage, width, height)))
       log.p("Input Parameters:")
       val style = styleSetup(width)
@@ -76,8 +81,11 @@ abstract class InitialPainting
         ArtistryUtil.toJson(style)
       })
       val fingerprint = textureGeneration.measureStyle(style)
-      val newImage = textureGeneration.generate(log, canvasCopy.get, trainingMinutes, fingerprint, maxIterations, isVerbose, style.precision)
-      canvasCopy.set(newImage)
+      val network = textureGeneration.fitnessNetwork(fingerprint)
+      val file = log.asInstanceOf[MarkdownNotebookOutput].resolveResource("style_network.zip")
+      network.writeZip(file)
+      log.p(log.link(file, "Artist Network"))
+      canvasCopy.set(TextureGeneration.optimize(log, network, canvasCopy.get, trainingMinutes, maxIterations, isVerbose, style.precision, tiling))
     }
     canvasCopy.get
   }

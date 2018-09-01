@@ -22,12 +22,12 @@ package fractal
 import java.awt.image.BufferedImage
 import java.util.function.Function
 
-import com.simiacryptus.mindseye.applications.ImageArtUtil
+import com.simiacryptus.mindseye.applications.{ArtistryUtil, ImageArtUtil}
 import com.simiacryptus.mindseye.lang.cudnn.Precision
-import com.simiacryptus.mindseye.pyramid.PyramidUtil
+import com.simiacryptus.mindseye.pyramid.{ImagePyramid, PyramidUtil}
 import com.simiacryptus.mindseye.test.TestUtil
 import com.simiacryptus.sparkbook.Java8Util._
-import com.simiacryptus.util.io.{JsonUtil, MarkdownNotebookOutput, NotebookOutput}
+import com.simiacryptus.util.io.{MarkdownNotebookOutput, NotebookOutput, ScalaJson}
 import com.simiacryptus.util.lang.SerializableConsumer
 
 abstract class EnlargePyramid
@@ -35,19 +35,28 @@ abstract class EnlargePyramid
   styleSources: Array[CharSequence]
 ) extends SerializableConsumer[NotebookOutput] with StyleTransferParams {
 
-  def inputHref: String
+  val inputHref: String
 
-  def inputHadoop: String
+  val inputHadoop: String
+  val tileSize: Int = 512
+  val magLevels: Int = 1
+  val padding: Int = 20
+  val startLevel: Int
+  val aspect: Double = 1.0
+  val trainingMinutes: Int = 10
+  val maxIterations: Int = 20
+  val verbose: Boolean = false
+  val style_resolution: Int = -1
 
   override def accept(log: NotebookOutput): Unit = {
     TestUtil.addGlobalHandlers(log.getHttpd)
-    log.asInstanceOf[MarkdownNotebookOutput].setMaxImageSize(10000)
-    log.run(() => {
-      JsonUtil.toJson(EnlargePyramid.this)
-    }: Unit)
+    log.asInstanceOf[MarkdownNotebookOutput].setMaxImageSize(8 * 1024)
+    log.eval(() => {
+      ScalaJson.toJson(EnlargePyramid.this, ScalaJson.getExplicitMapper)
+    })
     try {
       PyramidUtil.initJS(log)
-      PyramidUtil.writeViewer(log, "source", PyramidUtil.getTilesource(tileSize, 0, startLevel, inputHref, aspect))
+      PyramidUtil.writeViewer(log, "source", new ImagePyramid(tileSize, startLevel, aspect, inputHref))
       enlarge(log, inputHadoop)
     } catch {
       case throwable: Throwable =>
@@ -57,38 +66,27 @@ abstract class EnlargePyramid
     }
   }
 
-  def tileSize: Int = 512
-
   def enlarge(log: NotebookOutput, hadoopSource: String) = {
     val destPrefix = "tile"
     val destLevel = startLevel + magLevels
     val hadoopDest = ("file:///" + log.getResourceDir.getAbsolutePath) + "/" + destPrefix
     val finalTotalWidth = (tileSize * Math.pow(2, destLevel)).toInt
     val imageFunction = getImageEnlargingFunction(log, ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt, ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt, trainingMinutes, maxIterations, verbose, magLevels, padding, styleSources: _*)
-    PyramidUtil.buildNewImagePyramidLayer(startLevel, magLevels, padding, tileSize, hadoopSource, hadoopDest, imageFunction, aspect, false)
-    PyramidUtil.copyReducePyramid(destLevel, aspect, tileSize, hadoopDest, hadoopDest)
-    PyramidUtil.writeViewer(log, tileSize, destLevel, aspect, destPrefix)
-    log.p(log.jpg(PyramidUtil.assembleImagePyramid(destLevel, tileSize, hadoopDest, aspect, finalTotalWidth), "Full Image"))
+    new ImagePyramid(tileSize, startLevel, aspect, hadoopSource).buildNewImagePyramidLayer(magLevels, padding, hadoopDest, imageFunction, false)
+    new ImagePyramid(tileSize, startLevel, aspect, hadoopDest).copyReducePyramid(hadoopDest)
+    new ImagePyramid(tileSize, destLevel, aspect, destPrefix).writeViewer(log)
+    log.p(log.jpg(new ImagePyramid(tileSize, destLevel, aspect, hadoopDest).assemble(finalTotalWidth), "Full Image"))
   }
-
-  def magLevels: Int = 1
-
-  def padding: Int = 20
-
-  def startLevel: Int = 3
-
-  def aspect: Double = 1.0
-
-  def trainingMinutes: Int = 10
-
-  def maxIterations: Int = 20
-
-  def verbose: Boolean = false
 
   def getImageEnlargingFunction(log: NotebookOutput, width: Int, height: Int, trainingMinutes: Int, maxIterations: Int, verbose: Boolean, magLevels: Int, padding: Int, styleSources: CharSequence*): Function[BufferedImage, BufferedImage] = {
     val tileLayout = new ImageArtUtil.TileLayout(600, padding, 0, 0, Array[Int](width, height))
+    styleSources.foreach(source => try {
+      log.p(log.jpg(ArtistryUtil.load(source, style_resolution), source))
+    } catch {
+      case e: Throwable => e.printStackTrace()
+    })
     val styleTransfer = PyramidUtil.getStyleTransfer()
-    val styleSetup = getStyleSetup_SegmentedStyleTransfer(Precision.Float, styleSources, -1)
+    val styleSetup = getStyleSetup_SegmentedStyleTransfer(Precision.Float, styleSources, style_resolution)
     val opParams = new ImageArtUtil.ImageArtOpParams(log, trainingMinutes, maxIterations, verbose)
     val transformer = new ImageArtUtil.StyleTransformer(opParams, styleTransfer, tileLayout, padding, 0, 0, styleSetup)
     PyramidUtil.getImageEnlargingFunction(log, trainingMinutes, maxIterations, verbose, magLevels, padding, tileLayout, styleTransfer, styleSetup, transformer)
