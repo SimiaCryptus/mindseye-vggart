@@ -127,7 +127,7 @@
 //            )
 //          }
 //
-//          val candidateQuadrangles: List[Quadrilateral_F32] = log.run(() ⇒ {
+//          val candidateQuadrangles: List[Quadrilateral_F32] = log.eval(() ⇒ {
 //            val imageBounds = new Rectangle2D_F32(0, 0, image1.getWidth, image1.getHeight)
 //            cross(pairs(horizontals), pairs(verticals)).map(xa ⇒ {
 //              val ((left: LineParametric2D_F32, right: LineParametric2D_F32), (top: LineParametric2D_F32, bottom: LineParametric2D_F32)) = xa
@@ -144,7 +144,7 @@
 //            )
 //          })
 //
-//          val bestQuadrangle: Quadrilateral_F32 = log.run(() ⇒ {
+//          val bestQuadrangle: Quadrilateral_F32 = log.eval(() ⇒ {
 //            candidateQuadrangles.maxBy(quad ⇒ {
 //              val bounds = new Rectangle2D_F32()
 //              UtilPolygons2D_F32.bounding(quad, bounds)
@@ -189,15 +189,15 @@
 //        val totalHorizontalDivisions = 8
 //        val totalVerticalDivisions = 8
 //        log.h2("HoughPolar")
-//        fn(log.run(() ⇒ {
+//        fn(log.eval(() ⇒ {
 //          FactoryDetectLineAlgs.houghPolar(new ConfigHoughPolar(localMaxRadius, minCounts, 2, resolutionAngle, edgeThreshold, maxLines), classOf[GrayU8], classOf[GrayS16])
 //        }))
 //        log.h2("HoughFoot")
-//        fn(log.run(() ⇒ {
+//        fn(log.eval(() ⇒ {
 //          FactoryDetectLineAlgs.houghFoot(new ConfigHoughFoot(localMaxRadius, minCounts, minDistanceFromOrigin, edgeThreshold, maxLines), classOf[GrayU8], classOf[GrayS16])
 //        }))
 //        log.h2("HoughFootSubimage")
-//        fn(log.run(() ⇒ {
+//        fn(log.eval(() ⇒ {
 //          FactoryDetectLineAlgs.houghFootSub(new ConfigHoughFootSubimage(localMaxRadius, minCounts, minDistanceFromOrigin, edgeThreshold, maxLines, totalHorizontalDivisions, totalVerticalDivisions), classOf[GrayU8], classOf[GrayS16])
 //        }))
 //      })

@@ -48,7 +48,7 @@ object InitialPyramid_AWS extends InitialPyramid(
     case _ => 0e0
   }
 
-  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.DeepLearningAMI
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P3_2XL
 
 }
 

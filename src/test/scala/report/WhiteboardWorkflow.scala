@@ -86,7 +86,7 @@
 //    "Optimize whiteboard image" in {
 //      report("workflow", log ⇒ {
 //        log.p("First, we cache an photo of a whiteboard")
-//        val sourceImage = log.run(() ⇒ {
+//        val sourceImage = log.eval(() ⇒ {
 //          ImageIO.read(getClass.getClassLoader.getResourceAsStream("Whiteboard1.jpg"))
 //        })
 //
@@ -94,7 +94,7 @@
 //        val primaryImage: BufferedImage = rectifyQuadrangle(log, sourceImage)
 //
 //        log.p("Now we refine our selection using some region selection, perhaps by manual selection")
-//        val tileBounds = log.run(() ⇒ {
+//        val tileBounds = log.eval(() ⇒ {
 //          new Rectangle2D_F32(100, 40, 2700, 2100)
 //        })
 //        log.draw(gfx ⇒ {
@@ -103,7 +103,7 @@
 //          gfx.setColor(Color.RED)
 //          gfx.drawRect(tileBounds.p0.x.toInt, tileBounds.p0.y.toInt, tileBounds.getWidth.toInt, tileBounds.getHeight.toInt)
 //        }, height = primaryImage.getHeight, width = primaryImage.getWidth)
-//        val tile = log.run(() ⇒ {
+//        val tile = log.eval(() ⇒ {
 //          primaryImage.getSubimage(tileBounds.p0.x.toInt, tileBounds.p0.y.toInt, tileBounds.getWidth.toInt, tileBounds.getHeight.toInt)
 //        })
 //
@@ -144,7 +144,7 @@
 //    val (minHue, maxHue) = (ImageStatistics.min(hsv.getBand(0)), ImageStatistics.max(hsv.getBand(0)))
 //    val averageLuminosity = ImageStatistics.mean(hsv.getBand(2))
 //    val varianceLuminosity = ImageStatistics.variance(hsv.getBand(2), averageLuminosity)
-//    val superpixelParameters: Map[Int, Array[Double]] = log.run(() ⇒ {
+//    val superpixelParameters: Map[Int, Array[Double]] = log.eval(() ⇒ {
 //      val regions = (0 until segmentation.getWidth).flatMap(x ⇒ (0 until segmentation.getHeight).map(y ⇒ {
 //        segmentation.get(x, y) → ((x, y) → rgb.bands.map(_.get(x, y)))
 //      })).groupBy(x ⇒ x._1).mapValues(_.map(t ⇒ t._2))
@@ -207,7 +207,7 @@
 //    clusterAnalysis_density(log, name)
 //
 //    log.p("Now, we recolor the image by classifying each superpixel as white, black, or color:");
-//    val colorizedImg = log.run(() ⇒ {
+//    val colorizedImg = log.eval(() ⇒ {
 //      val segmentColors: ColorQueue_F32 = new ColorQueue_F32(3)
 //      segmentColors.resize(superpixels)
 //      (0 until superpixels).foreach(i ⇒ {
@@ -304,7 +304,7 @@
 //    }
 //
 //    log.p("To help interpret the structure of this data setByCoord, we newTrainer a density tree:");
-//    val densityModel = log.run(() ⇒ {
+//    val densityModel = log.eval(() ⇒ {
 //      val tree = new DensityTree("hueMean", "hueStdDev", "lumMean", "lumStdDev", "chromaMean", "width", "length")
 //      tree.setSplitSizeThreshold(2)
 //      tree.setMinFitness(2)
@@ -329,15 +329,15 @@
 //
 //  private def findSuperpixels_Hybrid(log: ScalaNotebookOutput, hsv: Planar[GrayF32], rgb: Planar[GrayF32]) = {
 //    val finalBinaryMask = threshold(log, hsv, rgb)
-//    val thresholdImg = log.run(() ⇒ {
+//    val thresholdImg = log.eval(() ⇒ {
 //      VisualizeBinaryData.renderBinary(finalBinaryMask, false, null)
 //    })
 //
 //    log.p("Use threshold mask to optimize a background image")
-//    val averageRGB = log.run(() ⇒ {
+//    val averageRGB = log.eval(() ⇒ {
 //      (0 until 3).map(b ⇒ ImageStatistics.mean(rgb.getBand(b)))
 //    })
-//    val maskedBackground: Planar[GrayF32] = log.run(() ⇒ {
+//    val maskedBackground: Planar[GrayF32] = log.eval(() ⇒ {
 //      val mask = BinaryImageOps.dilate8(BinaryImageOps.thin(finalBinaryMask.clone(), 2, null), 5, null)
 //      val maskedBackground: Planar[GrayF32] = rgb.clone()
 //      (0 until maskedBackground.getWidth).foreach(x ⇒
@@ -358,12 +358,12 @@
 //      })
 //      maskedBackground
 //    })
-//    log.run(() ⇒ {
+//    log.eval(() ⇒ {
 //      ConvertBufferedImage.convertTo(maskedBackground, null, false)
 //    })
 //
 //    log.p("Use threshold mask to optimize a mask the foreground image (contrasted mapCoords the background)")
-//    val maskedForground: Planar[GrayF32] = log.run(() ⇒ {
+//    val maskedForground: Planar[GrayF32] = log.eval(() ⇒ {
 //      val maskedForground: Planar[GrayF32] = rgb.clone()
 //      (0 until maskedForground.getWidth).foreach(x ⇒
 //        (0 until maskedForground.getHeight).foreach(y ⇒
@@ -377,19 +377,19 @@
 //            })))
 //      maskedForground
 //    })
-//    log.run(() ⇒ {
+//    log.eval(() ⇒ {
 //      ConvertBufferedImage.convertTo(maskedForground, null, false)
 //    })
 //
 //    log.p("We can identify segments which may be markings using the masked color image:")
-//    val (superpixels, segmentation) = log.run(() ⇒ {
+//    val (superpixels, segmentation) = log.eval(() ⇒ {
 //      val imageType = ImageType.pl(3, classOf[GrayF32])
 //      val alg = FactoryImageSegmentation.fh04(new ConfigFh04(0.1f, 10), imageType)
 //      val segmentation = new GrayS32(rgb.getWidth, rgb.getHeight)
 //      alg.segment(maskedForground, segmentation)
 //      (alg.getTotalSuperpixels, segmentation)
 //    })
-//    log.run(() ⇒ {
+//    log.eval(() ⇒ {
 //      VisualizeRegions.regions(segmentation, superpixels, null)
 //    })
 //    (superpixels, segmentation, maskedForground)
@@ -397,18 +397,18 @@
 //
 //  private def threshold(log: ScalaNotebookOutput, hsv: Planar[GrayF32], rgb: Planar[GrayF32]) = {
 //    log.p("Dectection of markings uses the luminosity")
-//    val colorBand = log.run(() ⇒ {
+//    val colorBand = log.eval(() ⇒ {
 //      val bandImg: GrayF32 = hsv.getBand(2)
 //      val to = ConvertBufferedImage.convertTo(bandImg, null)
 //      VisualizeImageData.standard(bandImg, to)
 //    })
 //    log.p("...by detecting local variations")
-//    val binaryMask = log.run(() ⇒ {
+//    val binaryMask = log.eval(() ⇒ {
 //      val single = ConvertBufferedImage.convertFromSingle(colorBand, null, classOf[GrayF32])
 //      val binary = new GrayU8(single.width, single.height)
 //      GThresholdImageOps.localSauvola(single, binary, 50, 0.2f, true)
 //    })
-//    log.run(() ⇒ {
+//    log.eval(() ⇒ {
 //      VisualizeBinaryData.renderBinary(binaryMask, false, null)
 //    })
 //    binaryMask
@@ -417,8 +417,8 @@
 //
 //  private def rectifyQuadrangle(log: ScalaNotebookOutput, sourceImage: BufferedImage) = {
 //    log.p("We start looking for long edges which can be used to find the board:")
-//    val found: util.List[LineParametric2D_F32] = log.run(() ⇒ {
-//      val rulerDetector: DetectLine[GrayU8] = log.run(() ⇒ {
+//    val found: util.List[LineParametric2D_F32] = log.eval(() ⇒ {
+//      val rulerDetector: DetectLine[GrayU8] = log.eval(() ⇒ {
 //        val localMaxRadius = 10
 //        val minCounts = 5
 //        val minDistanceFromOrigin = 1
@@ -455,7 +455,7 @@
 //    }, width = sourceImage.getWidth, height = sourceImage.getHeight)
 //
 //    log.p("This can then be searched for the largest, most upright, and rectangular shape")
-//    var bestQuadrangle: Quadrilateral_F32 = log.run(() ⇒ {
+//    var bestQuadrangle: Quadrilateral_F32 = log.eval(() ⇒ {
 //      val horizontals = found.asScala.filter(line ⇒ Math.abs(line.slope.x) > Math.abs(line.slope.y)).toList
 //      val verticals = found.asScala.filter(line ⇒ Math.abs(line.slope.x) <= Math.abs(line.slope.y)).toList
 //      val imageBounds = new Rectangle2D_F32(0, 0, sourceImage.getWidth, sourceImage.getHeight)
@@ -491,7 +491,7 @@
 //    }, width = sourceImage.getWidth, height = sourceImage.getHeight)
 //
 //    log.p("We then distort the image using a homographic transform back into a rectangle. First we estimate the correct size of the image:")
-//    val (areaHeight, areaWidth) = log.run(() ⇒ {
+//    val (areaHeight, areaWidth) = log.eval(() ⇒ {
 //      (
 //        (bestQuadrangle.getSideLength(0) + bestQuadrangle.getSideLength(2)).toInt / 2,
 //        (bestQuadrangle.getSideLength(1) + bestQuadrangle.getSideLength(3)).toInt / 2
@@ -499,7 +499,7 @@
 //    })
 //
 //    log.p("We derive the transform:")
-//    val transform: Homography2D_F64 = log.run(() ⇒ {
+//    val transform: Homography2D_F64 = log.eval(() ⇒ {
 //      val transformModel: ModelMatcher[Homography2D_F64, AssociatedPair] = {
 //        val maxIterations = 100
 //        val inlierThreshold = 7
@@ -517,7 +517,7 @@
 //    })
 //
 //    log.p("And we transform the image:")
-//    val primaryImage: BufferedImage = log.run(() ⇒ {
+//    val primaryImage: BufferedImage = log.eval(() ⇒ {
 //      val distortion: ImageDistort[Planar[GrayF32], Planar[GrayF32]] = {
 //        val interpolation = FactoryInterpolation.bilinearPixelS(classOf[GrayF32], BorderType.ZERO)
 //        val model = new PixelTransformHomography_F32

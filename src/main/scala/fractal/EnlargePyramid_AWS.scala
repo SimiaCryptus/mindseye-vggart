@@ -21,7 +21,6 @@ package fractal
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
-import com.simiacryptus.sparkbook.Java8Util._
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object EnlargePyramid_AWS extends EnlargePyramid(
@@ -35,7 +34,7 @@ object EnlargePyramid_AWS extends EnlargePyramid(
   override val inputHref: String = "https://" + bucket + ".s3.us-west-2.amazonaws.com/" + reportPath + "/etc/" + imagePrefix
   override val inputHadoop: String = "s3a://" + bucket + "/" + reportPath + "/etc/" + imagePrefix
 
-  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.DeepLearningAMI_P2
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
 
   def imagePrefix: String = "tile_0_"
 

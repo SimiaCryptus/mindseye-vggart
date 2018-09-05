@@ -77,7 +77,7 @@
 //
 //        log.h2("Data")
 //        log.p("First, we cache the training dataset: ")
-//        val data: Seq[Array[Tensor]] = log.run(() ⇒ {
+//        val data: Seq[Array[Tensor]] = log.eval(() ⇒ {
 //          MNIST.trainingDataStream().iterator().asScala.toStream.map(labeledObj ⇒ {
 //            Array(labeledObj.data, toOutNDArray(toOut(labeledObj.label), 10))
 //          })
@@ -134,7 +134,7 @@
 //          trainer
 //        }
 //        log.eval {
-//          trainer.run()
+//          trainer.eval()
 //        }
 //        log.p("After training, we have the following parameterized model: ")
 //        log.eval {
@@ -235,7 +235,7 @@
 //            trainer
 //          }
 //          log.eval {
-//            trainer.run()
+//            trainer.eval()
 //          }
 //
 //          def plotXY(gfx: Graphics2D) = {
@@ -454,7 +454,7 @@
 //          bias.getLayer.asInstanceOf[BiasLayer].addWeights(new DoubleSupplier {
 //            override def getAsDouble: Double = Util.R.get.nextGaussian * 1e-5
 //          })
-//          trainer.run()
+//          trainer.eval()
 //        }
 //
 //        log.p("Which results in the convergence timeline: ")

@@ -93,7 +93,7 @@
 //      report("quadrangle", log ⇒ {
 //
 //        val image1 = ImageIO.read(getClass.getClassLoader.getResourceAsStream("Whiteboard1.jpg"))
-//        val rulerDetector: DetectLine[GrayU8] = log.run(() ⇒ {
+//        val rulerDetector: DetectLine[GrayU8] = log.eval(() ⇒ {
 //          val localMaxRadius = 10
 //          val minCounts = 5
 //          val minDistanceFromOrigin = 1
@@ -128,7 +128,7 @@
 //        val found: util.List[LineParametric2D_F32] = rulerDetector.detect(ConvertBufferedImage.convertFromSingle(image1, null, classOf[GrayU8]))
 //        val horizontals = found.asScala.filter(line ⇒ Math.abs(line.slope.x) > Math.abs(line.slope.y)).toList
 //        val verticals = found.asScala.filter(line ⇒ Math.abs(line.slope.x) <= Math.abs(line.slope.y)).toList
-//        val candidateQuadrangles: List[Quadrilateral_F32] = log.run(() ⇒ {
+//        val candidateQuadrangles: List[Quadrilateral_F32] = log.eval(() ⇒ {
 //          val imageBounds = new Rectangle2D_F32(0, 0, image1.getWidth, image1.getHeight)
 //          cross(pairs(horizontals), pairs(verticals)).map(xa ⇒ {
 //            val ((left: LineParametric2D_F32, right: LineParametric2D_F32), (top: LineParametric2D_F32, bottom: LineParametric2D_F32)) = xa
@@ -145,7 +145,7 @@
 //          )
 //        })
 //
-//        var bestQuadrangle: Quadrilateral_F32 = scale(rotate(log.run(() ⇒ {
+//        var bestQuadrangle: Quadrilateral_F32 = scale(rotate(log.eval(() ⇒ {
 //          candidateQuadrangles.maxBy(quad ⇒ {
 //            val bounds = new Rectangle2D_F32()
 //            UtilPolygons2D_F32.bounding(quad, bounds)
@@ -167,13 +167,13 @@
 //
 //        optimizeQuadrangle(log, image1, bestQuadrangle)
 //
-//        val (areaHeight, areaWidth) = log.run(() ⇒ {
+//        val (areaHeight, areaWidth) = log.eval(() ⇒ {
 //          (
 //            (bestQuadrangle.getSideLength(0) + bestQuadrangle.getSideLength(2)).toInt / 2,
 //            (bestQuadrangle.getSideLength(1) + bestQuadrangle.getSideLength(3)).toInt / 2
 //          )
 //        })
-//        val transform: Homography2D_F64 = log.run(() ⇒ {
+//        val transform: Homography2D_F64 = log.eval(() ⇒ {
 //          val pairs: util.ArrayList[AssociatedPair] = new util.ArrayList(List(
 //            new AssociatedPair(0, 0, bestQuadrangle.a.x, bestQuadrangle.a.y),
 //            new AssociatedPair(0, areaHeight, bestQuadrangle.c.x, bestQuadrangle.c.y),
@@ -184,7 +184,7 @@
 //          transformModel.getModelParameters
 //        })
 //
-//        val primaryImage: BufferedImage = log.run(() ⇒ {
+//        val primaryImage: BufferedImage = log.eval(() ⇒ {
 //          val distortion: ImageDistort[Planar[GrayF32], Planar[GrayF32]] = {
 //            val interpolation = FactoryInterpolation.bilinearPixelS(classOf[GrayF32], BorderType.ZERO)
 //            val model = new PixelTransformHomography_F32
@@ -215,7 +215,7 @@
 //          gfx.setColor(Color.RED)
 //          gfx.drawRect(tileBounds.p0.x.toInt, tileBounds.p0.x.toInt, tileBounds.getWidth.toInt, tileBounds.getHeight.toInt)
 //        }, height = primaryImage.getHeight, width = primaryImage.getWidth))
-//        images.foreach(img ⇒ log.run(() ⇒ {
+//        images.foreach(img ⇒ log.eval(() ⇒ {
 //          img.getSubimage(tileBounds.p0.x.toInt, tileBounds.p0.x.toInt, tileBounds.getWidth.toInt, tileBounds.getHeight.toInt)
 //        }))
 //      })
@@ -406,7 +406,7 @@
 //      report("whiteboard", log ⇒ {
 //
 //        val image1 = ImageIO.read(getClass.getClassLoader.getResourceAsStream("Whiteboard1.jpg"))
-//        val rulerDetector: DetectLine[GrayU8] = log.run(() ⇒ {
+//        val rulerDetector: DetectLine[GrayU8] = log.eval(() ⇒ {
 //          val localMaxRadius = 10
 //          val minCounts = 5
 //          val minDistanceFromOrigin = 1
@@ -441,7 +441,7 @@
 //        val found: util.List[LineParametric2D_F32] = rulerDetector.detect(ConvertBufferedImage.convertFromSingle(image1, null, classOf[GrayU8]))
 //        val horizontals = found.asScala.filter(line ⇒ Math.abs(line.slope.x) > Math.abs(line.slope.y)).toList
 //        val verticals = found.asScala.filter(line ⇒ Math.abs(line.slope.x) <= Math.abs(line.slope.y)).toList
-//        val candidateQuadrangles: List[Quadrilateral_F32] = log.run(() ⇒ {
+//        val candidateQuadrangles: List[Quadrilateral_F32] = log.eval(() ⇒ {
 //          val imageBounds = new Rectangle2D_F32(0, 0, image1.getWidth, image1.getHeight)
 //          cross(pairs(horizontals), pairs(verticals)).map(xa ⇒ {
 //            val ((left: LineParametric2D_F32, right: LineParametric2D_F32), (top: LineParametric2D_F32, bottom: LineParametric2D_F32)) = xa
@@ -457,7 +457,7 @@
 //              Intersection2D_F32.contains(imageBounds, quad.d.x, quad.d.y)
 //          )
 //        })
-//        var bestQuadrangle: Quadrilateral_F32 = scale(rotate(log.run(() ⇒ {
+//        var bestQuadrangle: Quadrilateral_F32 = scale(rotate(log.eval(() ⇒ {
 //          candidateQuadrangles.maxBy(quad ⇒ {
 //            val bounds = new Rectangle2D_F32()
 //            UtilPolygons2D_F32.bounding(quad, bounds)
@@ -479,13 +479,13 @@
 //
 //        optimizeQuadrangle(log, image1, bestQuadrangle)
 //
-//        val (areaHeight, areaWidth) = log.run(() ⇒ {
+//        val (areaHeight, areaWidth) = log.eval(() ⇒ {
 //          (
 //            (bestQuadrangle.getSideLength(0) + bestQuadrangle.getSideLength(2)).toInt / 2,
 //            (bestQuadrangle.getSideLength(1) + bestQuadrangle.getSideLength(3)).toInt / 2
 //          )
 //        })
-//        val transform: Homography2D_F64 = log.run(() ⇒ {
+//        val transform: Homography2D_F64 = log.eval(() ⇒ {
 //          val pairs: util.ArrayList[AssociatedPair] = new util.ArrayList(List(
 //            new AssociatedPair(0, 0, bestQuadrangle.a.x, bestQuadrangle.a.y),
 //            new AssociatedPair(0, areaHeight, bestQuadrangle.c.x, bestQuadrangle.c.y),
@@ -496,7 +496,7 @@
 //          transformModel.getModelParameters
 //        })
 //
-//        val primaryImage: BufferedImage = log.run(() ⇒ {
+//        val primaryImage: BufferedImage = log.eval(() ⇒ {
 //          val distortion: ImageDistort[Planar[GrayF32], Planar[GrayF32]] = {
 //            val interpolation = FactoryInterpolation.bilinearPixelS(classOf[GrayF32], BorderType.ZERO)
 //            val model = new PixelTransformHomography_F32
@@ -575,7 +575,7 @@
 //  def optimizeQuadrangle(log: ScalaNotebookOutput, image: BufferedImage, startQuad: Quadrilateral_F32) = {
 //    val single = ConvertBufferedImage.convertFromSingle(image, null, classOf[GrayF32])
 //    val shapeThresholdImage = GThresholdImageOps.threshold(single, null, ImageStatistics.mean(single), true)
-//    val detectShape = log.run(() ⇒ {
+//    val detectShape = log.eval(() ⇒ {
 //      VisualizeBinaryData.renderBinary(shapeThresholdImage, false, null)
 //    })
 //
@@ -641,7 +641,7 @@
 //
 //  def apply(log: ScalaNotebookOutput, op: GrayF32 ⇒ GrayU8)(primaryImage: BufferedImage, secondaryImages: BufferedImage*) = {
 //    (List(primaryImage) ++ secondaryImages).map((img: BufferedImage) ⇒ {
-//      log.run(() ⇒ {
+//      log.eval(() ⇒ {
 //        val single = ConvertBufferedImage.convertFromSingle(img, null, classOf[GrayF32])
 //        val result = op(single)
 //        VisualizeBinaryData.renderBinary(result, false, null)
@@ -651,7 +651,7 @@
 //
 //  def applyMulti(log: ScalaNotebookOutput, op: Planar[GrayF32] ⇒ GrayU8)(primaryImage: BufferedImage, secondaryImages: BufferedImage*) = {
 //    (List(primaryImage) ++ secondaryImages).map((img: BufferedImage) ⇒ {
-//      log.run(() ⇒ {
+//      log.eval(() ⇒ {
 //        val multi = ConvertBufferedImage.convertFromMulti(img, null, false, classOf[GrayF32])
 //        val result = op(multi)
 //        VisualizeBinaryData.renderBinary(result, false, null)
@@ -736,7 +736,7 @@
 //      ColorHsv.rgbToHsv_F32(rgb, hsv)
 //
 //      val normalizedLighting: GrayF32 = freqFilter(hsv.getBand(2))
-//      val normalizedLightImg = log.run(() ⇒ {
+//      val normalizedLightImg = log.eval(() ⇒ {
 //        val to: BufferedImage = ConvertBufferedImage.convertTo(normalizedLighting, null)
 //        VisualizeImageData.standard(normalizedLighting, to)
 //      })
@@ -744,7 +744,7 @@
 //      hsvNormalized.setBand(2, normalizedLighting)
 //      val rgbNormalized = rgb.clone()
 //      ColorHsv.hsvToRgb_F32(hsvNormalized, rgbNormalized)
-//      log.run(() ⇒ {
+//      log.eval(() ⇒ {
 //        ConvertBufferedImage.convertTo_F32(rgbNormalized, null, false)
 //      })
 //
@@ -762,13 +762,13 @@
 //        val scale = 1.0
 //        val localGaussian = GThresholdImageOps.localGaussian(single, binary, radius, scale, true, null, null)
 //        var result = localGaussian
-//        log.run(() ⇒ {
+//        log.eval(() ⇒ {
 //          VisualizeBinaryData.renderBinary(result, false, null)
 //        })
 //        result = BinaryImageOps.erode4(result, 1, null)
 //        result = BinaryImageOps.erode8(result, 1, null)
 //        //result = BinaryImageOps.thin(result, 10, null)
-//        log.run(() ⇒ {
+//        log.eval(() ⇒ {
 //          VisualizeBinaryData.renderBinary(result, false, null)
 //        })
 //      }
@@ -780,7 +780,7 @@
 //        val segmentation = new GrayS32(thresholded.getWidth, thresholded.getHeight)
 //        alg.segment(input, segmentation)
 //        val superpixels = alg.getTotalSuperpixels
-//        log.run(() ⇒ {
+//        log.eval(() ⇒ {
 //          VisualizeRegions.regions(segmentation, superpixels, null)
 //        })
 //
@@ -816,7 +816,7 @@
 //          }
 //        })
 //
-//        log.run(() ⇒ {
+//        log.eval(() ⇒ {
 //          VisualizeRegions.regionsColor(segmentation, segmentColor, null)
 //        })
 //      }
@@ -925,7 +925,7 @@
 //    })
 //
 //  def rectify[T <: TupleDesc[_]](log: ScalaNotebookOutput, featureDetector: DetectDescribePoint[GrayF32, T], expand: Boolean = true)(primaryImage: BufferedImage, secondaryImages: BufferedImage*): List[BufferedImage] = {
-//    val (pointsA, descriptionsA) = log.run(() ⇒ {
+//    val (pointsA, descriptionsA) = log.eval(() ⇒ {
 //      describe[T](featureDetector, primaryImage)
 //    })
 //
@@ -951,7 +951,7 @@
 //    draw(primaryImage, pointsA, descriptionsA)
 //
 //    def findTransform(secondaryImage: BufferedImage) = {
-//      val (pointsB, descriptionsB) = log.run(() ⇒ {
+//      val (pointsB, descriptionsB) = log.eval(() ⇒ {
 //        describe[T](featureDetector, secondaryImage)
 //      })
 //      draw(secondaryImage, pointsB, descriptionsB)
@@ -963,7 +963,7 @@
 //
 //    val transforms: List[Homography2D_F64] = secondaryImages.map(findTransform).toList
 //
-//    val boundsPoints: List[(Double, Double)] = log.run(() ⇒ {
+//    val boundsPoints: List[(Double, Double)] = log.eval(() ⇒ {
 //      val boundsPoints = secondaryImages.zip(transforms).toMap.flatMap(x ⇒ {
 //        val (secondaryImage, transformParameters) = x
 //        val fromBtoA: Homography2D_F64 = transformParameters.invert(null)
@@ -978,7 +978,7 @@
 //      System.out.println("renderMaxY = " + boundsPoints.map(_._2).max)
 //      boundsPoints
 //    })
-//    val (offsetX: Double, offsetY: Double) = log.run(() ⇒ {
+//    val (offsetX: Double, offsetY: Double) = log.eval(() ⇒ {
 //      val renderMinX = boundsPoints.map(_._1).min
 //      val renderMaxX = boundsPoints.map(_._1).max
 //      val renderMinY = boundsPoints.map(_._2).min
@@ -986,7 +986,7 @@
 //      if (expand) (Math.max(0, -renderMinX), Math.max(0, -renderMinY))
 //      else (0.0, 0.0)
 //    })
-//    val (renderWidth: Double, renderHeight: Double) = log.run(() ⇒ {
+//    val (renderWidth: Double, renderHeight: Double) = log.eval(() ⇒ {
 //      val renderMinX = boundsPoints.map(_._1).min
 //      val renderMaxX = boundsPoints.map(_._1).max
 //      val renderMinY = boundsPoints.map(_._2).min
@@ -996,7 +996,7 @@
 //    })
 //
 //    def transform(secondaryImage: BufferedImage, transformParameters: Homography2D_F64) = {
-//      val distortion: ImageDistort[Planar[GrayF32], Planar[GrayF32]] = log.run(() ⇒ {
+//      val distortion: ImageDistort[Planar[GrayF32], Planar[GrayF32]] = log.eval(() ⇒ {
 //        val interpolation = FactoryInterpolation.bilinearPixelS(classOf[GrayF32], BorderType.ZERO)
 //        val model = new PixelTransformHomography_F32
 //        val distort = DistortSupport.createDistortPL(classOf[GrayF32], model, interpolation, false)
@@ -1004,7 +1004,7 @@
 //        distort.setRenderAll(false)
 //        distort
 //      })
-//      log.run(() ⇒ {
+//      log.eval(() ⇒ {
 //        val boofImage = ConvertBufferedImage.convertFromMulti(secondaryImage, null, true, classOf[GrayF32])
 //        val work: Planar[GrayF32] = boofImage.createNew(renderWidth.toInt, renderHeight.toInt)
 //        distortion.apply(boofImage, work)

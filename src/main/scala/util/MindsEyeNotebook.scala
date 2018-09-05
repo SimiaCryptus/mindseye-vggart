@@ -110,7 +110,7 @@ package util
 //    server.addSyncHandler("model.json", "application/json", Java8Util.cvt(out ⇒ {
 //      out.write(new GsonBuilder().setPrettyPrinting().create().toJson(getModelCheckpoint.getJson()).getBytes)
 //    }), false)
-//    server.addSessionHandler("_log.txt", Java8Util.cvt((session: IHTTPSession) ⇒ {
+//    server.addGET("_log.txt", Java8Util.cvt((session: IHTTPSession) ⇒ {
 //      NanoHTTPD.newChunkedResponse(NanoHTTPD.Response.Status.OK, "text/plain", logOut.newInputStream())
 //    }))
 //    server.addSyncHandler("table.csv", "text/csv", Java8Util.cvt(out ⇒ {

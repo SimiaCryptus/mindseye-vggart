@@ -158,7 +158,7 @@
 //  def test(log: ScalaNotebookOutput, model: PipelineNetwork) = {
 //    log.h2("Data")
 //    log.p("First, we cache the training dataset: ")
-//    val trainingData: Seq[Array[Tensor]] = log.run(() ⇒ {
+//    val trainingData: Seq[Array[Tensor]] = log.eval(() ⇒ {
 //      MNIST.trainingDataStream().iterator().asScala.toStream.map(labeledObj ⇒ {
 //        Array(labeledObj.data, toOutNDArray(toOut(labeledObj.label), 10))
 //      }).toList
@@ -187,7 +187,7 @@
 //      trainer.setMonitor(monitor)
 //      trainer.setTimeout(Math.min(trainingTimeMinutes, 10), TimeUnit.MINUTES)
 //      trainer.setTerminateThreshold(1.0)
-//      trainer.run()
+//      trainer.eval()
 //    }
 //    log.p("The second phase of training uses more data")
 //    log.eval {
@@ -198,7 +198,7 @@
 //      trainer.setMonitor(monitor)
 //      trainer.setTimeout(trainingTimeMinutes, TimeUnit.MINUTES)
 //      trainer.setTerminateThreshold(0.05)
-//      trainer.run()
+//      trainer.eval()
 //    }
 //
 //    log.p("After training, we save the following parameterized model: ")

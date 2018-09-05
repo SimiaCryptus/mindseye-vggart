@@ -33,7 +33,7 @@ import fractal.InitialPainting
 object InitialPainting_LayerSurvey extends InitialPainting_LayerSurvey(
   styleSources = Seq("s3a://simiacryptus/photos/shutterstock_1073629553.jpg")
 ) with EC2Runner with AWSNotebookRunner {
-  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.DeepLearningAMI
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P3_2XL
 
   override def resolutionSchedule = Array[Int](200, 600)
 

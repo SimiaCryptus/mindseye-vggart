@@ -129,15 +129,15 @@
 //        val totalHorizontalDivisions = 8
 //        val totalVerticalDivisions = 8
 //        log.h2("HoughPolar")
-//        fn(log.run(() ⇒ {
+//        fn(log.eval(() ⇒ {
 //          FactoryDetectLineAlgs.houghPolar(new ConfigHoughPolar(localMaxRadius, minCounts, 2, resolutionAngle, edgeThreshold, maxLines), classOf[GrayU8], classOf[GrayS16])
 //        }))
 //        log.h2("HoughFoot")
-//        fn(log.run(() ⇒ {
+//        fn(log.eval(() ⇒ {
 //          FactoryDetectLineAlgs.houghFoot(new ConfigHoughFoot(localMaxRadius, minCounts, minDistanceFromOrigin, edgeThreshold, maxLines), classOf[GrayU8], classOf[GrayS16])
 //        }))
 //        log.h2("HoughFootSubimage")
-//        fn(log.run(() ⇒ {
+//        fn(log.eval(() ⇒ {
 //          FactoryDetectLineAlgs.houghFootSub(new ConfigHoughFootSubimage(localMaxRadius, minCounts, minDistanceFromOrigin, edgeThreshold, maxLines, totalHorizontalDivisions, totalVerticalDivisions), classOf[GrayU8], classOf[GrayS16])
 //        }))
 //      })
@@ -162,7 +162,7 @@
 //          }, width = width, height = height)
 //        }
 //
-//        fn(log.run(() ⇒ {
+//        fn(log.eval(() ⇒ {
 //          FactoryDetectLineAlgs.lineRansac(40, 30, 2.36, true, classOf[GrayF32], classOf[GrayF32])
 //        }))
 //      })
@@ -252,7 +252,7 @@
 //        log.draw(gfx ⇒ {
 //          gfx.drawImage(image1, 0, 0, width, height, null)
 //        })
-//        val (pointsA, descriptionsA) = log.run(() ⇒ {
+//        val (pointsA, descriptionsA) = log.eval(() ⇒ {
 //          describe(featureDetector, image1)
 //        })
 //        log.draw(gfx ⇒ {
@@ -273,11 +273,11 @@
 //
 //        def rectify(primaryImage: BufferedImage, secondaryImages: BufferedImage*)(expand: Boolean = true): List[BufferedImage] = {
 //          val transforms: Map[BufferedImage, Homography2D_F64] = secondaryImages.map(secondaryImage ⇒ {
-//            val (pointsB, descriptionsB) = log.run(() ⇒ {
+//            val (pointsB, descriptionsB) = log.eval(() ⇒ {
 //              describe(featureDetector, secondaryImage)
 //            })
 //
-//            val pairs: util.ArrayList[AssociatedPair] = log.run(() ⇒ {
+//            val pairs: util.ArrayList[AssociatedPair] = log.eval(() ⇒ {
 //              associate(featureDetector, pointsA, descriptionsA, pointsB, descriptionsB)
 //            })
 //
@@ -299,14 +299,14 @@
 //              })
 //            }, width = 2 * width)
 //
-//            secondaryImage → log.run(() ⇒ {
+//            secondaryImage → log.eval(() ⇒ {
 //              val modelMatcher: ModelMatcher[Homography2D_F64, AssociatedPair] = FactoryMultiViewRobust.homographyRansac(null, new ConfigRansac(60, 3));
 //              if (!modelMatcher.process(pairs)) throw new RuntimeException("Model Matcher failed!")
 //              modelMatcher.getModelParameters
 //            })
 //          }).toMap
 //
-//          val boundsPoints: List[(Double, Double)] = log.run(() ⇒ {
+//          val boundsPoints: List[(Double, Double)] = log.eval(() ⇒ {
 //            transforms.flatMap(x ⇒ {
 //              val (secondaryImage, transformParameters) = x
 //              val fromBtoA = transformParameters.invert(null)
@@ -317,7 +317,7 @@
 //            }).toList
 //          }) ++ List[(Double, Double)]((0, 0), (0, primaryImage.getHeight), (primaryImage.getWidth, 0), (primaryImage.getWidth, primaryImage.getHeight))
 //
-//          val (offsetX: Double, offsetY: Double) = log.run(() ⇒ {
+//          val (offsetX: Double, offsetY: Double) = log.eval(() ⇒ {
 //            val renderMinX = boundsPoints.map(_._1).min
 //            val renderMaxX = boundsPoints.map(_._1).max
 //            val renderMinY = boundsPoints.map(_._2).min
@@ -326,7 +326,7 @@
 //            else (0.0, 0.0)
 //          })
 //
-//          val (renderWidth: Double, renderHeight: Double) = log.run(() ⇒ {
+//          val (renderWidth: Double, renderHeight: Double) = log.eval(() ⇒ {
 //            val renderMinX = boundsPoints.map(_._1).min
 //            val renderMaxX = boundsPoints.map(_._1).max
 //            val renderMinY = boundsPoints.map(_._2).min
@@ -335,14 +335,14 @@
 //            else (primaryImage.getWidth.toDouble, primaryImage.getHeight.toDouble)
 //          })
 //
-//          List(log.run(() ⇒ {
+//          List(log.eval(() ⇒ {
 //            val output = new BufferedImage(renderWidth.toInt, renderHeight.toInt, primaryImage.getType)
 //            output.getGraphics.drawImage(primaryImage, offsetX.toInt, offsetY.toInt, null)
 //            output
 //          })) ++ transforms.map(x ⇒ {
 //            val (secondaryImage, transformParameters) = x
 //
-//            val distortion: ImageDistort[Planar[GrayF32], Planar[GrayF32]] = log.run(() ⇒ {
+//            val distortion: ImageDistort[Planar[GrayF32], Planar[GrayF32]] = log.eval(() ⇒ {
 //              val scale = 1
 //              val fromAToWork = new Homography2D_F64(scale, 0, offsetX, 0, scale, offsetY, 0, 0, 1)
 //              val fromWorkToA = fromAToWork.invert(null)
@@ -356,7 +356,7 @@
 //              distort
 //            })
 //
-//            log.run(() ⇒ {
+//            log.eval(() ⇒ {
 //              val boofImage = ConvertBufferedImage.convertFromMulti(secondaryImage, null, true, classOf[GrayF32])
 //              val work: Planar[GrayF32] = boofImage.createNew(renderWidth.toInt, renderHeight.toInt)
 //              distortion.apply(boofImage, work)
