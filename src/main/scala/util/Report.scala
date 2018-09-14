@@ -19,33 +19,26 @@
 
 package util
 
-import java.io.{File, FileNotFoundException}
-import java.text.SimpleDateFormat
-import java.util.Date
-
-import com.simiacryptus.util.io.HtmlNotebookOutput
-import com.simiacryptus.util.{StreamNanoHTTPD, Util}
-
-trait Report {
-  def report[T](fn: (StreamNanoHTTPD, HtmlNotebookOutput with ScalaNotebookOutput) ⇒ T,
-                port: Int = 1024 + (Math.random() * 0x700).toInt): T = try {
-    val directoryName = new SimpleDateFormat("YYYY-MM-dd-HH-mm").format(new Date())
-    val path = new File(Util.mkString(File.separator, "www", directoryName))
-    path.mkdirs
-    val logFile = new File(path, "index.html")
-    //val port: Int = 0x1FF + (Math.randomize() * 0x700).toInt
-    println(s"Starting service on port $port")
-    val server = new StreamNanoHTTPD(port, "text/html", logFile).init()
-    val log = new HtmlNotebookOutput(path, server.dataReciever) with ScalaNotebookOutput
-    //_log.addCopy(System.out)
-    try {
-      fn(server, log)
-    } finally {
-      log.close()
-    }
-  } catch {
-    case e: FileNotFoundException ⇒ {
-      throw new RuntimeException(e)
-    }
-  }
-}
+//trait Report {
+//  def report[T](fn: (StreamNanoHTTPD, MarkdownNotebookOutput with ScalaNotebookOutput) ⇒ T,
+//                port: Int = 1024 + (Math.random() * 0x700).toInt): T = try {
+//    val directoryName = new SimpleDateFormat("YYYY-MM-dd-HH-mm").format(new Date())
+//    val path = new File(Util.mkString(File.separator, "www", directoryName))
+//    path.mkdirs
+//    val logFile = new File(path, "index.html")
+//    //val port: Int = 0x1FF + (Math.randomize() * 0x700).toInt
+//    println(s"Starting service on port $port")
+//    val server = new StreamNanoHTTPD(port, "text/html", logFile).init()
+//    val log = new MarkdownNotebookOutput(path, server.dataReciever, false) with ScalaNotebookOutput
+//    //_log.addCopy(System.out)
+//    try {
+//      fn(server, log)
+//    } finally {
+//      log.close()
+//    }
+//  } catch {
+//    case e: FileNotFoundException ⇒ {
+//      throw new RuntimeException(e)
+//    }
+//  }
+//}

@@ -17,36 +17,36 @@
  * under the License.
  */
 
-package util
-
-import java.io.{File, FileNotFoundException}
-
-import com.simiacryptus.util.io.MarkdownNotebookOutput
-
-object ReportNotebook {
-  var currentMethod: String = null
-}
-
-trait ReportNotebook {
-  def report[T](methodName: String, fn: ScalaNotebookOutput ⇒ T): T = try {
-    ReportNotebook.currentMethod = methodName
-    val className: String = getClass.getCanonicalName
-    val path: File = new File(List("reports", className, methodName + ".md").mkString(File.separator))
-    path.getParentFile.mkdirs
-    val log = new MarkdownNotebookOutput(path, methodName) with ScalaNotebookOutput
-    //_log.addCopy(System.out)
-    try {
-      fn.apply(log)
-    } finally {
-      log.close()
-    }
-  } catch {
-    case e: FileNotFoundException ⇒ {
-      throw new RuntimeException(e)
-    }
-  } finally {
-    ReportNotebook.currentMethod = null
-  }
-}
+//package util
+//
+//import java.io.{File, FileNotFoundException}
+//
+//import com.simiacryptus.util.io.MarkdownNotebookOutput
+//
+//object ReportNotebook {
+//  var currentMethod: String = null
+//}
+//
+//trait ReportNotebook {
+//  def report[T](methodName: String, fn: ScalaNotebookOutput ⇒ T): T = try {
+//    ReportNotebook.currentMethod = methodName
+//    val className: String = getClass.getCanonicalName
+//    val path: File = new File(List("reports", className, methodName + ".md").mkString(File.separator))
+//    path.getParentFile.mkdirs
+//    val log = new MarkdownNotebookOutput(path, methodName) with ScalaNotebookOutput
+//    //_log.addCopy(System.out)
+//    try {
+//      fn.apply(log)
+//    } finally {
+//      log.close()
+//    }
+//  } catch {
+//    case e: FileNotFoundException ⇒ {
+//      throw new RuntimeException(e)
+//    }
+//  } finally {
+//    ReportNotebook.currentMethod = null
+//  }
+//}
 
 
