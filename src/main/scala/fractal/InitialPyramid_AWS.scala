@@ -24,8 +24,8 @@ import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object InitialPyramid_AWS extends InitialPyramid(
-  initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/20180824155832/etc/fractal.InitialPainting_Personal.6.png",
-  styleSources = Array("s3a://simiacryptus/photos/shutterstock_1065730331.jpg")
+  initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/etc/fractal.InitialPainting_AWS.8.png",
+  styleSources = Array("s3a://simiacryptus/photos/shutterstock_157227299.jpg")
 ) with EC2Runner with AWSNotebookRunner {
 
   override def style_layers(layer: CVPipe_VGG19.Layer): Double = layer match {

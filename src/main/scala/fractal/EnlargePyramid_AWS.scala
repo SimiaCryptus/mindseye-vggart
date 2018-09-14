@@ -24,7 +24,7 @@ import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object EnlargePyramid_AWS extends EnlargePyramid(
-  styleSources = Array("s3a://simiacryptus/photos/shutterstock_1065730331.jpg")
+  styleSources = Array("s3a://simiacryptus/photos/shutterstock_157227299.jpg")
 ) with EC2Runner with AWSNotebookRunner {
 
   override val startLevel: Int = 1

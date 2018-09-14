@@ -19,6 +19,7 @@
 
 package fractal
 
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
 import com.simiacryptus.mindseye.applications._
@@ -82,9 +83,9 @@ abstract class InitialPainting
       })
       val fingerprint = textureGeneration.measureStyle(style)
       val network = textureGeneration.fitnessNetwork(fingerprint)
-      val file = log.asInstanceOf[MarkdownNotebookOutput].resolveResource("style_network.zip")
-      network.writeZip(file)
-      log.p(log.link(file, "Artist Network"))
+      //      val file = log.asInstanceOf[MarkdownNotebookOutput].resolveResource("style_network_"+UUID.randomUUID().toString+".zip")
+      //      network.writeZip(file)
+      //      log.p(log.link(file, "Artist Network"))
       canvasCopy.set(TextureGeneration.optimize(log, network, canvasCopy.get, trainingMinutes, maxIterations, isVerbose, style.precision, tiling))
     }
     canvasCopy.get

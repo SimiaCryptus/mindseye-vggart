@@ -23,9 +23,12 @@ import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object InitialPainting_AWS extends InitialPainting(
-  styleSources = Seq("s3a://simiacryptus/photos/shutterstock_1073629553.jpg")
+  styleSources = Seq(
+    "s3a://simiacryptus/photos/shutterstock_542903440.jpg",
+    "s3a://simiacryptus/photos/shutterstock_157227299.jpg"
+  )
 ) with EC2Runner with AWSNotebookRunner {
-  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P3_2XL
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
   override def aspect_ratio = 0.61803398875
   override def plasma_magnitude = 1e-1
 }
