@@ -24,15 +24,15 @@ import com.simiacryptus.mindseye.applications.ArtistryUtil
 import com.simiacryptus.mindseye.lang.Tensor
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.mindseye.test.TestUtil
-import com.simiacryptus.sparkbook.Java8Util._
+import com.simiacryptus.notebook.NotebookOutput
+import com.simiacryptus.sparkbook.util.Java8Util._
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
-import com.simiacryptus.util.io.NotebookOutput
 import fractal.InitialPainting
 
 
 object InitialPainting_LayerSurvey extends InitialPainting_LayerSurvey(
   styleSources = Seq("s3a://simiacryptus/photos/shutterstock_1073629553.jpg")
-) with EC2Runner with AWSNotebookRunner {
+) with EC2Runner[Object] with AWSNotebookRunner[Object] {
   override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P3_2XL
 
   override def resolutionSchedule = Array[Int](200, 600)
@@ -82,7 +82,7 @@ abstract class InitialPainting_LayerSurvey(
                                           ) extends InitialPainting(styleSources) {
   def getLayers: List[List[CVPipe_VGG19.Layer]]
 
-  override def accept(log: NotebookOutput): Unit = {
+  override def apply(log: NotebookOutput): Object = {
     TestUtil.addGlobalHandlers(log.getHttpd)
     for (styleSource <- styleSources) {
       log.p(log.png(ArtistryUtil.load(styleSource, style_resolution), "Style Image"))
@@ -96,6 +96,7 @@ abstract class InitialPainting_LayerSurvey(
         r => getStyleSetup_TextureGeneration(precision, styleSources, style_resolution)).toImage)
       log.p(log.png(painting, reportName))
     }
+    null
   }
 
 }

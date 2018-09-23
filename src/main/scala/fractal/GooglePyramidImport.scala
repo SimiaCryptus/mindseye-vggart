@@ -19,20 +19,21 @@
 
 package fractal
 
+import com.simiacryptus.lang.SerializableFunction
 import com.simiacryptus.mindseye.pyramid._
 import com.simiacryptus.mindseye.test.TestUtil
-import com.simiacryptus.sparkbook.Java8Util._
-import com.simiacryptus.sparkbook.{LocalRunner, NotebookRunner}
-import com.simiacryptus.util.io.{MarkdownNotebookOutput, NotebookOutput, ScalaJson}
-import com.simiacryptus.util.lang.SerializableConsumer
+import com.simiacryptus.notebook.{MarkdownNotebookOutput, NotebookOutput}
+import com.simiacryptus.sparkbook.util.Java8Util._
+import com.simiacryptus.sparkbook.util.{LocalRunner, ScalaJson}
+import com.simiacryptus.sparkbook.{NotebookRunner}
 
-object GooglePyramidImport extends GooglePyramidImport with LocalRunner with NotebookRunner
+object GooglePyramidImport extends GooglePyramidImport with LocalRunner[Unit] with NotebookRunner[Unit]
 
-class GooglePyramidImport() extends SerializableConsumer[NotebookOutput] {
+class GooglePyramidImport() extends SerializableFunction[NotebookOutput, Unit] {
 
   val level = 2
 
-  override def accept(log: NotebookOutput): Unit = {
+  override def apply(log: NotebookOutput): Unit = {
     TestUtil.addGlobalHandlers(log.getHttpd)
     log.asInstanceOf[MarkdownNotebookOutput].setMaxImageSize(8 * 1024)
     log.eval(() => {

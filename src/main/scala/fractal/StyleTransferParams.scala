@@ -50,11 +50,6 @@ trait StyleTransferParams {
 
   def coeff_style_mean(layer: CVPipe_VGG19.Layer) = 1e0 * style_layers(layer)
 
-  def coeff_content(layer: CVPipe_VGG19.Layer) = layer match {
-    case CVPipe_VGG19.Layer.Layer_1a => 1e-1
-    case CVPipe_VGG19.Layer.Layer_1b => 1e-1
-  }
-
   def getStyleSetup_SegmentedStyleTransfer(precision: Precision, styleSources: Seq[CharSequence], style_resolution: Int): SegmentedStyleTransfer.StyleSetup[CVPipe_VGG19.Layer] = {
     val contentCoefficients: SegmentedStyleTransfer.ContentCoefficients[CVPipe_VGG19.Layer] = new SegmentedStyleTransfer.ContentCoefficients[CVPipe_VGG19.Layer]
     CVPipe_VGG19.Layer.values().foreach((layer: CVPipe_VGG19.Layer) => contentCoefficients.set(CVPipe_VGG19.Layer.Layer_0, coeff_content(layer)))
@@ -67,6 +62,11 @@ trait StyleTransferParams {
       ImageArtUtil.getStyleImages(style_resolution, styleSources: _*),
       Map(styleSources.toList.asJava -> styleCoefficients)
     )
+  }
+
+  def coeff_content(layer: CVPipe_VGG19.Layer) = layer match {
+    case CVPipe_VGG19.Layer.Layer_1a => 1e-1
+    case CVPipe_VGG19.Layer.Layer_1b => 1e-1
   }
 
 }

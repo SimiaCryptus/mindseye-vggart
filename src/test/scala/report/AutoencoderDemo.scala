@@ -52,8 +52,8 @@
 //import com.simiacryptus.mindseye.opt._
 //import com.simiacryptus.mindseye.opt.orient.LBFGS
 //import com.simiacryptus.mindseye.test.data._
-//import com.simiacryptus.util.TableOutput
-//import com.simiacryptus.util.io.IOUtil
+//import com.simiacryptus.notebook.TableOutput
+//import com.simiacryptus.util.IOUtil
 //import de.javakaffee.kryoserializers.KryoReflectionFactorySupport
 //import org.scalatest.{MustMatchers, WordSpec}
 //import smile.plot.{PlotCanvas, ScatterPlot}

@@ -23,9 +23,19 @@ import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
-object EnlargePyramid_AWS extends EnlargePyramid(
+object EnlargePyramid_AWS_EC2 extends EnlargePyramid_AWS with EC2Runner[Object]  {
+
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
+
+  override def maxHeap: Option[String] = Option("55g")
+
+  override def s3bucket: String = super.s3bucket
+}
+
+
+abstract class EnlargePyramid_AWS extends EnlargePyramid(
   styleSources = Array("s3a://simiacryptus/photos/shutterstock_157227299.jpg")
-) with EC2Runner with AWSNotebookRunner {
+) with AWSNotebookRunner[Object] {
 
   override val startLevel: Int = 1
   override val style_resolution: Int = 1024
@@ -34,13 +44,13 @@ object EnlargePyramid_AWS extends EnlargePyramid(
   override val inputHref: String = "https://" + bucket + ".s3.us-west-2.amazonaws.com/" + reportPath + "/etc/" + imagePrefix
   override val inputHadoop: String = "s3a://" + bucket + "/" + reportPath + "/etc/" + imagePrefix
 
-  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
+  override protected def s3bucket: String = super.s3bucket
 
   def imagePrefix: String = "tile_0_"
 
   def bucket: String = "mindseye-art-7f168"
 
-  def reportPath: String = "reports/20180826125743"
+  def reportPath: String = "reports/201809171536"
 
   override def style_layers(layer: CVPipe_VGG19.Layer): Double = layer match {
     case CVPipe_VGG19.Layer.Layer_1a => 1e0

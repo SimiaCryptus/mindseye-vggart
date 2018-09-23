@@ -19,17 +19,17 @@
 
 package fractal
 
-import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
+import com.simiacryptus.lang.SerializableFunction
 import com.simiacryptus.mindseye.applications._
 import com.simiacryptus.mindseye.lang.Tensor
 import com.simiacryptus.mindseye.lang.cudnn.Precision
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.mindseye.test.TestUtil
-import com.simiacryptus.sparkbook.Java8Util._
-import com.simiacryptus.util.io.{MarkdownNotebookOutput, NotebookOutput, ScalaJson}
-import com.simiacryptus.util.lang.SerializableConsumer
+import com.simiacryptus.notebook.{MarkdownNotebookOutput, NotebookOutput}
+import com.simiacryptus.sparkbook.util.Java8Util._
+import com.simiacryptus.sparkbook.util.ScalaJson
 
 import scala.collection.JavaConversions._
 
@@ -37,12 +37,10 @@ import scala.collection.JavaConversions._
 abstract class InitialPainting
 (
   styleSources: Seq[CharSequence]
-) extends SerializableConsumer[NotebookOutput] with StyleTransferParams {
+) extends SerializableFunction[NotebookOutput, Object] with StyleTransferParams {
   require(!styleSources.isEmpty)
 
-  def plasma_magnitude: Double = 1.0
-
-  override def accept(log: NotebookOutput): Unit = {
+  override def apply(log: NotebookOutput): Object = {
     TestUtil.addGlobalHandlers(log.getHttpd)
     log.asInstanceOf[MarkdownNotebookOutput].setMaxImageSize(10000)
     log.eval(() => {
@@ -56,9 +54,8 @@ abstract class InitialPainting
     val painting = log.subreport("Paint", (output: NotebookOutput) =>
       paint(output, colorAligned, r => getStyleSetup_TextureGeneration(precision, styleSources, style_resolution)).toImage)
     log.p(log.png(painting, "painting"))
+    null
   }
-
-  def precision: Precision = Precision.Float
 
   def style_resolution: Int = 1280
 
@@ -91,21 +88,17 @@ abstract class InitialPainting
     canvasCopy.get
   }
 
-  def resolutionSchedule: Array[Int] = Array(100, 160, 220, 300, 400, 512)
-
-  def aspect_ratio: Double = 1.0
-
-  def trainingMinutes: Int = 10
-
-  def maxIterations: Int = 20
-
   def init(log: NotebookOutput) = {
     val width = resolutionSchedule(0)
     val height = (aspect_ratio * width).toInt
     colorAlign(log, ArtistryUtil.paint_Plasma(3, 1000.0, 1.1, width, height).scale(plasma_magnitude))
   }
 
-  def isVerbose: Boolean = false
+  def plasma_magnitude: Double = 1.0
+
+  def resolutionSchedule: Array[Int] = Array(100, 160, 220, 300, 400, 512)
+
+  def aspect_ratio: Double = 1.0
 
   def colorAlign
   (
@@ -123,5 +116,13 @@ abstract class InitialPainting
     contentColorTransform.transfer(log, resizedCanvas, styleSetup, trainingMinutes, styleFingerprint, maxIterations, isVerbose)
     contentColorTransform.forwardTransform(inputCanvas)
   }
+
+  def precision: Precision = Precision.Float
+
+  def trainingMinutes: Int = 10
+
+  def maxIterations: Int = 20
+
+  def isVerbose: Boolean = false
 
 }

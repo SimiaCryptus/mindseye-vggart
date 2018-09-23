@@ -54,10 +54,10 @@ object SimplexOptimizer {
       new InitialGuess(toArray(initial)),
       GoalType.MINIMIZE, new MaxIter(maxIterations), new MaxEval(maxIterations),
       new MultiDirectionalSimplex(dimensions)
-//      new SimpleBounds(
-//        (0 until dimensions).mapCoords(d ⇒ min).toArray,
-//        (0 until dimensions).mapCoords(d ⇒ max).toArray
-//      )
+      //      new SimpleBounds(
+      //        (0 until dimensions).mapCoords(d ⇒ min).toArray,
+      //        (0 until dimensions).mapCoords(d ⇒ max).toArray
+      //      )
     ).getPoint)
     optimalMetaparameters
   }

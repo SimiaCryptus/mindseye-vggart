@@ -51,7 +51,7 @@
 //import com.simiacryptus.mindseye.opt._
 //import com.simiacryptus.mindseye.opt.orient.LBFGS
 //import com.simiacryptus.mindseye.test.data.MNIST
-//import com.simiacryptus.util.io.IOUtil
+//import com.simiacryptus.util.IOUtil
 //import com.simiacryptus.util.{TableOutput, Util}
 //import org.scalatest.{MustMatchers, WordSpec}
 //import smile.plot.{PlotCanvas, ScatterPlot}

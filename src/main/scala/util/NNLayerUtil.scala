@@ -31,6 +31,7 @@ object NNLayerUtil {
 }
 
 case class NNLayerUtil(inner: LayerBase) {
-  def withMonitor = new MonitoringWrapperLayer(inner)
   def addTo(monitor: MonitoredObject) = withMonitor.addTo(monitor)
+
+  def withMonitor = new MonitoringWrapperLayer(inner)
 }

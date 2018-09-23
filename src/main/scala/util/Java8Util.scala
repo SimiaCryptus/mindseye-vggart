@@ -21,7 +21,7 @@ package util
 
 import java.util.function.{BiFunction, BinaryOperator, Consumer, DoubleSupplier, DoubleUnaryOperator, Function, IntToDoubleFunction, Supplier, ToDoubleBiFunction, ToDoubleFunction}
 
-import com.simiacryptus.util.lang.UncheckedSupplier
+import com.simiacryptus.lang.UncheckedSupplier
 
 object Java8Util {
 
@@ -49,15 +49,15 @@ object Java8Util {
     }
   }
 
-  implicit def cvt[T <: AnyRef,U<:AnyRef,R<:AnyRef](fn: (T,U) ⇒ R): BiFunction[T,U,R] = {
-    new BiFunction[T,U,R] {
-      override def apply(t: T, u: U) = fn.apply(t,u)
+  implicit def cvt[T <: AnyRef, U <: AnyRef, R <: AnyRef](fn: (T, U) ⇒ R): BiFunction[T, U, R] = {
+    new BiFunction[T, U, R] {
+      override def apply(t: T, u: U) = fn.apply(t, u)
     }
   }
 
-  implicit def cvt[T <: AnyRef](fn: (T,T) ⇒ T): BinaryOperator[T] = {
-    new BinaryOperator[T]{
-      override def apply(t: T, u: T) = fn.apply(t,u)
+  implicit def cvt[T <: AnyRef](fn: (T, T) ⇒ T): BinaryOperator[T] = {
+    new BinaryOperator[T] {
+      override def apply(t: T, u: T) = fn.apply(t, u)
     }
   }
 
@@ -85,13 +85,13 @@ object Java8Util {
     }
   }
 
-  implicit def cvt[T,U](fn: T ⇒ U): Function[T, U] = {
+  implicit def cvt[T, U](fn: T ⇒ U): Function[T, U] = {
     new Function[T, U] {
       override def apply(v1: T): U = fn(v1)
     }
   }
 
-  implicit def cvt[T,U](fn: (T, U) ⇒ Double): ToDoubleBiFunction[T, U] = {
+  implicit def cvt[T, U](fn: (T, U) ⇒ Double): ToDoubleBiFunction[T, U] = {
     new ToDoubleBiFunction[T, U] {
       override def applyAsDouble(v: T, u: U): Double = fn(v, u)
     }

@@ -23,13 +23,14 @@ import java.awt.image.BufferedImage
 import java.util.function.Function
 
 import com.simiacryptus.mindseye.test.TestUtil
-import com.simiacryptus.sparkbook.Java8Util.cvt
-import com.simiacryptus.sparkbook.{LocalRunner, NotebookRunner}
-import com.simiacryptus.util.io.NotebookOutput
+import com.simiacryptus.notebook.NotebookOutput
+import com.simiacryptus.sparkbook.util.Java8Util.cvt
+import com.simiacryptus.sparkbook.NotebookRunner
+import com.simiacryptus.sparkbook.util.LocalRunner
 
 object EnlargePyramid_Test extends EnlargePyramid(
   styleSources = Array("s3a://simiacryptus/photos/shutterstock_1065730331.jpg")
-) with LocalRunner with NotebookRunner {
+) with LocalRunner[Object] with NotebookRunner[Object] {
 
   override val startLevel: Int = 1
 

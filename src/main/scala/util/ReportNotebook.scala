@@ -21,7 +21,7 @@
 //
 //import java.io.{File, FileNotFoundException}
 //
-//import com.simiacryptus.util.io.MarkdownNotebookOutput
+//import com.simiacryptus.notebook.MarkdownNotebookOutput
 //
 //object ReportNotebook {
 //  var currentMethod: String = null

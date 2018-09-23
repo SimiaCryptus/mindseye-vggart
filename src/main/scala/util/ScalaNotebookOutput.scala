@@ -22,8 +22,8 @@ package util
 import java.awt.image.BufferedImage
 import java.awt.{Graphics2D, RenderingHints}
 
-import com.simiacryptus.util.io.NotebookOutput
-import com.simiacryptus.util.lang.UncheckedSupplier
+import com.simiacryptus.lang.UncheckedSupplier
+import com.simiacryptus.notebook.NotebookOutput
 
 /**
   * Created by Andrew Charneski on 5/14/2017.

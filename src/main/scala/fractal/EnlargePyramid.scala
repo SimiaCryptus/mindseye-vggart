@@ -22,18 +22,25 @@ package fractal
 import java.awt.image.BufferedImage
 import java.util.function.Function
 
+import com.simiacryptus.lang.SerializableFunction
 import com.simiacryptus.mindseye.applications.{ArtistryUtil, ImageArtUtil}
 import com.simiacryptus.mindseye.lang.cudnn.Precision
+import com.simiacryptus.mindseye.pyramid.ImagePyramid.ImageTile
 import com.simiacryptus.mindseye.pyramid.{ImagePyramid, PyramidUtil}
 import com.simiacryptus.mindseye.test.TestUtil
-import com.simiacryptus.sparkbook.Java8Util._
-import com.simiacryptus.util.io.{MarkdownNotebookOutput, NotebookOutput, ScalaJson}
-import com.simiacryptus.util.lang.SerializableConsumer
+import com.simiacryptus.notebook.{MarkdownNotebookOutput, NotebookOutput}
+import com.simiacryptus.sparkbook.util.Java8Util._
+import com.simiacryptus.sparkbook.repl.SparkSessionProvider
+import com.simiacryptus.sparkbook.util.{LocalAppSettings, ScalaJson}
+import com.simiacryptus.sparkbook.WorkerRunner
+import sun.awt.AWTAutoShutdown
+
+import scala.collection.JavaConverters._
 
 abstract class EnlargePyramid
 (
   styleSources: Array[CharSequence]
-) extends SerializableConsumer[NotebookOutput] with StyleTransferParams {
+) extends SerializableFunction[NotebookOutput, Object] with StyleTransferParams with SparkSessionProvider {
 
   val inputHref: String
 
@@ -48,7 +55,7 @@ abstract class EnlargePyramid
   val verbose: Boolean = false
   val style_resolution: Int = -1
 
-  override def accept(log: NotebookOutput): Unit = {
+  override def apply(log: NotebookOutput): Object = {
     TestUtil.addGlobalHandlers(log.getHttpd)
     log.asInstanceOf[MarkdownNotebookOutput].setMaxImageSize(8 * 1024)
     log.eval(() => {
@@ -58,6 +65,7 @@ abstract class EnlargePyramid
       PyramidUtil.initJS(log)
       PyramidUtil.writeViewer(log, "source", new ImagePyramid(tileSize, startLevel, aspect, inputHref))
       enlarge(log, inputHadoop)
+      null
     } catch {
       case throwable: Throwable =>
         log.eval(() => {
@@ -69,13 +77,39 @@ abstract class EnlargePyramid
   def enlarge(log: NotebookOutput, hadoopSource: String) = {
     val destPrefix = "tile"
     val destLevel = startLevel + magLevels
-    val hadoopDest = ("file:///" + log.getResourceDir.getAbsolutePath) + "/" + destPrefix
     val finalTotalWidth = (tileSize * Math.pow(2, destLevel)).toInt
-    val imageFunction = getImageEnlargingFunction(log, ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt, ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt, trainingMinutes, maxIterations, verbose, magLevels, padding, styleSources: _*)
-    new ImagePyramid(tileSize, startLevel, aspect, hadoopSource).buildNewImagePyramidLayer(magLevels, padding, hadoopDest, imageFunction, false)
-    new ImagePyramid(tileSize, startLevel, aspect, hadoopDest).copyReducePyramid(hadoopDest)
+    val hadoopPrefix = if (null != log.getArchiveHome) {
+      log.getArchiveHome.resolve("etc/" + destPrefix).toString.replaceAll("^s3:","s3a:")
+    } else {
+      "file:///" + log.getResourceDir.getAbsolutePath + "/" + destPrefix
+    }
+    val sourcepyramid = new ImagePyramid(tileSize, startLevel, aspect, hadoopSource)
+    val pyramid = new ImagePyramid(tileSize, startLevel, aspect, hadoopPrefix)
+    var tileRdd = spark.sparkContext.parallelize(sourcepyramid.getImageTiles(padding, false).asScala)
+
+    import scala.concurrent.duration._
+    WorkerRunner.mapPartitions(tileRdd, (log, tiles: Iterator[ImageTile]) => {
+      val imageFunction = getImageEnlargingFunction(
+        log,
+        ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt,
+        ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt,
+        trainingMinutes,
+        maxIterations,
+        verbose,
+        magLevels,
+        padding,
+        styleSources: _*)
+      AWTAutoShutdown.getInstance().run()
+      tiles.map(tile => {
+        new ImageTile(tile.getRow(), tile.getCol, imageFunction.apply(tile.getImage))
+      })
+    })(scala.reflect.ClassTag(classOf[ImageTile]), scala.reflect.ClassTag(classOf[ImageTile]), log).collect().foreach(pyramid.collect(magLevels, padding, hadoopSource, _))
+    new ImagePyramid(tileSize, startLevel, aspect, hadoopSource).copyReducePyramid(hadoopSource)
     new ImagePyramid(tileSize, destLevel, aspect, destPrefix).writeViewer(log)
-    log.p(log.jpg(new ImagePyramid(tileSize, destLevel, aspect, hadoopDest).assemble(finalTotalWidth), "Full Image"))
+    val assembled = new ImagePyramid(tileSize, destLevel, aspect, hadoopSource).assemble(finalTotalWidth)
+    log.p(log.jpg(assembled, "Full Image"))
+    PyramidUtil.initImagePyramids(log, "Image", tileSize, assembled)
+
   }
 
   def getImageEnlargingFunction(log: NotebookOutput, width: Int, height: Int, trainingMinutes: Int, maxIterations: Int, verbose: Boolean, magLevels: Int, padding: Int, styleSources: CharSequence*): Function[BufferedImage, BufferedImage] = {

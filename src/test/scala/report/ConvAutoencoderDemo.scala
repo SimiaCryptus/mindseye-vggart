@@ -47,7 +47,7 @@
 //import com.simiacryptus.mindseye.network._
 //import com.simiacryptus.mindseye.opt._
 //import com.simiacryptus.mindseye.test.data._
-//import com.simiacryptus.util.TableOutput
+//import com.simiacryptus.notebook.TableOutput
 //import org.scalatest.{MustMatchers, WordSpec}
 //import smile.plot.{PlotCanvas, ScatterPlot}
 //
