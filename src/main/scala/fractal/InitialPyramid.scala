@@ -54,6 +54,7 @@ abstract class InitialPyramid
 
   override def apply(log: NotebookOutput): Object = {
     implicit val _log = log
+    implicit val _spark = spark
     TestUtil.addGlobalHandlers(log.getHttpd)
     log.asInstanceOf[MarkdownNotebookOutput].setMaxImageSize(8 * 1024)
     log.eval(() => {
@@ -85,7 +86,7 @@ abstract class InitialPyramid
           System.setProperty("CUDA_DEVICES", idx)
         })
       })
-      val tileRdd = spark.sparkContext.parallelize(pyramid.getImageTiles(padding, false).asScala)
+      val tileRdd = sc.parallelize(pyramid.getImageTiles(padding, false).asScala)
       WorkerRunner.mapPartitions(tileRdd, (log, tiles: Iterator[ImageTile]) => {
         val imageFunction = getImageEnlargingFunction(
           log,

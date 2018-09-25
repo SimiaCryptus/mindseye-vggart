@@ -29,7 +29,7 @@ object EnlargePyramid_AWS_EC2 extends EnlargePyramid_AWS with EC2Runner[Object] 
 
   override def maxHeap: Option[String] = Option("55g")
 
-  override def s3bucket: String = super.s3bucket
+  override val s3bucket: String = envTuple._2
 }
 
 
@@ -44,13 +44,11 @@ abstract class EnlargePyramid_AWS extends EnlargePyramid(
   override val inputHref: String = "https://" + bucket + ".s3.us-west-2.amazonaws.com/" + reportPath + "/etc/" + imagePrefix
   override val inputHadoop: String = "s3a://" + bucket + "/" + reportPath + "/etc/" + imagePrefix
 
-  override protected def s3bucket: String = super.s3bucket
-
-  def imagePrefix: String = "tile_0_"
+  override def imagePrefix: String = "tile_0_"
 
   def bucket: String = "mindseye-art-7f168"
 
-  def reportPath: String = "reports/201809171536"
+  def reportPath: String = "reports/201809240642"
 
   override def style_layers(layer: CVPipe_VGG19.Layer): Double = layer match {
     case CVPipe_VGG19.Layer.Layer_1a => 1e0

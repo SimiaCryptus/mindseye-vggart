@@ -23,16 +23,22 @@ import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
-object InitialPyramid_AWS extends InitialPyramid(
-  initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/201809145834/etc/fractal.InitialPainting_AWS.6.png",
-  styleSources = Array("s3a://simiacryptus/photos/shutterstock_157227299.jpg")
-) with EC2Runner[Object] with AWSNotebookRunner[Object] {
-
-  override val maxIterations: Int = 10
+object InitialPyramid_AWS_EC2 extends InitialPyramid_AWS with EC2Runner[Object] {
 
   override def maxHeap: Option[String] = Option("55g")
 
-  override def s3bucket: String = super.s3bucket
+  override val s3bucket: String = envTuple._2
+
+  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
+
+}
+
+abstract class InitialPyramid_AWS extends InitialPyramid(
+    initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/201809145834/etc/fractal.InitialPainting_AWS.6.png",
+    styleSources = Array("s3a://simiacryptus/photos/shutterstock_157227299.jpg")
+  ) with AWSNotebookRunner[Object] {
+
+  override val maxIterations: Int = 10
 
   override def style_layers(layer: CVPipe_VGG19.Layer): Double = layer match {
     case CVPipe_VGG19.Layer.Layer_1a => 1e0
@@ -51,8 +57,6 @@ object InitialPyramid_AWS extends InitialPyramid(
     case CVPipe_VGG19.Layer.Layer_1b => 4e-1
     case _ => 0e0
   }
-
-  override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
 
 }
 

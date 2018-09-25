@@ -20,6 +20,7 @@
 package fractal
 
 import java.awt.image.BufferedImage
+import java.io.File
 import java.util.function.Function
 
 import com.simiacryptus.lang.SerializableFunction
@@ -36,15 +37,17 @@ import com.simiacryptus.sparkbook.WorkerRunner
 import sun.awt.AWTAutoShutdown
 
 import scala.collection.JavaConverters._
+import scala.reflect.ClassTag
 
 abstract class EnlargePyramid
 (
   styleSources: Array[CharSequence]
 ) extends SerializableFunction[NotebookOutput, Object] with StyleTransferParams with SparkSessionProvider {
 
-  val inputHref: String
+  def inputHref: String
+  def imagePrefix: String
+  def inputHadoop: String
 
-  val inputHadoop: String
   val tileSize: Int = 512
   val magLevels: Int = 1
   val padding: Int = 20
@@ -64,7 +67,7 @@ abstract class EnlargePyramid
     try {
       PyramidUtil.initJS(log)
       PyramidUtil.writeViewer(log, "source", new ImagePyramid(tileSize, startLevel, aspect, inputHref))
-      enlarge(log, inputHadoop)
+      enlarge(log)
       null
     } catch {
       case throwable: Throwable =>
@@ -74,23 +77,19 @@ abstract class EnlargePyramid
     }
   }
 
-  def enlarge(log: NotebookOutput, hadoopSource: String) = {
-    val destPrefix = "tile"
+  def enlarge(log: NotebookOutput) = {
     val destLevel = startLevel + magLevels
-    val finalTotalWidth = (tileSize * Math.pow(2, destLevel)).toInt
-    val hadoopPrefix = if (null != log.getArchiveHome) {
-      log.getArchiveHome.resolve("etc/" + destPrefix).toString.replaceAll("^s3:","s3a:")
-    } else {
-      "file:///" + log.getResourceDir.getAbsolutePath + "/" + destPrefix
-    }
-    val sourcepyramid = new ImagePyramid(tileSize, startLevel, aspect, hadoopSource)
-    val pyramid = new ImagePyramid(tileSize, startLevel, aspect, hadoopPrefix)
-    var tileRdd = spark.sparkContext.parallelize(sourcepyramid.getImageTiles(padding, false).asScala)
-
-    import scala.concurrent.duration._
-    WorkerRunner.mapPartitions(tileRdd, (log, tiles: Iterator[ImageTile]) => {
+    val sourcePyramid = new ImagePyramid(tileSize, startLevel, aspect, inputHadoop)
+    val tileList = sourcePyramid.getImageTiles(padding, false).asScala
+    log.p(log.jpg(sourcePyramid.assemble((tileSize * Math.pow(2, startLevel)).toInt), "Full Source Image"))
+    log.p(s"Tile Size = $tileSize; Padding = $padding".asInstanceOf[CharSequence])
+    tileList.foreach(tile=>{
+      log.p(log.jpg(tile.getImage,""))
+    })
+    var tileRdd = sc.parallelize(tileList)
+    WorkerRunner.mapPartitions(tileRdd, (workerLog, tiles: Iterator[ImageTile]) => {
       val imageFunction = getImageEnlargingFunction(
-        log,
+        workerLog,
         ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt,
         ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt,
         trainingMinutes,
@@ -101,15 +100,12 @@ abstract class EnlargePyramid
         styleSources: _*)
       AWTAutoShutdown.getInstance().run()
       tiles.map(tile => {
+        workerLog.p(workerLog.jpg(tile.getImage,""))
         new ImageTile(tile.getRow(), tile.getCol, imageFunction.apply(tile.getImage))
-      })
-    })(scala.reflect.ClassTag(classOf[ImageTile]), scala.reflect.ClassTag(classOf[ImageTile]), log).collect().foreach(pyramid.collect(magLevels, padding, hadoopSource, _))
-    new ImagePyramid(tileSize, startLevel, aspect, hadoopSource).copyReducePyramid(hadoopSource)
-    new ImagePyramid(tileSize, destLevel, aspect, destPrefix).writeViewer(log)
-    val assembled = new ImagePyramid(tileSize, destLevel, aspect, hadoopSource).assemble(finalTotalWidth)
-    log.p(log.jpg(assembled, "Full Image"))
-    PyramidUtil.initImagePyramids(log, "Image", tileSize, assembled)
-
+      }).toList.iterator
+    })(ClassTag(classOf[ImageTile]), ClassTag(classOf[ImageTile]), log, spark).collect().foreach(sourcePyramid.collect(magLevels, padding, inputHadoop, _))
+    new ImagePyramid(tileSize, destLevel, aspect, inputHadoop).copyReducePyramid(log.getResourceDir.getAbsolutePath + File.separator + "tile_")
+    new ImagePyramid(tileSize, destLevel, aspect, "tile_").writeViewer(log)
   }
 
   def getImageEnlargingFunction(log: NotebookOutput, width: Int, height: Int, trainingMinutes: Int, maxIterations: Int, verbose: Boolean, magLevels: Int, padding: Int, styleSources: CharSequence*): Function[BufferedImage, BufferedImage] = {

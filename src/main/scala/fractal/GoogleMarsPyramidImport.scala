@@ -27,9 +27,9 @@ import com.simiacryptus.sparkbook.util.Java8Util._
 import com.simiacryptus.sparkbook.util.{LocalRunner, ScalaJson}
 import com.simiacryptus.sparkbook.{NotebookRunner}
 
-object GooglePyramidImport extends GooglePyramidImport with LocalRunner[Unit] with NotebookRunner[Unit]
+object GoogleMarsPyramidImport extends GoogleMarsPyramidImport with LocalRunner[Unit] with NotebookRunner[Unit]
 
-class GooglePyramidImport() extends SerializableFunction[NotebookOutput, Unit] {
+class GoogleMarsPyramidImport() extends SerializableFunction[NotebookOutput, Unit] {
 
   val level = 2
 
@@ -37,7 +37,7 @@ class GooglePyramidImport() extends SerializableFunction[NotebookOutput, Unit] {
     TestUtil.addGlobalHandlers(log.getHttpd)
     log.asInstanceOf[MarkdownNotebookOutput].setMaxImageSize(8 * 1024)
     log.eval(() => {
-      ScalaJson.toJson(GooglePyramidImport.this)
+      ScalaJson.toJson(GoogleMarsPyramidImport.this)
     })
     try {
       PyramidUtil.initJS(log)

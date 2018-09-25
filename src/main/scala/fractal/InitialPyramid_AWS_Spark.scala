@@ -20,7 +20,6 @@
 package fractal
 
 import java.io.{ByteArrayOutputStream, OutputStream, PrintStream}
-import java.util.function.Consumer
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.lang.cudnn.{CudaSettings, CudaSystem}
@@ -31,7 +30,7 @@ import util.Java8Util._
 
 import scala.reflect.ClassTag
 
-object EnlargePyramid_AWS_Spark extends EnlargePyramid_AWS with EC2SparkRunner[Object] {
+object InitialPyramid_AWS_Spark extends InitialPyramid_AWS with EC2SparkRunner[Object] {
 
   override protected val s3bucket: String = envTuple._2
 
