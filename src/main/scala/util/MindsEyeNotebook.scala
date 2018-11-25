@@ -192,21 +192,21 @@ package util
 //      val layers: Array[Layer] = history.flatMap(_.point.weights.getMap.asScala.keySet).distinct.toArray
 //      val outputTable = new mutable.HashMap[Int, mutable.Map[String, AnyRef]]()
 //      log.out("<table>")
-//      layers.foreach(layer ⇒ {
+//      layers.foreach(key ⇒ {
 //        try {
-//          val transcript: List[Array[Double]] = history.map(_.point.weights.getMap.get(layer).getDelta).toList
+//          val transcript: List[Array[Double]] = history.map(_.point.weights.getMap.get(key).getDelta).toList
 //          log.out("<tr><td>")
-//          log.p(s"${layer.getName}")
+//          log.p(s"${key.getName}")
 //          List(1, 5, 20).foreach(lag ⇒ {
 //            log.out("</td><td>")
 //            val xy = (lag until transcript.size).map(i ⇒ {
 //              val v = Math.log10(magnitude(subtract(transcript(i), transcript(i - lag))) / lag)
-//              outputTable.getOrElseUpdate(i, new mutable.HashMap[String,AnyRef]())(s"${layer.getName}/$lag") = v.asInstanceOf[Object]
+//              outputTable.getOrElseUpdate(i, new mutable.HashMap[String,AnyRef]())(s"${key.getName}/$lag") = v.asInstanceOf[Object]
 //              i → v
 //            }).filter(d ⇒ java.lang.Double.isFinite(d._2))
 //            if (xy.size > 1) {
 //              val plot: PlotCanvas = ScatterPlot.plot(xy.map(xy ⇒ Array(xy._1.toDouble, xy._2)): _*)
-//              plot.setTitle(s"${layer.getName}")
+//              plot.setTitle(s"${key.getName}")
 //              plot.setAxisLabels("Epoch", s"_log(dist(n,n-$lag)/$lag)")
 //              plot.setSize(600, 400)
 //              log.eval {
@@ -301,9 +301,9 @@ package util
 //  def phase[T >: Null](inputFile: String, fn: Layer ⇒ T): T = {
 //    var result : Option[T] = None
 //    phase(read(inputFile),
-//      layer ⇒ {
-//        result = Option(fn(layer))
-//        layer
+//      key ⇒ {
+//        result = Option(fn(key))
+//        key
 //      }, model ⇒ {})
 //    result.orNull
 //  }
@@ -341,9 +341,9 @@ package util
 //  def phase[T >: Null](inputFile: String, fn: Layer ⇒ T, outputFile: String): T = {
 //    var result: Option[T] = None
 //    phase(read(inputFile),
-//      layer ⇒ {
-//        result = Option(fn(layer))
-//        layer
+//      key ⇒ {
+//        result = Option(fn(key))
+//        key
 //      }, model ⇒ write(outputFile, model))
 //    result.orNull
 //  }
@@ -357,7 +357,7 @@ package util
 //  }
 //
 //  def phase[T >: Null](input: ⇒ Layer, fn: Layer ⇒ T, outputFile: String): T = phase(input,
-//    layer ⇒ fn(layer), model ⇒ write(outputFile, model))
+//    key ⇒ fn(key), model ⇒ write(outputFile, model))
 //
 //  def loadModel(discriminatorFile: String) = {
 //    Layer.fromJson(new GsonBuilder().create().fromJson(IOUtils.toString(new FileInputStream(findFile(discriminatorFile).orNull), "UTF-8"), classOf[JsonObject]))

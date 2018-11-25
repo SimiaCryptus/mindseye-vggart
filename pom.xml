@@ -24,7 +24,7 @@
     <parent>
         <groupId>com.simiacryptus</groupId>
         <artifactId>scala-parent</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.1</version>
         <relativePath>../scala-parent</relativePath>
     </parent>
 
@@ -125,16 +125,6 @@
             <artifactId>sparkbook</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.georegression</groupId>
-            <artifactId>georegression</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.boofcv</groupId>
-            <artifactId>all</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.mjversion}</artifactId>
             <scope>test</scope>
@@ -202,7 +192,16 @@
             <groupId>com.aparapi</groupId>
             <artifactId>aparapi</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>hdf5-platform</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>hdf5</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>

@@ -37,7 +37,7 @@ abstract class EnlargePyramid_AWS extends EnlargePyramid(
   styleSources = Array("s3a://simiacryptus/photos/shutterstock_157227299.jpg")
 ) with AWSNotebookRunner[Object] {
 
-  override val startLevel: Int = 2
+  override val startLevel: Int = 3
   override val style_resolution: Int = 1024
   override val maxIterations: Int = 5
   override val aspect = 632.0 / 1024.0
