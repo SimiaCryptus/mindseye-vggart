@@ -20,7 +20,7 @@
 package util
 
 import com.simiacryptus.mindseye.lang.LayerBase
-import com.simiacryptus.mindseye.layers.java.MonitoringWrapperLayer
+import com.simiacryptus.mindseye.layers.MonitoringWrapperLayer
 import com.simiacryptus.util.MonitoredObject
 
 /**
