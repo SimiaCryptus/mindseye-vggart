@@ -88,7 +88,7 @@ package util
 //      dataTable.clear();
 //    }
 //  }
-//  monitoringRoot.addField("openCL",Java8Util.cvt(()⇒{
+//  monitoringRoot.addField("openCL",Java8Util.convertToReferenceLayer(()⇒{
 //    val sb = new java.lang.StringBuilder()
 //    KernelManager.instance().reportDeviceUsage(sb,true)
 //    util.Arrays.asList(sb.toString().split("\n"))
@@ -107,19 +107,19 @@ package util
 //    log.h1(getClass.getSimpleName)
 //    log.p(s"Generated on ${new java.util.Date()}")
 //    log.p("Reports: <a href='model.json'>Model Json</a>, <a href='metricsHistory.html'>Metrics Plots</a>, <a href='mobility.html'>Mobility</a>, <a href='_log.txt'>Optimization Log</a>, <a href='cuda.json'>Cuda Stats</a>, or <a href='metrics.csv'>Metrics Data</a>")
-//    server.addSyncHandler("model.json", "application/json", Java8Util.cvt(out ⇒ {
+//    server.addSyncHandler("model.json", "application/json", Java8Util.convertToReferenceLayer(out ⇒ {
 //      out.write(new GsonBuilder().setPrettyPrinting().create().toJson(getModelCheckpoint.getJson()).getBytes)
 //    }), false)
-//    server.addGET("_log.txt", Java8Util.cvt((session: IHTTPSession) ⇒ {
+//    server.addGET("_log.txt", Java8Util.convertToReferenceLayer((session: IHTTPSession) ⇒ {
 //      NanoHTTPD.newChunkedResponse(NanoHTTPD.Response.Status.OK, "text/plain", logOut.newInputStream())
 //    }))
-//    server.addSyncHandler("table.csv", "text/csv", Java8Util.cvt(out ⇒ {
+//    server.addSyncHandler("table.csv", "text/csv", Java8Util.convertToReferenceLayer(out ⇒ {
 //      IOUtils.write(dataTable.toCSV(false), out, "UTF-8")
 //    }), false)
-//    server.addSyncHandler("netmon.json", "application/json", Java8Util.cvt(out ⇒ {
+//    server.addSyncHandler("netmon.json", "application/json", Java8Util.convertToReferenceLayer(out ⇒ {
 //      JsonUtil.writeJson(out, monitoringRoot.getMetrics)
 //    }), false)
-//    server.addSyncHandler("cuda.json", "application/json", Java8Util.cvt(out ⇒ {
+//    server.addSyncHandler("cuda.json", "application/json", Java8Util.convertToReferenceLayer(out ⇒ {
 //      JsonUtil.writeJson(out, new java.util.HashMap[Integer, util.HashMap[String, Long]](CudaMemory.METRICS.asScala.mapValues(metrics => {
 //        new java.util.HashMap[String, Long](Map(
 //          "usedMemory" -> metrics.usedMemory.get(),
@@ -132,20 +132,20 @@ package util
 //
 //
 //    log.p("Process Control: <a href='/pause' target='Pause'>Pause</a> or <a href='/resume' target='Pause'>Resume</a> Training</p><iframe name='Pause' style='height:50pt;width:200;float:right;border:none;'></iframe>")
-//    server.addSyncHandler("pause", "text/html", Java8Util.cvt(out ⇒ {
+//    server.addSyncHandler("pause", "text/html", Java8Util.convertToReferenceLayer(out ⇒ {
 //      Option(new HtmlNotebookOutput(log.workingDir, out) with ScalaNotebookOutput).foreach(log ⇒ {
 //        pauseSemaphore.acquire(1)
 //        log.h1("Paused")
 //      })
 //    }), false)
-//    server.addSyncHandler("resume", "text/html", Java8Util.cvt(out ⇒ {
+//    server.addSyncHandler("resume", "text/html", Java8Util.convertToReferenceLayer(out ⇒ {
 //      Option(new HtmlNotebookOutput(log.workingDir, out) with ScalaNotebookOutput).foreach(log ⇒ {
 //        pauseSemaphore.drainPermits()
 //        pauseSemaphore.release(1)
 //        log.h1("Resumed")
 //      })
 //    }), false)
-//    server.addSyncHandler("history.html", "text/html", Java8Util.cvt(out ⇒ {
+//    server.addSyncHandler("history.html", "text/html", Java8Util.convertToReferenceLayer(out ⇒ {
 //      Option(new HtmlNotebookOutput(log.workingDir, out) with ScalaNotebookOutput).foreach(log ⇒ {
 //        summarizeHistory(log)
 //      })
@@ -289,7 +289,7 @@ package util
 //    val onExit = new Semaphore(0)
 //    log.out("<hr/>")
 //    log.p("To exit the sever: <a href='/exit' target='Pause'>/exit</a>")
-//    server.addAsyncHandler("exit", "text/html", Java8Util.cvt(out ⇒ {
+//    server.addAsyncHandler("exit", "text/html", Java8Util.convertToReferenceLayer(out ⇒ {
 //      Option(new HtmlNotebookOutput(log.workingDir, out) with ScalaNotebookOutput).foreach(log ⇒ {
 //        log.h1("EXIT")
 //        onExit.release(1)
