@@ -60,7 +60,7 @@ object NetworkViz {
     })
     val nodeArray = graphNodes.values.map(_.asInstanceOf[LinkSource]).toArray
     guru.nidi.graphviz.model.Factory.graph().`with`(nodeArray: _*)
-      .generalAttr.`with`(RankDir.TOP_TO_BOTTOM).directed()
+      .graphAttr().`with`(RankDir.TOP_TO_BOTTOM).directed()
   }
 
 }
