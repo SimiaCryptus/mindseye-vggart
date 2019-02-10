@@ -30,10 +30,10 @@ import com.simiacryptus.mindseye.pyramid.ImagePyramid.ImageTile
 import com.simiacryptus.mindseye.pyramid.{ImagePyramid, PyramidUtil}
 import com.simiacryptus.mindseye.test.TestUtil
 import com.simiacryptus.notebook.{MarkdownNotebookOutput, NotebookOutput}
-import com.simiacryptus.sparkbook.util.Java8Util._
+import com.simiacryptus.sparkbook.WorkerRunner
 import com.simiacryptus.sparkbook.repl.SparkSessionProvider
+import com.simiacryptus.sparkbook.util.Java8Util._
 import com.simiacryptus.sparkbook.util.{LocalAppSettings, ScalaJson}
-import com.simiacryptus.sparkbook.{WorkerRunner}
 
 import scala.collection.JavaConverters._
 

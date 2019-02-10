@@ -20,7 +20,6 @@
 package fractal
 
 import java.io.{ByteArrayOutputStream, OutputStream, PrintStream}
-import java.util.function.Consumer
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.lang.cudnn.{CudaSettings, CudaSystem}

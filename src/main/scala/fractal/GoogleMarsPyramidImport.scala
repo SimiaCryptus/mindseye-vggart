@@ -23,9 +23,9 @@ import com.simiacryptus.lang.SerializableFunction
 import com.simiacryptus.mindseye.pyramid._
 import com.simiacryptus.mindseye.test.TestUtil
 import com.simiacryptus.notebook.{MarkdownNotebookOutput, NotebookOutput}
+import com.simiacryptus.sparkbook.NotebookRunner
 import com.simiacryptus.sparkbook.util.Java8Util._
 import com.simiacryptus.sparkbook.util.{LocalRunner, ScalaJson}
-import com.simiacryptus.sparkbook.{NotebookRunner}
 
 object GoogleMarsPyramidImport extends GoogleMarsPyramidImport with LocalRunner[Unit] with NotebookRunner[Unit]
 

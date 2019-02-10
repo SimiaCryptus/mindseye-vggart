@@ -24,8 +24,8 @@ import java.util.function.Function
 
 import com.simiacryptus.mindseye.test.TestUtil
 import com.simiacryptus.notebook.NotebookOutput
-import com.simiacryptus.sparkbook.util.Java8Util.cvt
 import com.simiacryptus.sparkbook.NotebookRunner
+import com.simiacryptus.sparkbook.util.Java8Util.cvt
 import com.simiacryptus.sparkbook.util.LocalRunner
 
 object EnlargePyramid_Test extends EnlargePyramid(
