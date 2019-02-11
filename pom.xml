@@ -29,13 +29,11 @@
     </parent>
 
     <artifactId>mindseye-scala</artifactId>
-    <description>Experiments with Image Analysis</description>
+    <description>Neural Networks with Scala</description>
 
     <properties>
-        <github.project>image-labs</github.project>
+        <github.project>mindseye-scala</github.project>
         <github.path></github.path>
-        <scala.mjversion>2.11</scala.mjversion>
-        <scala.version>2.11.11</scala.version>
     </properties>
     <distributionManagement>
         <site>
