@@ -24,22 +24,21 @@
     <parent>
         <groupId>com.simiacryptus</groupId>
         <artifactId>scala-parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.1</version>
         <relativePath>../scala-parent</relativePath>
     </parent>
 
     <artifactId>mindseye-scala</artifactId>
     <description>Neural Networks with Scala</description>
-    <url>https://simiacryptus.github.io/${github.project}/${github.path}</url>
+    <url>https://simiacryptus.github.io/${github.project}/</url>
 
     <properties>
         <github.project>mindseye-scala</github.project>
-        <github.path></github.path>
     </properties>
     <distributionManagement>
         <site>
             <id>github</id>
-            <url>https://simiacryptus.github.io/${github.project}/${github.path}</url>
+            <url>https://simiacryptus.github.io/${github.project}/</url>
         </site>
     </distributionManagement>
 
