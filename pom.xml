@@ -30,6 +30,7 @@
 
     <artifactId>mindseye-scala</artifactId>
     <description>Neural Networks with Scala</description>
+    <url>https://simiacryptus.github.io/${github.project}/${github.path}</url>
 
     <properties>
         <github.project>mindseye-scala</github.project>
