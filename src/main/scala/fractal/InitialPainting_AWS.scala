@@ -20,15 +20,25 @@
 package fractal
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
+import com.simiacryptus.mindseye.lang.cudnn.CudaMemory
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object InitialPainting_AWS extends InitialPainting(
   styleSources = Seq(
-    "s3a://simiacryptus/photos/shutterstock_542903440.jpg"
-    //    "s3a://simiacryptus/photos/shutterstock_157227299.jpg"
+    "s3a://simiacryptus/photos/shutterstock_87165334.jpg"
   )
 ) with EC2Runner[Object] with AWSNotebookRunner[Object] {
   override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
+  override def maxHeap: Option[String] = Option("60g")
+
+  override def javaProperties: Map[String, String] = Map(
+    "spark.master" -> "local[4]",
+    "MAX_TOTAL_MEMORY" -> (8 * CudaMemory.GiB).toString,
+    "MAX_DEVICE_MEMORY" -> (8 * CudaMemory.GiB).toString,
+    "MAX_IO_ELEMENTS" -> (2 * CudaMemory.MiB).toString,
+    "CONVOLUTION_WORKSPACE_SIZE_LIMIT" -> (1 * 512 * CudaMemory.MiB).toString,
+    "MAX_FILTER_ELEMENTS" -> (1 * 512 * CudaMemory.MiB).toString
+  )
 
   override def aspect_ratio = 0.61803398875
 
