@@ -25,7 +25,7 @@ import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object InitialPainting_AWS extends InitialPainting(
   styleSources = Seq(
-    "s3a://simiacryptus/photos/shutterstock_87165334.jpg"
+    "s3a://simiacryptus/photos/shutterstock_781159663.jpg"
   )
 ) with EC2Runner[Object] with AWSNotebookRunner[Object] {
   override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL

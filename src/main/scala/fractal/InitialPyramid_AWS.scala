@@ -20,6 +20,7 @@
 package fractal
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
+import com.simiacryptus.mindseye.lang.cudnn.CudaMemory
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
@@ -31,11 +32,20 @@ object InitialPyramid_AWS_EC2 extends InitialPyramid_AWS with EC2Runner[Object] 
 
   override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
 
+  override def javaProperties: Map[String, String] = Map(
+    "spark.master" -> "local[4]",
+    "MAX_TOTAL_MEMORY" -> (8 * CudaMemory.GiB).toString,
+    "MAX_DEVICE_MEMORY" -> (8 * CudaMemory.GiB).toString,
+    "MAX_IO_ELEMENTS" -> (2 * CudaMemory.MiB).toString,
+    "CONVOLUTION_WORKSPACE_SIZE_LIMIT" -> (1 * 512 * CudaMemory.MiB).toString,
+    "MAX_FILTER_ELEMENTS" -> (1 * 512 * CudaMemory.MiB).toString
+  )
+
 }
 
 abstract class InitialPyramid_AWS extends InitialPyramid(
-    initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/201809145834/etc/fractal.InitialPainting_AWS.6.png",
-    styleSources = Array("s3a://simiacryptus/photos/shutterstock_157227299.jpg")
+    initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/201903035142/etc/fractal.InitialPainting_AWS.11.png",
+    styleSources = Array("s3a://simiacryptus/photos/shutterstock_781159663.jpg")
   ) with AWSNotebookRunner[Object] {
 
   override val maxIterations: Int = 10
