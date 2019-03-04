@@ -32,21 +32,23 @@ import scala.reflect.ClassTag
 
 object InitialPyramid_AWS_Spark extends InitialPyramid_AWS with EC2SparkRunner[Object] {
 
-  override protected val s3bucket: String = envTuple._2
+  override val hiveRoot: Option[String] = super.hiveRoot
 
-  override def masterSettings: EC2NodeSettings = EC2NodeSettings.M5_XL
+  override val s3bucket: String = envTuple._2
 
-  override def workerSettings: EC2NodeSettings = EC2NodeSettings.P2_8XL
+  override val masterSettings: EC2NodeSettings = EC2NodeSettings.M5_XL
 
-  override def driverMemory: String = "15g"
+  override val workerSettings: EC2NodeSettings = EC2NodeSettings.P2_8XL
 
-  override def workerMemory: String = "60g"
+  override val driverMemory: String = "15g"
 
-  override def numberOfWorkersPerNode: Int = 8
+  override val workerMemory: String = "60g"
 
-  override def numberOfWorkerNodes: Int = 1
+  override val numberOfWorkersPerNode: Int = 8
 
-  override def workerCores: Int = 1
+  override val numberOfWorkerNodes: Int = 1
+
+  override val workerCores: Int = 4
 
   override def apply(log: NotebookOutput): AnyRef = {
     log.getHttpd.addGET("gpu.txt", "text/plain", (out: OutputStream) => {

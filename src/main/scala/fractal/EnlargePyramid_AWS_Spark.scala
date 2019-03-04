@@ -22,7 +22,8 @@ package fractal
 import java.io.{ByteArrayOutputStream, OutputStream, PrintStream}
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
-import com.simiacryptus.mindseye.lang.cudnn.{CudaSettings, CudaSystem}
+import com.simiacryptus.mindseye.lang.CoreSettings
+import com.simiacryptus.mindseye.lang.cudnn.{CudaMemory, CudaSettings, CudaSystem}
 import com.simiacryptus.notebook.NotebookOutput
 import com.simiacryptus.sparkbook.{EC2SparkRunner, WorkerRunner}
 import com.simiacryptus.util.JsonUtil
@@ -32,21 +33,35 @@ import scala.reflect.ClassTag
 
 object EnlargePyramid_AWS_Spark extends EnlargePyramid_AWS with EC2SparkRunner[Object] {
 
-  override protected val s3bucket: String = envTuple._2
+  override def hiveRoot: Option[String] = super.hiveRoot
+
+  override def sparkProperties: Map[String, String] = super.sparkProperties
+
+  override def javaProperties: Map[String, String] = super.javaProperties ++ Map(
+    "MAX_TOTAL_MEMORY" -> (8 * CudaMemory.GiB).toString,
+    "MAX_DEVICE_MEMORY" -> (8 * CudaMemory.GiB).toString,
+    "MAX_IO_ELEMENTS" -> (2 * CudaMemory.MiB).toString,
+    "CONVOLUTION_WORKSPACE_SIZE_LIMIT" -> (1 * 512 * CudaMemory.MiB).toString,
+    "MAX_FILTER_ELEMENTS" -> (1 * 512 * CudaMemory.MiB).toString,
+    "java.util.concurrent.ForkJoinPool.common.parallelism" -> Integer.toString(CoreSettings.INSTANCE().jvmThreads)
+  )
+
+
+  override val s3bucket: String = envTuple._2
 
   override def masterSettings: EC2NodeSettings = EC2NodeSettings.M5_XL
 
   override def workerSettings: EC2NodeSettings = EC2NodeSettings.P2_8XL
 
-  override def driverMemory: String = "15g"
+  override val driverMemory: String = "15g"
 
-  override def workerMemory: String = "60g"
+  override val workerMemory: String = "60g"
 
-  override def numberOfWorkersPerNode: Int = 8
+  override val numberOfWorkersPerNode: Int = 8
 
-  override def numberOfWorkerNodes: Int = 1
+  override val numberOfWorkerNodes: Int = 1
 
-  override def workerCores: Int = 1
+  override val workerCores: Int = 1
 
   override def apply(log: NotebookOutput): AnyRef = {
     log.getHttpd.addGET("gpu.txt", "text/plain", (out: OutputStream) => {

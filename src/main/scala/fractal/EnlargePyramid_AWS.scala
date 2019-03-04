@@ -34,10 +34,11 @@ object EnlargePyramid_AWS_EC2 extends EnlargePyramid_AWS with EC2Runner[Object] 
 
 
 abstract class EnlargePyramid_AWS extends EnlargePyramid(
-  styleSources = Array("s3a://simiacryptus/photos/shutterstock_157227299.jpg")
+  styleSources = Array("s3a://simiacryptus/photos/shutterstock_781159663.jpg")
 ) with AWSNotebookRunner[Object] {
+  override val s3bucket: String = super.s3bucket
 
-  override val startLevel: Int = 3
+  override val startLevel: Int = 1
   override val style_resolution: Int = 1024
   override val maxIterations: Int = 5
   override val aspect = 632.0 / 1024.0
@@ -46,9 +47,9 @@ abstract class EnlargePyramid_AWS extends EnlargePyramid(
 
   override def imagePrefix: String = "tile_0_"
 
-  def bucket: String = "mindseye-art-7f168"
+  def bucket: String = "data-cb03c"
 
-  def reportPath: String = "reports/201809240642"
+  def reportPath: String = "reports/201903030717"
 
   override def style_layers(layer: CVPipe_VGG19.Layer): Double = layer match {
     case CVPipe_VGG19.Layer.Layer_1a => 1e0
