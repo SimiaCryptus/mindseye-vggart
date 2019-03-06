@@ -28,7 +28,7 @@
         <relativePath>../scala-parent</relativePath>
     </parent>
 
-    <artifactId>mindseye-scala</artifactId>
+    <artifactId>mindseye-vggart</artifactId>
     <description>Neural Networks with Scala</description>
     <url>https://simiacryptus.github.io/${github.project}/</url>
 
@@ -65,7 +65,11 @@
             <groupId>com.esotericsoftware</groupId>
             <artifactId>kryo</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -93,12 +97,14 @@
         <dependency>
             <groupId>com.simiacryptus</groupId>
             <artifactId>mindseye-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.simiacryptus</groupId>
-            <artifactId>mindseye-art</artifactId>
-            <scope>compile</scope>
+            <artifactId>mindseye-cudnn</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.simiacryptus</groupId>
+            <artifactId>mindseye-research</artifactId>
         </dependency>
         <dependency>
             <groupId>com.simiacryptus</groupId>
@@ -146,6 +152,22 @@
             <groupId>org.jcuda</groupId>
             <artifactId>jcuda-natives</artifactId>
             <classifier>linux-x86_64</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacpp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>hdf5-platform</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>hdf5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.simiacryptus</groupId>
+            <artifactId>hadoop-jgit-fs</artifactId>
         </dependency>
     </dependencies>
 
