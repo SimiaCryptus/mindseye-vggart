@@ -29,6 +29,7 @@ object InitialPainting_AWS extends InitialPainting(
   )
 ) with EC2Runner[Object] with AWSNotebookRunner[Object] {
   override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
+
   override def maxHeap: Option[String] = Option("60g")
 
   override def javaProperties: Map[String, String] = Map(

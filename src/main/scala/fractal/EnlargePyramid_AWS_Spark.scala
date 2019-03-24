@@ -33,6 +33,13 @@ import scala.reflect.ClassTag
 
 object EnlargePyramid_AWS_Spark extends EnlargePyramid_AWS with EC2SparkRunner[Object] {
 
+  override val s3bucket: String = envTuple._2
+  override val driverMemory: String = "15g"
+  override val workerMemory: String = "60g"
+  override val numberOfWorkersPerNode: Int = 8
+  override val numberOfWorkerNodes: Int = 1
+  override val workerCores: Int = 1
+
   override def hiveRoot: Option[String] = super.hiveRoot
 
   override def sparkProperties: Map[String, String] = super.sparkProperties
@@ -46,22 +53,9 @@ object EnlargePyramid_AWS_Spark extends EnlargePyramid_AWS with EC2SparkRunner[O
     "java.util.concurrent.ForkJoinPool.common.parallelism" -> Integer.toString(CoreSettings.INSTANCE().jvmThreads)
   )
 
-
-  override val s3bucket: String = envTuple._2
-
   override def masterSettings: EC2NodeSettings = EC2NodeSettings.M5_XL
 
   override def workerSettings: EC2NodeSettings = EC2NodeSettings.P2_8XL
-
-  override val driverMemory: String = "15g"
-
-  override val workerMemory: String = "60g"
-
-  override val numberOfWorkersPerNode: Int = 8
-
-  override val numberOfWorkerNodes: Int = 1
-
-  override val workerCores: Int = 1
 
   override def apply(log: NotebookOutput): AnyRef = {
     log.getHttpd.addGET("gpu.txt", "text/plain", (out: OutputStream) => {
@@ -71,8 +65,8 @@ object EnlargePyramid_AWS_Spark extends EnlargePyramid_AWS with EC2SparkRunner[O
         val outputStream = new ByteArrayOutputStream()
         CudaSystem.printHeader(new PrintStream(outputStream))
         s"""CudaSettings.INSTANCE = ${JsonUtil.toJson(CudaSettings.INSTANCE)}
-            |Cuda System Header = ${outputStream.toString}
-            |""".stripMargin
+           |Cuda System Header = ${outputStream.toString}
+           |""".stripMargin
       })(ClassTag.apply(classOf[String]), spark).foreach(printStream.println(_))
       printStream.close()
     }: Unit)

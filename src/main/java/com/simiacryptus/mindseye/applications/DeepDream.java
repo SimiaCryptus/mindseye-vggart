@@ -20,9 +20,9 @@
 package com.simiacryptus.mindseye.applications;
 
 import com.simiacryptus.lang.Tuple2;
-import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.eval.ArrayTrainable;
 import com.simiacryptus.mindseye.eval.Trainable;
+import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;

@@ -27,7 +27,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.simiacryptus" level="INFO" />
+    <logger name="com.simiacryptus" level="INFO"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>

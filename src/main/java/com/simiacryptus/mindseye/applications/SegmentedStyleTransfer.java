@@ -20,10 +20,10 @@
 package com.simiacryptus.mindseye.applications;
 
 import com.simiacryptus.lang.Tuple2;
+import com.simiacryptus.lang.ref.ReferenceCountingBase;
 import com.simiacryptus.mindseye.eval.ArrayTrainable;
 import com.simiacryptus.mindseye.eval.Trainable;
 import com.simiacryptus.mindseye.lang.Layer;
-import com.simiacryptus.lang.ref.ReferenceCountingBase;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
@@ -592,7 +592,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       assert null != tensors;
       return tensors;
     }).stream().map(img -> {
-      Tensor tensor = Tensor.fromRGB(TestUtil.resize(img.toImage(),width, height));
+      Tensor tensor = Tensor.fromRGB(TestUtil.resize(img.toImage(), width, height));
       assert null != tensor;
       return tensor;
     }).collect(Collectors.toSet());

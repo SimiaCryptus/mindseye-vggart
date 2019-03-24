@@ -23,13 +23,13 @@ import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
-object EnlargePyramid_AWS_EC2 extends EnlargePyramid_AWS with EC2Runner[Object]  {
+object EnlargePyramid_AWS_EC2 extends EnlargePyramid_AWS with EC2Runner[Object] {
+
+  override val s3bucket: String = envTuple._2
 
   override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
 
   override def maxHeap: Option[String] = Option("55g")
-
-  override val s3bucket: String = envTuple._2
 }
 
 

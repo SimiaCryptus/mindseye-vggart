@@ -19,7 +19,7 @@
 
 package com.simiacryptus.mindseye.applications;
 
-import com.simiacryptus.lang.ref.*;
+import com.simiacryptus.lang.ref.ReferenceCountingBase;
 import com.simiacryptus.mindseye.eval.ArrayTrainable;
 import com.simiacryptus.mindseye.eval.Trainable;
 import com.simiacryptus.mindseye.lang.*;

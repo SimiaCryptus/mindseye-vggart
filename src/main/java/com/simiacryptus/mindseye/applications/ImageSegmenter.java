@@ -19,8 +19,11 @@
 
 package com.simiacryptus.mindseye.applications;
 
-import com.simiacryptus.lang.ref.*;
-import com.simiacryptus.mindseye.lang.*;
+import com.simiacryptus.lang.ref.ReferenceCountingBase;
+import com.simiacryptus.mindseye.lang.Layer;
+import com.simiacryptus.mindseye.lang.MutableResult;
+import com.simiacryptus.mindseye.lang.Result;
+import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.ImgBandSelectLayer;
 import com.simiacryptus.mindseye.layers.cudnn.ImgConcatLayer;

@@ -219,7 +219,8 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
 
   /**
    * Train.
-   *  @param log             the log
+   *
+   * @param log             the log
    * @param canvas          the canvas
    * @param network         the network
    * @param trainingMinutes the training minutes

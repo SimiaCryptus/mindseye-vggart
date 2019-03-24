@@ -45,12 +45,6 @@ abstract class EnlargePyramid
   styleSources: Array[CharSequence]
 ) extends SerializableFunction[NotebookOutput, Object] with StyleTransferParams with SparkSessionProvider {
 
-  def inputHref: String
-
-  def imagePrefix: String
-
-  def inputHadoop: String
-
   val tileSize: Int = 512
   val magLevels: Int = 1
   val padding: Int = 20
@@ -60,6 +54,12 @@ abstract class EnlargePyramid
   val maxIterations: Int = 20
   val verbose: Boolean = false
   val style_resolution: Int = -1
+
+  def inputHref: String
+
+  def imagePrefix: String
+
+  def inputHadoop: String
 
   override def apply(log: NotebookOutput): Object = {
     TestUtil.addGlobalHandlers(log.getHttpd)
@@ -91,7 +91,7 @@ abstract class EnlargePyramid
     Thread.sleep(20000) // Await full init
 
     var tileRdd = sc.parallelize(sourcePyramid.getImageTileFns(padding).asScala)
-    WorkerRunner.mapPartitions(tileRdd, (workerLog, tiles: Iterator[_<:SerializableSupplier[ImageTile]]) => {
+    WorkerRunner.mapPartitions(tileRdd, (workerLog, tiles: Iterator[_ <: SerializableSupplier[ImageTile]]) => {
       val imageFunction = getImageEnlargingFunction(
         workerLog,
         ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt,

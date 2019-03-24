@@ -48,7 +48,7 @@ import java.util.stream.Stream;
 
 public final class ImagePyramid implements Serializable {
   public transient final static Logger logger = LoggerFactory.getLogger(ImagePyramid.class);
-
+  public static final WritableRaster NULL_RASTER = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB).getRaster();
   private int tileSize;
   private int level;
   private double aspect;
@@ -75,6 +75,23 @@ public final class ImagePyramid implements Serializable {
     ImagePyramid imagePyramid = new ImagePyramid(tileSize, PyramidUtil.getMaxLevel(image, tileSize), PyramidUtil.getAspect(image), prefix);
     imagePyramid.write(log, minLevel, image);
     return imagePyramid;
+  }
+
+  @NotNull
+  public static BufferedImage renderTile(int row, int col, ValueSampler sampler, int tileSize, int level) {
+    BufferedImage image = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_RGB);
+    WritableRaster raster = image.getRaster();
+    double mag = Math.pow(2, level);
+    for (int y = 0; y < tileSize; y++) {
+      for (int x = 0; x < tileSize; x++) {
+        for (int b = 0; b < 3; b++) {
+          double xf = (((double) x / tileSize) + col) / mag;
+          double yf = (((double) y / tileSize) + row) / mag;
+          raster.setSample(x, y, b, sampler.getValue(xf, yf, b));
+        }
+      }
+    }
+    return image;
   }
 
   public ImagePyramid write(
@@ -139,23 +156,6 @@ public final class ImagePyramid implements Serializable {
       final ValueSampler sampler
   ) {
     return renderTile(row, col, sampler, getTileSize(), getLevel());
-  }
-
-  @NotNull
-  public static BufferedImage renderTile(int row, int col, ValueSampler sampler, int tileSize, int level) {
-    BufferedImage image = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_RGB);
-    WritableRaster raster = image.getRaster();
-    double mag = Math.pow(2, level);
-    for (int y = 0; y < tileSize; y++) {
-      for (int x = 0; x < tileSize; x++) {
-        for (int b = 0; b < 3; b++) {
-          double xf = (((double) x / tileSize) + col) / mag;
-          double yf = (((double) y / tileSize) + row) / mag;
-          raster.setSample(x, y, b, sampler.getValue(xf, yf, b));
-        }
-      }
-    }
-    return image;
   }
 
   @Nonnull
@@ -241,9 +241,6 @@ public final class ImagePyramid implements Serializable {
         "        }\n" +
         "    }";
   }
-
-
-  public static final WritableRaster NULL_RASTER = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB).getRaster();
 
   @Nonnull
   public ValueSampler newSampler() {

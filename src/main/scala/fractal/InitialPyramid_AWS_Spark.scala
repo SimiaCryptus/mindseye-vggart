@@ -58,8 +58,8 @@ object InitialPyramid_AWS_Spark extends InitialPyramid_AWS with EC2SparkRunner[O
         val outputStream = new ByteArrayOutputStream()
         CudaSystem.printHeader(new PrintStream(outputStream))
         s"""CudaSettings.INSTANCE = ${JsonUtil.toJson(CudaSettings.INSTANCE)}
-            |Cuda System Header = ${outputStream.toString}
-            |""".stripMargin
+           |Cuda System Header = ${outputStream.toString}
+           |""".stripMargin
       })(ClassTag.apply(classOf[String]), spark).foreach(printStream.println(_))
       printStream.close()
     }: Unit)

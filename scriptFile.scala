@@ -17,4 +17,4 @@
  * under the License.
  */
 
-git@github.com:SimiaCryptus/mindseye-dataframes.git
+git@github.com: SimiaCryptus / mindseye - dataframes.git

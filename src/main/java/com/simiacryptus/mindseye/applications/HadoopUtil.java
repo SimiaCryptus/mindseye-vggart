@@ -164,7 +164,7 @@ public class HadoopUtil {
     try {
       return fileSystem.create(path);
     } catch (IOException e) {
-      throw new RuntimeException(String.format("Error writing %s", file),e);
+      throw new RuntimeException(String.format("Error writing %s", file), e);
     }
   }
 

@@ -104,12 +104,12 @@ public class PyramidUtil {
       return JsonUtil.toJson(tilesource);
     });
     try {
-      IOUtils.write(html, log.file("etc/" + name + ".view.html"),"UTF-8");
+      IOUtils.write(html, log.file("etc/" + name + ".view.html"), "UTF-8");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
     CharSequence name_without_etc;
-    if(name.toString().startsWith("etc/")){
+    if (name.toString().startsWith("etc/")) {
       name_without_etc = name.toString().substring(4);
     } else {
       name_without_etc = name;
@@ -181,8 +181,8 @@ public class PyramidUtil {
       final String zipName,
       Function<String, String> nameTransform
   ) throws IOException {
-    File zipFile = File.createTempFile(zipName.replace("\\.zip$",""), ".zip");
-    try(OutputStream outputStream = new FileOutputStream(zipFile)) {
+    File zipFile = File.createTempFile(zipName.replace("\\.zip$", ""), ".zip");
+    try (OutputStream outputStream = new FileOutputStream(zipFile)) {
       IOUtils.copy(new ByteArrayInputStream(HadoopUtil.getData(file)), outputStream);
     }
     try (ZipFile zip = new ZipFile(zipFile)) {

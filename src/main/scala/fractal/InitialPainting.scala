@@ -94,11 +94,9 @@ abstract class InitialPainting
     colorAlign(log, ArtistryUtil.paint_Plasma(3, 1000.0, 1.1, width, height).scale(plasma_magnitude))
   }
 
-  def plasma_magnitude: Double = 1.0
-
   def resolutionSchedule: Array[Int] = Array(100, 160, 220, 300, 400, 512)
 
-  def aspect_ratio: Double = 1.0
+  def plasma_magnitude: Double = 1.0
 
   def colorAlign
   (
@@ -117,12 +115,14 @@ abstract class InitialPainting
     contentColorTransform.forwardTransform(inputCanvas)
   }
 
-  def precision: Precision = Precision.Float
+  def aspect_ratio: Double = 1.0
 
   def trainingMinutes: Int = 10
 
   def maxIterations: Int = 20
 
   def isVerbose: Boolean = false
+
+  def precision: Precision = Precision.Float
 
 }

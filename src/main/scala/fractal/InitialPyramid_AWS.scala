@@ -24,7 +24,6 @@ import com.simiacryptus.mindseye.lang.CoreSettings
 import com.simiacryptus.mindseye.lang.cudnn.CudaMemory
 import com.simiacryptus.mindseye.models.CVPipe_VGG19
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
-import fractal.EnlargePyramid_AWS_EC2.envTuple
 
 object InitialPyramid_AWS_EC2 extends InitialPyramid_AWS with EC2Runner[Object] {
 
@@ -47,9 +46,9 @@ object InitialPyramid_AWS_EC2 extends InitialPyramid_AWS with EC2Runner[Object] 
 }
 
 abstract class InitialPyramid_AWS extends InitialPyramid(
-    initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/201903035142/etc/fractal.InitialPainting_AWS.11.png",
-    styleSources = Array("s3a://simiacryptus/photos/shutterstock_781159663.jpg")
-  ) with AWSNotebookRunner[Object] {
+  initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/201903035142/etc/fractal.InitialPainting_AWS.11.png",
+  styleSources = Array("s3a://simiacryptus/photos/shutterstock_781159663.jpg")
+) with AWSNotebookRunner[Object] {
 
   override val s3bucket: String = super.s3bucket
 
