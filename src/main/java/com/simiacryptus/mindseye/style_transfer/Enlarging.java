@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.ArtistryUtil;
 import com.simiacryptus.mindseye.applications.StyleTransfer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
@@ -98,7 +98,7 @@ public class Enlarging extends ImageScript {
 
   public void accept(@Nonnull NotebookOutput log) {
 
-    StyleTransfer.VGG19 styleTransfer = new StyleTransfer.VGG19();
+    StyleTransfer.Inception styleTransfer = new StyleTransfer.Inception();
     Precision precision = Precision.Float;
     styleTransfer.parallelLossFunctions = true;
     styleTransfer.setTiled(false);
@@ -110,7 +110,7 @@ public class Enlarging extends ImageScript {
       for (final CharSequence styleSource : styleSources) {
         log.p(log.png(ArtistryUtil.load(styleSource, startImageSize), "Style Image"));
       }
-      //.set(CVPipe_VGG19.Layer.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
+      //.set(CVPipe_Inception.Strata.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
       double contentMixingCoeff = 1e1;
       double dreamCoeff = 1e-1;
       styleTransfer(log, styleTransfer, precision,
@@ -118,17 +118,17 @@ public class Enlarging extends ImageScript {
           TestUtil.buildMap(x ->
               x.put(
                   Arrays.asList(styleSources),
-                  new StyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer>(StyleTransfer.CenteringMode.Origin)
-                      .set(CVPipe_VGG19.Layer.Layer_0, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                      .set(CVPipe_VGG19.Layer.Layer_1a, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                      .set(CVPipe_VGG19.Layer.Layer_1b, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                      .set(CVPipe_VGG19.Layer.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                  //.set(CVPipe_VGG19.Layer.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                  new StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>(StyleTransfer.CenteringMode.Origin)
+                      .set(CVPipe_Inception.Strata.Layer_0, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                      .set(CVPipe_Inception.Strata.Layer_1a, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                      .set(CVPipe_Inception.Strata.Layer_1b, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                      .set(CVPipe_Inception.Strata.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                  //.set(CVPipe_Inception.Strata.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
               )),
-          new StyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer>()
-              .set(CVPipe_VGG19.Layer.Layer_1a, contentMixingCoeff * 1e-1)
-              .set(CVPipe_VGG19.Layer.Layer_1c, contentMixingCoeff)
-              .set(CVPipe_VGG19.Layer.Layer_1d, contentMixingCoeff),
+          new StyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
+              .set(CVPipe_Inception.Strata.Layer_1a, contentMixingCoeff * 1e-1)
+              .set(CVPipe_Inception.Strata.Layer_1c, contentMixingCoeff)
+              .set(CVPipe_Inception.Strata.Layer_1d, contentMixingCoeff),
           getTrainingMinutes(), getMaxIterations());
 
     });
@@ -149,11 +149,11 @@ public class Enlarging extends ImageScript {
    */
   public Tensor styleTransfer(
       @Nonnull final NotebookOutput log,
-      final StyleTransfer.VGG19 styleTransfer,
+      final StyleTransfer.Inception styleTransfer,
       final Precision precision,
       final CharSequence contentSource,
-      final Map<List<CharSequence>, StyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer>> styles,
-      final StyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer> contentCoefficients,
+      final Map<List<CharSequence>, StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>> styles,
+      final StyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients,
       final int trainingMinutes,
       final int maxIterations
   ) {
@@ -165,7 +165,7 @@ public class Enlarging extends ImageScript {
       } else {
         canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), size, true));
       }
-      StyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new StyleTransfer.StyleSetup<>(precision,
+      StyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new StyleTransfer.StyleSetup<>(precision,
           ArtistryUtil.loadTensor(
               contentSource,
               canvasImage.getDimensions()[0],

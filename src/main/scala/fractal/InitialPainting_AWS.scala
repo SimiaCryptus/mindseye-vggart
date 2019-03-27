@@ -21,11 +21,12 @@ package fractal
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.lang.cudnn.CudaMemory
-import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
+import com.simiacryptus.sparkbook.util.LocalRunner
+import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner, NotebookRunner}
 
 object InitialPainting_AWS extends InitialPainting(
   styleSources = Seq(
-    "s3a://simiacryptus/photos/shutterstock_781159663.jpg"
+    "s3a://simiacryptus/photos/shutterstock_1060865300.jpg"
   )
 ) with EC2Runner[Object] with AWSNotebookRunner[Object] {
   override def nodeSettings: EC2NodeSettings = EC2NodeSettings.P2_XL
@@ -40,6 +41,17 @@ object InitialPainting_AWS extends InitialPainting(
     "CONVOLUTION_WORKSPACE_SIZE_LIMIT" -> (1 * 512 * CudaMemory.MiB).toString,
     "MAX_FILTER_ELEMENTS" -> (1 * 512 * CudaMemory.MiB).toString
   )
+
+  override def aspect_ratio = 0.61803398875
+
+  override def plasma_magnitude = 1e-1
+}
+
+object InitialPainting_Local extends InitialPainting(
+  styleSources = Seq(
+    "s3a://simiacryptus/photos/shutterstock_781159663.jpg"
+  )
+) with LocalRunner[Object] with NotebookRunner[Object] {
 
   override def aspect_ratio = 0.61803398875
 

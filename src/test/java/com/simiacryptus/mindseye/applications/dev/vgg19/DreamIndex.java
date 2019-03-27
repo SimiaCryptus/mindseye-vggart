@@ -68,7 +68,7 @@ public class DreamIndex extends ArtistryAppBase_VGG19 {
       }
       for (final CVPipe_VGG19.Layer layer : CVPipe_VGG19.Layer.values()) {
         Tensor canvas = Tensor.fromRGB(TextureGeneration.initCanvas(new AtomicInteger(256)));
-        log.h2("Layer: " + layer);
+        log.h2("Strata: " + layer);
         Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer>> textureStyle = new HashMap<>();
         TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer> tStyleCoefficients = new TextureGeneration.StyleCoefficients<>(TextureGeneration.CenteringMode.Origin);
         tStyleCoefficients.set(layer, 1e0, 1e0);

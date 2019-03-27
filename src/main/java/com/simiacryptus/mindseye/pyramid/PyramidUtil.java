@@ -25,7 +25,7 @@ import com.simiacryptus.mindseye.applications.ImageArtUtil;
 import com.simiacryptus.mindseye.applications.SegmentedStyleTransfer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
@@ -244,8 +244,8 @@ public class PyramidUtil {
             width,
             height}
     );
-    SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer = getStyleTransfer();
-    SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = getStyleSetup(Precision.Float, style_resolution, styleSources);
+    SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> styleTransfer = getStyleTransfer();
+    SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = getStyleSetup(Precision.Float, style_resolution, styleSources);
     ImageArtUtil.StyleTransformer transformer = new ImageArtUtil.StyleTransformer(
         new ImageArtUtil.ImageArtOpParams(
             log,
@@ -283,8 +283,8 @@ public class PyramidUtil {
       final int magLevels,
       final int padding,
       final ImageArtUtil.TileLayout tileLayout,
-      final SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer,
-      final SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup,
+      final SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> styleTransfer,
+      final SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup,
       final ImageArtUtil.StyleTransformer transformer
   ) {
     final AtomicInteger tile = new AtomicInteger();
@@ -344,13 +344,13 @@ public class PyramidUtil {
   }
 
   @Nonnull
-  public static SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> getStyleTransfer() {
+  public static SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> getStyleTransfer() {
     return getStyleTransfer(1);
   }
 
   @Nonnull
-  public static SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> getStyleTransfer(final int imageClusters) {
-    SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer = new SegmentedStyleTransfer.VGG19();
+  public static SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> getStyleTransfer(final int imageClusters) {
+    SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> styleTransfer = new SegmentedStyleTransfer.Inception();
     styleTransfer.setStyle_masks(imageClusters);
     styleTransfer.setStyle_textureClusters(imageClusters);
     styleTransfer.setContent_colorClusters(imageClusters);
@@ -362,14 +362,14 @@ public class PyramidUtil {
   }
 
   @Nonnull
-  public static SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> getStyleSetup(
+  public static SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> getStyleSetup(
       final Precision precision, final int style_resolution, final CharSequence... styleSources
   ) {
-    SegmentedStyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer> contentCoefficients = new SegmentedStyleTransfer.ContentCoefficients<>();
-    contentCoefficients.set(CVPipe_VGG19.Layer.Layer_0, 1e-1);
-    Map<CVPipe_VGG19.Layer, Double> styleLayers = new HashMap<>();
-    styleLayers.put(CVPipe_VGG19.Layer.Layer_1a, 1e0);
-    styleLayers.put(CVPipe_VGG19.Layer.Layer_1b, 1e0);
+    SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients = new SegmentedStyleTransfer.ContentCoefficients<>();
+    contentCoefficients.set(CVPipe_Inception.Strata.Layer_1, 1e-1);
+    Map<CVPipe_Inception.Strata, Double> styleLayers = new HashMap<>();
+    styleLayers.put(CVPipe_Inception.Strata.Layer_2, 1e0);
+    styleLayers.put(CVPipe_Inception.Strata.Layer_3a, 1e0);
     return new SegmentedStyleTransfer.StyleSetup<>(
         precision,
         null,

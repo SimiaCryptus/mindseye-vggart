@@ -24,7 +24,7 @@ import com.simiacryptus.mindseye.applications.ArtistryUtil;
 import com.simiacryptus.mindseye.applications.ColorTransfer;
 import com.simiacryptus.mindseye.applications.ImageArtUtil;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
@@ -80,8 +80,8 @@ public class ColorEnhancementSurvey extends ImageScript {
 
 
         log.subreport("Color_Space_Enhancement_1", sublog -> {
-          ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
-          coefficients.set(CVPipe_VGG19.Layer.Layer_1a, 1e0, 1e0, 1e-1);
+          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
+          coefficients.set(CVPipe_Inception.Strata.Layer_1a, 1e0, 1e0, 1e-1);
           return ImageArtUtil.getColorStyleEnhance(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               precision,
@@ -93,8 +93,8 @@ public class ColorEnhancementSurvey extends ImageScript {
         });
 
         log.subreport("Color_Space_Enhancement_2", sublog -> {
-          ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
-          coefficients.set(CVPipe_VGG19.Layer.Layer_1a, 1e0, 0, 1e-1);
+          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
+          coefficients.set(CVPipe_Inception.Strata.Layer_1a, 1e0, 0, 1e-1);
           return ImageArtUtil.getColorStyleEnhance(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               precision,
@@ -106,8 +106,8 @@ public class ColorEnhancementSurvey extends ImageScript {
         });
 
         log.subreport("Color_Space_Enhancement_3", sublog -> {
-          ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
-          coefficients.set(CVPipe_VGG19.Layer.Layer_1a, 1e0, 0, -1e-1);
+          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
+          coefficients.set(CVPipe_Inception.Strata.Layer_1a, 1e0, 0, -1e-1);
           return ImageArtUtil.getColorStyleEnhance(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               precision,
@@ -119,8 +119,8 @@ public class ColorEnhancementSurvey extends ImageScript {
         });
 
         log.subreport("Color_Space_Enhancement_4", sublog -> {
-          ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
-          coefficients.set(CVPipe_VGG19.Layer.Layer_1a, 1e0, 1e0, 1e1);
+          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
+          coefficients.set(CVPipe_Inception.Strata.Layer_1a, 1e0, 1e0, 1e1);
           return ImageArtUtil.getColorStyleEnhance(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               precision,
@@ -132,8 +132,8 @@ public class ColorEnhancementSurvey extends ImageScript {
         });
 
         log.subreport("Color_Space_Enhancement_5", sublog -> {
-          ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
-          coefficients.set(CVPipe_VGG19.Layer.Layer_1a, 1e0, 0, 1e1);
+          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
+          coefficients.set(CVPipe_Inception.Strata.Layer_1a, 1e0, 0, 1e1);
           return ImageArtUtil.getColorStyleEnhance(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               precision,
@@ -145,8 +145,8 @@ public class ColorEnhancementSurvey extends ImageScript {
         });
 
         log.subreport("Color_Space_Enhancement_6", sublog -> {
-          ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
-          coefficients.set(CVPipe_VGG19.Layer.Layer_1a, 1e0, 0, -1e1);
+          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
+          coefficients.set(CVPipe_Inception.Strata.Layer_1a, 1e0, 0, -1e1);
           return ImageArtUtil.getColorStyleEnhance(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               precision,
@@ -158,8 +158,8 @@ public class ColorEnhancementSurvey extends ImageScript {
         });
 
         log.subreport("Color_Space_Enhancement_7", sublog -> {
-          ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
-          coefficients.set(CVPipe_VGG19.Layer.Layer_1a, 1e0, 1e0, -1e-1);
+          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
+          coefficients.set(CVPipe_Inception.Strata.Layer_1a, 1e0, 1e0, -1e-1);
           return ImageArtUtil.getColorStyleEnhance(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               precision,

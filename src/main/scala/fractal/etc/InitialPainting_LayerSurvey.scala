@@ -93,7 +93,7 @@ abstract class InitialPainting_LayerSurvey(
       val reportName = layers.map((x: CVPipe_VGG19.Layer) => x.name).reduce(_ + "_" + _)
       log.h1(reportName)
       val painting = log.subreport(reportName, (output: NotebookOutput) => paint(output, colorAligned,
-        r => getStyleSetup_TextureGeneration(precision, styleSources, style_resolution)).toImage)
+        r => getStyleSetup_TextureGeneration2(precision, styleSources, style_resolution)).toImage)
       log.p(log.png(painting, reportName))
     }
     null

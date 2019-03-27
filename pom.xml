@@ -104,6 +104,11 @@
         </dependency>
         <dependency>
             <groupId>com.simiacryptus</groupId>
+            <artifactId>mindseye-tensorflow</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.simiacryptus</groupId>
             <artifactId>mindseye-research</artifactId>
         </dependency>
         <dependency>

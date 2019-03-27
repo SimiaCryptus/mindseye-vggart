@@ -26,7 +26,8 @@ import com.simiacryptus.mindseye.applications.ImageArtUtil;
 import com.simiacryptus.mindseye.applications.TextureGeneration;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
@@ -76,7 +77,7 @@ public abstract class HiDef extends ImageScript {
 
   public void accept(@Nonnull NotebookOutput log) {
 
-    TextureGeneration.VGG19 textureGeneration = new TextureGeneration.VGG19();
+    TextureGeneration.Inception textureGeneration = new TextureGeneration.Inception();
     Precision precision = Precision.Float;
     textureGeneration.parallelLossFunctions = true;
     textureGeneration.setTiling(3);
@@ -84,10 +85,10 @@ public abstract class HiDef extends ImageScript {
     for (final CharSequence styleSource : styleSources) {
       log.p(log.png(ArtistryUtil.load(styleSource, resolution), "Style Image"));
     }
-    final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer>> styles = TestUtil.buildMap(x -> {
-      TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients = new TextureGeneration.StyleCoefficients<>(
+    final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata>> styles = TestUtil.buildMap(x -> {
+      TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients = new TextureGeneration.StyleCoefficients<>(
           TextureGeneration.CenteringMode.Origin);
-      for (final CVPipe_VGG19.Layer layer : getLayers()) {
+      for (final CVPipe_Inception.Strata layer : getLayers()) {
         styleCoefficients.set(
             layer,
             coeff_style_mean,
@@ -104,19 +105,19 @@ public abstract class HiDef extends ImageScript {
     final AtomicReference<Tensor> canvas = new AtomicReference<>(ArtistryUtil.paint_Plasma(3, 1000.0, 1.1, resolution));
 
     canvas.set(log.subreport("Color_Space_Analog", sublog -> {
-      ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> contentColorTransform = new ColorTransfer.VGG19() {
+      ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception() {
       }.setOrtho(false);
-      //colorSyncContentCoeffMap.set(CVPipe_VGG19.Layer.Layer_1a, 1e-1);
+      //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
       int colorSyncResolution = 600;
       Tensor resizedCanvas = Tensor.fromRGB(TestUtil.resize(canvas.get().toImage(), colorSyncResolution));
-      final ColorTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = ImageArtUtil.getColorAnalogSetup(
+      final ColorTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = ImageArtUtil.getColorAnalogSetup(
           Arrays.asList(styleSources),
           precision,
           resizedCanvas,
           ImageArtUtil.getStyleImages(
               colorSyncResolution, styleSources
           ),
-          CVPipe_VGG19.Layer.Layer_0
+          CVPipe_Inception.Strata.Layer_1
       );
       contentColorTransform.transfer(
           sublog,
@@ -130,7 +131,7 @@ public abstract class HiDef extends ImageScript {
       return contentColorTransform.forwardTransform(canvas.get());
     }));
 
-    TextureGeneration.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new TextureGeneration.StyleSetup<>(
+    TextureGeneration.StyleSetup<CVPipe_Inception.Strata> styleSetup = new TextureGeneration.StyleSetup<>(
         precision,
         TestUtil.buildMap(y -> y.putAll(
             styles.keySet().stream().flatMap(
@@ -157,6 +158,6 @@ public abstract class HiDef extends ImageScript {
   }
 
   @Nonnull
-  public abstract List<CVPipe_VGG19.Layer> getLayers();
+  public abstract List<CVPipe_Inception.Strata> getLayers();
 
 }

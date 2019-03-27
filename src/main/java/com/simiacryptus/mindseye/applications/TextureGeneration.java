@@ -26,10 +26,7 @@ import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
-import com.simiacryptus.mindseye.models.CVPipe;
-import com.simiacryptus.mindseye.models.CVPipe_VGG16;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
-import com.simiacryptus.mindseye.models.LayerEnum;
+import com.simiacryptus.mindseye.models.*;
 import com.simiacryptus.mindseye.network.DAGNode;
 import com.simiacryptus.mindseye.network.InnerNode;
 import com.simiacryptus.mindseye.network.PipelineNetwork;
@@ -63,44 +60,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * This notebook implements the Style Transfer protocol outlined in <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a>
- *
- * @param <T> the type parameter
- * @param <U> the type parameter
- */
 public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe<T>> {
 
   private static final Logger logger = LoggerFactory.getLogger(TextureGeneration.class);
-  /**
-   * The Parallel loss functions.
-   */
   public boolean parallelLossFunctions = true;
   private int tiling = 0;
 
-  /**
-   * Instantiates a new Texture generation.
-   */
   public TextureGeneration() {
     tiling = 3;
   }
 
-  /**
-   * Generate buffered png.
-   *
-   * @param log             the log
-   * @param styleTransfer   the style transfer
-   * @param precision       the precision
-   * @param imageSize       the png size
-   * @param growthFactor    the growth factor
-   * @param styles          the styles
-   * @param trainingMinutes the training minutes
-   * @param canvasImage     the canvas png
-   * @param phases          the phases
-   * @param maxIterations   the max iterations
-   * @param styleSize       the style size
-   * @return the buffered png
-   */
   public static Tensor optimize(
       @Nonnull final NotebookOutput log,
       final VGG19 styleTransfer,
@@ -161,12 +130,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     return canvasImage;
   }
 
-  /**
-   * Init canvas buffered png.
-   *
-   * @param imageSize the png size
-   * @return the buffered png
-   */
   @Nonnull
   public static BufferedImage initCanvas(final AtomicInteger imageSize) {
     return ArtistryUtil.paint_Plasma(3, 100.0, 1.4, imageSize.get()).toImage();
@@ -217,16 +180,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     }, workingImage);
   }
 
-  /**
-   * Train.
-   *
-   * @param log             the log
-   * @param canvas          the canvas
-   * @param network         the network
-   * @param trainingMinutes the training minutes
-   * @param maxIterations   the max iterations
-   * @param precision
-   */
   public static void train(
       @Nonnull final NotebookOutput log,
       final Tensor canvas,
@@ -271,27 +224,11 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     });
   }
 
-  /**
-   * Gets trainable.
-   *
-   * @param network the network
-   * @param canvas  the canvas
-   * @return the trainable
-   */
   @Nonnull
   public static Trainable getTrainable(final PipelineNetwork network, final Tensor canvas) {
     return new ArrayTrainable(network, 1).setVerbose(true).setMask(true).setData(Arrays.asList(new Tensor[][]{{canvas}}));
   }
 
-  /**
-   * Style transfer buffered png.
-   *
-   * @param canvasImage     the canvas png
-   * @param styleParameters the style parameters
-   * @param trainingMinutes the training minutes
-   * @param measureStyle    the measureStyle style
-   * @return the buffered png
-   */
   public Tensor optimize(
       final Tensor canvasImage,
       final StyleSetup<T> styleParameters,
@@ -318,17 +255,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     return optimize(log, fitnessNetwork(measureStyle), canvasImage, trainingMinutes, maxIterations, verbose, precision, tiling);
   }
 
-  /**
-   * Gets style components.
-   *
-   * @param node          the node
-   * @param network       the network
-   * @param styleParams   the style params
-   * @param mean          the mean
-   * @param covariance    the covariance
-   * @param centeringMode the centering mode
-   * @return the style components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getStyleComponents(
       final DAGNode node,
@@ -392,12 +318,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     return styleComponents;
   }
 
-  /**
-   * Measure style neural setup.
-   *
-   * @param style the style
-   * @return the neural setup
-   */
   public NeuralSetup<T> measureStyle(final StyleSetup<T> style) {
     NeuralSetup<T> self = new NeuralSetup<>(style);
     List<CharSequence> keyList = style.styleImages.keySet().stream().collect(Collectors.toList());
@@ -476,13 +396,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     return self;
   }
 
-  /**
-   * Gets fitness components.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @return the fitness components
-   */
   @Nonnull
   public List<Tuple2<Double, DAGNode>> getFitnessComponents(NeuralSetup<T> setup, final Map<T, DAGNode> nodeMap) {
     List<Tuple2<Double, DAGNode>> functions = new ArrayList<>();
@@ -491,13 +404,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     return functions;
   }
 
-  /**
-   * Gets style components.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @return the style components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getStyleComponents(NeuralSetup<T> setup, final Map<T, DAGNode> nodeMap) {
     ArrayList<Tuple2<Double, DAGNode>> styleComponents = new ArrayList<>();
@@ -529,12 +435,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     return styleComponents;
   }
 
-  /**
-   * Fitness function pipeline network.
-   *
-   * @param setup the setup
-   * @return the pipeline network
-   */
   @Nonnull
   public PipelineNetwork fitnessNetwork(NeuralSetup setup) {
     PipelineNetwork pipelineNetwork = getInstance().getNetwork();
@@ -547,76 +447,32 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     return network;
   }
 
-  /**
-   * Get key types t [ ].
-   *
-   * @return the t [ ]
-   */
   @Nonnull
   public abstract T[] getLayerTypes();
 
-  /**
-   * Gets instance.
-   *
-   * @return the instance
-   */
   public abstract U getInstance();
 
-  /**
-   * Measure style pipeline network.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @param network the network
-   * @return the pipeline network
-   */
   public PipelineNetwork buildNetwork(NeuralSetup<T> setup, final Map<T, DAGNode> nodeMap, final PipelineNetwork network) {
     List<Tuple2<Double, DAGNode>> functions = getFitnessComponents(setup, nodeMap);
     ArtistryUtil.reduce(network, functions, parallelLossFunctions);
     return network;
   }
 
-  /**
-   * Is tiled boolean.
-   *
-   * @return the boolean
-   */
   public int getTiling() {
     return tiling;
   }
 
-  /**
-   * Sets tiled.
-   *
-   * @param tiling the tiled
-   * @return the tiled
-   */
   public TextureGeneration<T, U> setTiling(int tiling) {
     this.tiling = tiling;
     return this;
   }
 
-  /**
-   * The enum Centering mode.
-   */
   public enum CenteringMode {
-    /**
-     * Dynamic centering mode.
-     */
     Dynamic,
-    /**
-     * Static centering mode.
-     */
     Static,
-    /**
-     * Origin centering mode.
-     */
     Origin
   }
 
-  /**
-   * The type Vgg 16.
-   */
   public static class VGG16 extends TextureGeneration<CVPipe_VGG16.Layer, CVPipe_VGG16> {
 
     public CVPipe_VGG16 getInstance() {
@@ -630,9 +486,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
 
   }
 
-  /**
-   * The type Vgg 19.
-   */
   public static class VGG19 extends TextureGeneration<CVPipe_VGG19.Layer, CVPipe_VGG19> {
 
     public CVPipe_VGG19 getInstance() {
@@ -644,32 +497,24 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
       return CVPipe_VGG19.Layer.values();
     }
 
+  }public static class Inception extends TextureGeneration<CVPipe_Inception.Strata, CVPipe_Inception> {
+
+    public CVPipe_Inception getInstance() {
+      return CVPipe_Inception.INSTANCE;
+    }
+
+    @Nonnull
+    public CVPipe_Inception.Strata[] getLayerTypes() {
+      return CVPipe_Inception.Strata.values();
+    }
+
   }
 
-  /**
-   * The type Layer style params.
-   */
   public static class LayerStyleParams {
-    /**
-     * The Coeff style mean 0.
-     */
     public final double mean;
-    /**
-     * The Coeff style bandCovariance 0.
-     */
     public final double cov;
-    /**
-     * The Enhance.
-     */
     public final double enhance;
 
-    /**
-     * Instantiates a new Layer style params.
-     *
-     * @param mean    the mean
-     * @param cov     the bandCovariance
-     * @param enhance the enhance
-     */
     public LayerStyleParams(final double mean, final double cov, final double enhance) {
       this.mean = mean;
       this.cov = cov;
@@ -677,33 +522,12 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     }
   }
 
-  /**
-   * The type Style setup.
-   *
-   * @param <T> the type parameter
-   */
   public static class StyleSetup<T extends LayerEnum<T>> {
-    /**
-     * The Precision.
-     */
     public final Precision precision;
-    /**
-     * The Style png.
-     */
     public final transient Map<CharSequence, BufferedImage> styleImages;
-    /**
-     * The Styles.
-     */
     public final Map<List<CharSequence>, StyleCoefficients<T>> styles;
 
 
-    /**
-     * Instantiates a new Style setup.
-     *
-     * @param precision   the precision
-     * @param styleImages the style png
-     * @param styles      the styles
-     */
     public StyleSetup(
         final Precision precision,
         final Map<CharSequence, BufferedImage> styleImages,
@@ -716,50 +540,19 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
 
   }
 
-  /**
-   * The type Style coefficients.
-   *
-   * @param <T> the type parameter
-   */
   public static class StyleCoefficients<T extends LayerEnum<T>> {
-    /**
-     * The Dynamic center.
-     */
     public final CenteringMode centeringMode;
-    /**
-     * The Params.
-     */
     public final Map<T, LayerStyleParams> params = new HashMap<>();
 
 
-    /**
-     * Instantiates a new Style coefficients.
-     *
-     * @param centeringMode the dynamic center
-     */
     public StyleCoefficients(final CenteringMode centeringMode) {
       this.centeringMode = centeringMode;
     }
 
-    /**
-     * Set style coefficients.
-     *
-     * @param layerType        the key type
-     * @param coeff_style_mean the coeff style mean
-     * @return the style coefficients
-     */
     public StyleCoefficients set(final T layerType, final double coeff_style_mean) {
       return set(layerType, coeff_style_mean, 0);
     }
 
-    /**
-     * Set style coefficients.
-     *
-     * @param layerType        the key type
-     * @param coeff_style_mean the coeff style mean
-     * @param coeff_style_cov  the coeff style bandCovariance
-     * @return the style coefficients
-     */
     public StyleCoefficients<T> set(final T layerType, final double coeff_style_mean, final double coeff_style_cov) {
       return set(
           layerType,
@@ -769,15 +562,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
       );
     }
 
-    /**
-     * Set style coefficients.
-     *
-     * @param layerType        the key type
-     * @param coeff_style_mean the coeff style mean
-     * @param coeff_style_cov  the coeff style bandCovariance
-     * @param enhance          the enhance
-     * @return the style coefficients
-     */
     public StyleCoefficients<T> set(final T layerType, final double coeff_style_mean, final double coeff_style_cov, final double enhance) {
       params.put(layerType, new LayerStyleParams(coeff_style_mean, coeff_style_cov, enhance));
       return this;
@@ -785,43 +569,15 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
 
   }
 
-  /**
-   * The type Content target.
-   *
-   * @param <T> the type parameter
-   */
   public static class ContentTarget<T extends LayerEnum<T>> {
-    /**
-     * The Content.
-     */
     public Map<T, Tensor> content = new HashMap<>();
   }
 
-  /**
-   * The type Style target.
-   *
-   * @param <T> the type parameter
-   */
   public static class StyleTarget<T extends LayerEnum<T>> {
-    /**
-     * The Cov.
-     */
     public Map<T, Tensor> cov0 = new HashMap<>();
-    /**
-     * The Cov.
-     */
     public Map<T, Tensor> cov1 = new HashMap<>();
-    /**
-     * The Mean.
-     */
     public Map<T, Tensor> mean = new HashMap<>();
 
-    /**
-     * Add style target.
-     *
-     * @param right the right
-     * @return the style target
-     */
     public StyleTarget<T> add(StyleTarget<T> right) {
       StyleTarget<T> newStyle = new StyleTarget<>();
       Stream.concat(mean.keySet().stream(), right.mean.keySet().stream()).distinct().forEach(layer -> {
@@ -848,12 +604,6 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
       return newStyle;
     }
 
-    /**
-     * Scale style target.
-     *
-     * @param value the value
-     * @return the style target
-     */
     public StyleTarget<T> scale(double value) {
       StyleTarget<T> newStyle = new StyleTarget<>();
       mean.keySet().stream().distinct().forEach(layer -> {
@@ -870,29 +620,13 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
 
   }
 
-  /**
-   * The type Neural setup.
-   *
-   * @param <T> the type parameter
-   */
   public static class NeuralSetup<T extends LayerEnum<T>> {
 
-    /**
-     * The Style parameters.
-     */
     public final StyleSetup<T> style;
 
-    /**
-     * The Style targets.
-     */
     public Map<CharSequence, StyleTarget<T>> styleTargets = new HashMap<>();
 
 
-    /**
-     * Instantiates a new Neural setup.
-     *
-     * @param style the style
-     */
     public NeuralSetup(final StyleSetup<T> style) {
       this.style = style;
     }

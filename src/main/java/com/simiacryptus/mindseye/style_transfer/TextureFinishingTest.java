@@ -25,7 +25,7 @@ import com.simiacryptus.mindseye.applications.ImageArtUtil;
 import com.simiacryptus.mindseye.applications.SegmentedStyleTransfer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
@@ -63,7 +63,7 @@ public class TextureFinishingTest extends ImageScript {
       return JsonUtil.toJson(TextureFinishingTest.this);
     });
 
-    SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer = new SegmentedStyleTransfer.VGG19();
+    SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> styleTransfer = new SegmentedStyleTransfer.Inception();
     Precision precision = Precision.Float;
     int imageClusters = 1;
     styleTransfer.setStyle_masks(imageClusters);
@@ -90,8 +90,8 @@ public class TextureFinishingTest extends ImageScript {
         TestUtil.geometricStream(canvasImage.get().getDimensions()[0], resolution, steps + 1).get().skip(1).forEach(res -> {
           canvasImage.set(Tensor.fromRGB(TestUtil.resize(canvasImage.get().toImage(), (int) res, true)));
           canvasImage.set(log.subreport(String.format("Phase_%s", index.getAndIncrement()), sublog -> {
-            SegmentedStyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer> contentCoefficients = new SegmentedStyleTransfer.ContentCoefficients<>();
-            contentCoefficients.set(CVPipe_VGG19.Layer.Layer_0, 1e-1);
+            SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients = new SegmentedStyleTransfer.ContentCoefficients<>();
+            contentCoefficients.set(CVPipe_Inception.Strata.Layer_0, 1e-1);
             int padding = 20;
             final ImageArtUtil.ImageArtOpParams imageArtOpParams = new ImageArtUtil.ImageArtOpParams(
                 sublog,

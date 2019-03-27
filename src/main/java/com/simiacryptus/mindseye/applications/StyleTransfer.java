@@ -27,10 +27,7 @@ import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
-import com.simiacryptus.mindseye.models.CVPipe;
-import com.simiacryptus.mindseye.models.CVPipe_VGG16;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
-import com.simiacryptus.mindseye.models.LayerEnum;
+import com.simiacryptus.mindseye.models.*;
 import com.simiacryptus.mindseye.network.DAGNetwork;
 import com.simiacryptus.mindseye.network.DAGNode;
 import com.simiacryptus.mindseye.network.InnerNode;
@@ -604,6 +601,18 @@ public abstract class StyleTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     }
 
   }
+  public static class Inception extends StyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> {
+
+    public CVPipe_Inception getInstance() {
+      return CVPipe_Inception.INSTANCE;
+    }
+
+    @Nonnull
+    public CVPipe_Inception.Strata[] getLayerTypes() {
+      return CVPipe_Inception.Strata.values();
+    }
+
+  }
 
   /**
    * The type Content coefficients.
@@ -631,7 +640,7 @@ public abstract class StyleTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
   }
 
   /**
-   * The type Layer style params.
+   * The type Strata style params.
    */
   public static class LayerStyleParams {
     /**
@@ -645,7 +654,7 @@ public abstract class StyleTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     private final double enhance;
 
     /**
-     * Instantiates a new Layer style params.
+     * Instantiates a new Strata style params.
      *
      * @param mean    the mean
      * @param cov     the bandCovariance

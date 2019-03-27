@@ -25,7 +25,7 @@ import com.simiacryptus.lang.SerializableFunction
 import com.simiacryptus.mindseye.applications._
 import com.simiacryptus.mindseye.lang.Tensor
 import com.simiacryptus.mindseye.lang.cudnn.Precision
-import com.simiacryptus.mindseye.models.CVPipe_VGG19
+import com.simiacryptus.mindseye.models.CVPipe_Inception
 import com.simiacryptus.mindseye.test.TestUtil
 import com.simiacryptus.notebook.{MarkdownNotebookOutput, NotebookOutput}
 import com.simiacryptus.sparkbook.util.Java8Util._
@@ -52,7 +52,7 @@ abstract class InitialPainting
     val colorAligned: Tensor = log.subreport("Init", (output: NotebookOutput) => init(output))
     log.p(log.png(colorAligned.toImage, "Seed"))
     val painting = log.subreport("Paint", (output: NotebookOutput) =>
-      paint(output, colorAligned, r => getStyleSetup_TextureGeneration(precision, styleSources, style_resolution)).toImage)
+      paint(output, colorAligned, r => getStyleSetup_TextureGeneration2(precision, styleSources, style_resolution)).toImage)
     log.p(log.png(painting, "painting"))
     null
   }
@@ -63,11 +63,11 @@ abstract class InitialPainting
   (
     log: NotebookOutput,
     inputCanvas: Tensor,
-    styleSetup: Int => TextureGeneration.StyleSetup[CVPipe_VGG19.Layer]
+    styleSetup: Int => TextureGeneration.StyleSetup[CVPipe_Inception.Strata]
   ): Tensor = {
     val canvasCopy: AtomicReference[Tensor] = new AtomicReference[Tensor](inputCanvas.copy)
     for (width <- resolutionSchedule) {
-      val textureGeneration: TextureGeneration.VGG19 = new TextureGeneration.VGG19
+      val textureGeneration = new TextureGeneration.Inception
       textureGeneration.parallelLossFunctions = true
       val height = (aspect_ratio * width).toInt
       val tiling = Math.max(Math.min((2.0 * Math.pow(600, 2)) / (width * height), 9), 2).toInt
@@ -103,13 +103,13 @@ abstract class InitialPainting
     log: NotebookOutput,
     inputCanvas: Tensor
   ): Tensor = {
-    val contentColorTransform: ColorTransfer[CVPipe_VGG19.Layer, CVPipe_VGG19] = new ColorTransfer.VGG19() {}.setOrtho(false).setUnit(true)
+    val contentColorTransform: ColorTransfer[CVPipe_Inception.Strata, CVPipe_Inception] = new ColorTransfer.Inception() {}.setOrtho(false).setUnit(true)
     val width = 600
     val height = (aspect_ratio * width).toInt
     val resizedCanvas: Tensor = Tensor.fromRGB(TestUtil.resize(inputCanvas.toImage, width, height))
-    val empty = new java.util.HashMap[CharSequence, ColorTransfer[CVPipe_VGG19.Layer, CVPipe_VGG19]]
-    val styleImages = ImageArtUtil.getStyleImages(styleSources.toArray, empty, width, height)
-    val styleSetup = ImageArtUtil.getColorAnalogSetup(styleSources.toList, precision, resizedCanvas, styleImages, CVPipe_VGG19.Layer.Layer_0)
+    val empty = new java.util.HashMap[CharSequence, ColorTransfer[CVPipe_Inception.Strata, CVPipe_Inception]]
+    val styleImages = ImageArtUtil.getStyleImages2(styleSources.toArray, empty, width, height)
+    val styleSetup = ImageArtUtil.getColorAnalogSetup(styleSources.toList, precision, resizedCanvas, styleImages, CVPipe_Inception.Strata.Layer_1)
     val styleFingerprint = contentColorTransform.measureStyle(styleSetup)
     contentColorTransform.transfer(log, resizedCanvas, styleSetup, trainingMinutes, styleFingerprint, maxIterations, isVerbose)
     contentColorTransform.forwardTransform(inputCanvas)

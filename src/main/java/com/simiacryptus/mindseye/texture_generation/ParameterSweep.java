@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.ArtistryUtil;
 import com.simiacryptus.mindseye.applications.TextureGeneration;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
@@ -93,7 +93,7 @@ public class ParameterSweep extends ImageScript {
 
   public void accept(@Nonnull NotebookOutput log) {
 
-    TextureGeneration.VGG19 textureGeneration = new TextureGeneration.VGG19();
+    TextureGeneration.Inception textureGeneration = new TextureGeneration.Inception();
     Precision precision = Precision.Float;
     textureGeneration.parallelLossFunctions = true;
     textureGeneration.setTiling(3);
@@ -104,42 +104,42 @@ public class ParameterSweep extends ImageScript {
       for (final CharSequence styleSource : sources) {
         log.p(log.png(ArtistryUtil.load(styleSource, startImageSize), "Style Image"));
       }
-      //.set(CVPipe_VGG19.Layer.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
+      //.set(CVPipe_Inception.Strata.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
       BufferedImage[] imgs = dreamCoeffStream().mapToObj(x -> x).map(dreamCoeff -> {
-        final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer>> styles = TestUtil.buildMap(x -> {
+        final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata>> styles = TestUtil.buildMap(x -> {
           x.put(
               sources,
-              new TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer>(
+              new TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata>(
                   TextureGeneration.CenteringMode.Origin)
                   .set(
-                      CVPipe_VGG19.Layer.Layer_0,
+                      CVPipe_Inception.Strata.Layer_0,
                       coeff_style_mean,
                       coeff_style_cov,
                       dreamCoeff
                   )
                   .set(
-                      CVPipe_VGG19.Layer.Layer_1a,
+                      CVPipe_Inception.Strata.Layer_1a,
                       coeff_style_mean,
                       coeff_style_cov,
                       dreamCoeff
                   )
                   .set(
-                      CVPipe_VGG19.Layer.Layer_1b,
+                      CVPipe_Inception.Strata.Layer_1b,
                       coeff_style_mean,
                       coeff_style_cov,
                       dreamCoeff
                   )
                   .set(
-                      CVPipe_VGG19.Layer.Layer_1c,
+                      CVPipe_Inception.Strata.Layer_1c,
                       coeff_style_mean,
                       coeff_style_cov,
                       dreamCoeff
                   )
-              //.set(CVPipe_VGG19.Layer.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
+              //.set(CVPipe_Inception.Strata.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
           );
         });
         Tensor canvasImage = Tensor.fromRGB(init(resolution));
-        TextureGeneration.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new TextureGeneration.StyleSetup<>(
+        TextureGeneration.StyleSetup<CVPipe_Inception.Strata> styleSetup = new TextureGeneration.StyleSetup<>(
             precision,
             TestUtil.buildMap(y -> y.putAll(styles.keySet().stream().flatMap(x -> x.stream()).collect(
                 Collectors.toMap(

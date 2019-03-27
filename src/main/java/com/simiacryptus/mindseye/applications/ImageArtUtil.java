@@ -23,7 +23,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.java.ImgTileAssemblyLayer;
 import com.simiacryptus.mindseye.layers.java.ImgTileSelectLayer;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
@@ -51,21 +51,47 @@ public class ImageArtUtil {
     return image;
   }
 
+//  @Nonnull
+//  public static ColorTransfer.StyleSetup<CVPipe_Inception.Strata> getColorAnalogSetup(
+//      final List<CharSequence> styleKeys,
+//      final Precision precision,
+//      final Tensor canvasBufferedImage,
+//      final Map<CharSequence, Tensor> styleImages,
+//      final CVPipe_Inception.Strata layer
+//  ) {
+//    return new ColorTransfer.StyleSetup<CVPipe_Inception.Strata>(
+//        precision,
+//        canvasBufferedImage,
+//        new ColorTransfer.ContentCoefficients<>(),
+//        styleImages,
+//        TestUtil.buildMap(map -> {
+//          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients =
+//              new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
+//          styleCoefficients.set(
+//              layer,
+//              1e0,
+//              1e0,
+//              (double) 0
+//          );
+//          map.put(styleKeys, styleCoefficients);
+//        })
+//    );
+//  }
   @Nonnull
-  public static ColorTransfer.StyleSetup<CVPipe_VGG19.Layer> getColorAnalogSetup(
+  public static ColorTransfer.StyleSetup<CVPipe_Inception.Strata> getColorAnalogSetup(
       final List<CharSequence> styleKeys,
       final Precision precision,
       final Tensor canvasBufferedImage,
       final Map<CharSequence, Tensor> styleImages,
-      final CVPipe_VGG19.Layer layer
+      final CVPipe_Inception.Strata layer
   ) {
-    return new ColorTransfer.StyleSetup<CVPipe_VGG19.Layer>(
+    return new ColorTransfer.StyleSetup<CVPipe_Inception.Strata>(
         precision,
         canvasBufferedImage,
         new ColorTransfer.ContentCoefficients<>(),
         styleImages,
         TestUtil.buildMap(map -> {
-          ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients =
+          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients =
               new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
           styleCoefficients.set(
               layer,
@@ -88,7 +114,7 @@ public class ImageArtUtil {
 
   @Nonnull
   public static Map<CharSequence, Tensor> getStyleImages(
-      final Map<CharSequence, ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19>> styleColorTransforms,
+      final Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms,
       final int resolution,
       final CharSequence... styleSources
   ) {
@@ -102,7 +128,19 @@ public class ImageArtUtil {
   @Nonnull
   public static Map<CharSequence, Tensor> getStyleImages(
       final CharSequence[] styleSources,
-      final Map<CharSequence, ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19>> styleColorTransforms,
+      final Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms,
+      final int resolutionX, final int resolutionY
+  ) {
+    return TestUtil.buildMap(y -> y.putAll(Arrays.stream(styleSources).collect(Collectors.toMap(x -> x, file -> {
+      ColorTransfer colorTransfer = styleColorTransforms.get(file);
+      Tensor tensor = ArtistryUtil.loadTensor(file, resolutionX, resolutionY);
+      return colorTransfer == null ? tensor : colorTransfer.forwardTransform(tensor);
+    }))));
+  }
+  @Nonnull
+  public static Map<CharSequence, Tensor> getStyleImages2(
+      final CharSequence[] styleSources,
+      final Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms,
       final int resolutionX, final int resolutionY
   ) {
     return TestUtil.buildMap(y -> y.putAll(Arrays.stream(styleSources).collect(Collectors.toMap(x -> x, file -> {
@@ -161,8 +199,8 @@ public class ImageArtUtil {
 
   public static Tensor colorTransfer(
       final ImageArtOpParams opParams,
-      final ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> colorTransfer,
-      final ColorTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup,
+      final ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> colorTransfer,
+      final ColorTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup,
       final CharSequence contentSource,
       final int tileSize,
       final Tensor canvasImage
@@ -254,8 +292,8 @@ public class ImageArtUtil {
   }
 
   @Nonnull
-  public static SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> setContentImage(
-      final SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup,
+  public static SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> setContentImage(
+      final SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup,
       final Tensor tileImage
   ) {
     styleSetup.styleImages.values().stream().forEach(x -> x.assertAlive());
@@ -279,13 +317,13 @@ public class ImageArtUtil {
   }
 
   @Nonnull
-  public static SegmentedStyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer> getStyleCoefficients(
-      final Map<CVPipe_VGG19.Layer, Double> styleLayers,
+  public static SegmentedStyleTransfer.StyleCoefficients<CVPipe_Inception.Strata> getStyleCoefficients(
+      final Map<CVPipe_Inception.Strata, Double> styleLayers,
       final double coeff_style_mean,
       final double coeff_style_cov,
       final double dreamCoeff
   ) {
-    SegmentedStyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients =
+    SegmentedStyleTransfer.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients =
         new SegmentedStyleTransfer.StyleCoefficients<>(SegmentedStyleTransfer.CenteringMode.Origin);
     styleLayers.forEach((layer, coeff) -> styleCoefficients.set(
         layer,
@@ -297,11 +335,11 @@ public class ImageArtUtil {
   }
 
   @Nonnull
-  public static SegmentedStyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer> scale(
-      final SegmentedStyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer> contentCoefficients,
+  public static SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> scale(
+      final SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients,
       final double contentMixingCoeff
   ) {
-    SegmentedStyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer> contentCoefficients_phase = new SegmentedStyleTransfer.ContentCoefficients<>();
+    SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients_phase = new SegmentedStyleTransfer.ContentCoefficients<>();
     contentCoefficients.params.forEach((a, b) -> {
       contentCoefficients_phase.set(a, contentMixingCoeff * b);
     });
@@ -309,20 +347,20 @@ public class ImageArtUtil {
   }
 
   @Nonnull
-  public static Map<CharSequence, ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19>> getColorStyleEnhance(
+  public static Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> getColorStyleEnhance(
       final ImageArtOpParams imageArtOpParams,
       final Precision precision,
       final AtomicInteger resolution,
       final int minStyleWidth,
-      final ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> coefficients,
+      final ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients,
       final CharSequence[] styleSources
   ) {
-    Map<CharSequence, ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19>> styleColorTransforms = new HashMap<>();
+    Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms = new HashMap<>();
     for (final CharSequence styleSource : styleSources) {
-      Map<List<CharSequence>, ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer>> coefficientsMap = TestUtil.buildMap(buildMap -> {
+      Map<List<CharSequence>, ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata>> coefficientsMap = TestUtil.buildMap(buildMap -> {
         buildMap.put(Arrays.asList(styleSource), coefficients);
       });
-      ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> colorTransfer = new ColorTransfer.VGG19();
+      ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> colorTransfer = new ColorTransfer.Inception();
       Tensor styleImage = Tensor.fromRGB(ArtistryUtil.load(styleSource, resolution.get()));
       HashMap<CharSequence, Tensor> styleImages = new HashMap<>();
       styleImage.addRef();
@@ -525,8 +563,8 @@ public class ImageArtUtil {
 
   public static class StyleTransformer implements TileTransformer {
     final HashMap<SegmentedStyleTransfer.MaskJob, Set<Tensor>> originalCache;
-    private final SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer;
-    private final SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup;
+    private final SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> styleTransfer;
+    private final SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup;
     Map<SegmentedStyleTransfer.MaskJob, Set<Tensor[]>> maskJobSetMap;
     SegmentedStyleTransfer.NeuralSetup measuredStyle;
     private NotebookOutput log;
@@ -534,12 +572,12 @@ public class ImageArtUtil {
 
     public StyleTransformer(
         final ImageArtOpParams imageArtOpParams,
-        final SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer,
+        final SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> styleTransfer,
         final TileLayout tileLayout,
         final int padding,
         final int torroidalOffsetX,
         final int torroidalOffsetY,
-        final SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup
+        final SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup
     ) {
       this.setImageArtOpParams(imageArtOpParams);
       this.styleTransfer = styleTransfer;
@@ -570,7 +608,7 @@ public class ImageArtUtil {
       getLog().p(String.format("Processing Tile %s with size %s", i, Arrays.toString(tileData.getCanvasTile().getDimensions())));
       styleTransfer.getMaskCache().clear();
       styleTransfer.getMaskCache().putAll(tileData.getTileMasks());
-      SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> tileSetup = setContentImage(styleSetup, tileData.getContentTile());
+      SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> tileSetup = setContentImage(styleSetup, tileData.getContentTile());
       styleTransfer.measureContent(getLog(), tileSetup, measuredStyle);
       return styleTransfer.transfer(
           getLog(),
@@ -585,7 +623,7 @@ public class ImageArtUtil {
 
     @Nonnull
     public SegmentedStyleTransfer.NeuralSetup getNeuralSetup() {
-      SegmentedStyleTransfer.NeuralSetup<CVPipe_VGG19.Layer> measureStyle = new SegmentedStyleTransfer.NeuralSetup<>(styleSetup);
+      SegmentedStyleTransfer.NeuralSetup<CVPipe_Inception.Strata> measureStyle = new SegmentedStyleTransfer.NeuralSetup<>(styleSetup);
       styleTransfer.measureStyles(getLog(), styleSetup, measureStyle);
       return measureStyle;
     }

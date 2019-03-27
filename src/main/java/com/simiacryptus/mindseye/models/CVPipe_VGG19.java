@@ -160,43 +160,43 @@ public class CVPipe_VGG19 implements CVPipe<CVPipe_VGG19.Layer> {
   }
 
   /**
-   * The enum Layer type.
+   * The enum Strata type.
    */
   public enum Layer implements LayerEnum<Layer> {
     /**
-     * Layer 0 key type.
+     * Strata 0 key type.
      */
     Layer_0,
     /**
-     * Layer 1 a key type.
+     * Strata 1 a key type.
      */
     Layer_1a,
     /**
-     * Layer 1 b key type.
+     * Strata 1 b key type.
      */
     Layer_1b,
     /**
-     * Layer 1 c key type.
+     * Strata 1 c key type.
      */
     Layer_1c,
     /**
-     * Layer 1 d key type.
+     * Strata 1 d key type.
      */
     Layer_1d,
     /**
-     * Layer 1 e key type.
+     * Strata 1 e key type.
      */
     Layer_1e, /**
-     * Layer 2 a key type.
+     * Strata 2 a key type.
      */
     Layer_2a, /**
-     * Layer 2 b key type.
+     * Strata 2 b key type.
      */
     Layer_2b, /**
-     * Layer 3 a key type.
+     * Strata 3 a key type.
      */
     Layer_3a, /**
-     * Layer 3 b key type.
+     * Strata 3 b key type.
      */
     Layer_3b;
 

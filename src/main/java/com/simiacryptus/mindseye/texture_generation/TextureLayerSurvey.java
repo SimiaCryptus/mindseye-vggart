@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.ImageArtUtil;
 import com.simiacryptus.mindseye.applications.TextureGeneration;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
@@ -101,12 +101,12 @@ public abstract class TextureLayerSurvey extends ImageScript {
     ).scale(plasma_magnitude));
 
     canvas.set(log.subreport("Color_Space_Analog", sublog -> {
-      ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> contentColorTransform = new ColorTransfer.VGG19() {
+      ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception() {
       }.setOrtho(false).setUnit(true);
-      //colorSyncContentCoeffMap.set(CVPipe_VGG19.Layer.Layer_1a, 1e-1);
+      //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
       int colorSyncResolution = 600;
       Tensor resizedCanvas = Tensor.fromRGB(TestUtil.resize(canvas.get().toImage(), colorSyncResolution, (int) (aspect_ratio * colorSyncResolution)));
-      final ColorTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = ImageArtUtil.getColorAnalogSetup(
+      final ColorTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = ImageArtUtil.getColorAnalogSetup(
           Arrays.asList(styleSources),
           precision,
           resizedCanvas,
@@ -115,7 +115,7 @@ public abstract class TextureLayerSurvey extends ImageScript {
               new HashMap<>(),
               colorSyncResolution, (int) (aspect_ratio * colorSyncResolution)
           ),
-          CVPipe_VGG19.Layer.Layer_0
+          CVPipe_Inception.Strata.Layer_0
       );
       contentColorTransform.transfer(
           sublog,
@@ -129,14 +129,14 @@ public abstract class TextureLayerSurvey extends ImageScript {
       return contentColorTransform.forwardTransform(canvas.get());
     }));
 
-    for (final List<CVPipe_VGG19.Layer> layers : getLayers()) {
+    for (final List<CVPipe_Inception.Strata> layers : getLayers()) {
       String reportName = layers.stream().map(x -> x.name()).reduce((a, b) -> a + "_" + b).get();
       log.h1(reportName);
       Tensor subresult = log.subreport(reportName, subreport -> {
-        final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer>> styles = TestUtil.buildMap(x -> {
-          TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients = new TextureGeneration.StyleCoefficients<>(
+        final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata>> styles = TestUtil.buildMap(x -> {
+          TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients = new TextureGeneration.StyleCoefficients<>(
               TextureGeneration.CenteringMode.Origin);
-          for (final CVPipe_VGG19.Layer layer : layers) {
+          for (final CVPipe_Inception.Strata layer : layers) {
             styleCoefficients.set(
                 layer,
                 coeff_style_mean,
@@ -149,7 +149,7 @@ public abstract class TextureLayerSurvey extends ImageScript {
               styleCoefficients
           );
         });
-        TextureGeneration.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new TextureGeneration.StyleSetup<>(
+        TextureGeneration.StyleSetup<CVPipe_Inception.Strata> styleSetup = new TextureGeneration.StyleSetup<>(
             precision,
             TestUtil.buildMap(y -> y.putAll(
                 styles.keySet().stream().flatMap(
@@ -165,7 +165,7 @@ public abstract class TextureLayerSurvey extends ImageScript {
         );
         AtomicReference<Tensor> canvasCopy = new AtomicReference<>(canvas.get().copy());
         for (final Integer width : resolutionSchedule) {
-          TextureGeneration.VGG19 textureGeneration = new TextureGeneration.VGG19();
+          TextureGeneration.Inception textureGeneration = new TextureGeneration.Inception();
           textureGeneration.parallelLossFunctions = true;
           int height = (int) (aspect_ratio * width);
           textureGeneration.setTiling((int) Math.max(Math.min((2.0 * Math.pow(600, 2)) / (width * height), 9), 2));
@@ -189,6 +189,6 @@ public abstract class TextureLayerSurvey extends ImageScript {
   }
 
   @Nonnull
-  public abstract List<List<CVPipe_VGG19.Layer>> getLayers();
+  public abstract List<List<CVPipe_Inception.Strata>> getLayers();
 
 }

@@ -26,7 +26,8 @@ import com.simiacryptus.mindseye.applications.ImageArtUtil;
 import com.simiacryptus.mindseye.applications.TextureGeneration;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
@@ -119,16 +120,16 @@ public abstract class StyleSurvey extends ImageScript {
         BufferedImage initialImage = getInitialImage(txt, padding, style, color, fontName, seedResolution);
         final AtomicReference<Tensor> canvas = new AtomicReference<>(Tensor.fromRGB(initialImage));
         canvas.set(log.subreport("Color_Space_Analog", subreport -> {
-          ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> contentColorTransform = new ColorTransfer.VGG19() {
+          ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception() {
           }.setOrtho(false).setUnit(false);
-          //colorSyncContentCoeffMap.set(CVPipe_VGG19.Layer.Layer_1a, 1e-1);
+          //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
           int colorSyncResolution = 600;
           Tensor resizedCanvas = Tensor.fromRGB(TestUtil.resize(
               canvas.get().toImage(),
               colorSyncResolution,
               (int) (aspect_ratio * colorSyncResolution)
           ));
-          final ColorTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = ImageArtUtil.getColorAnalogSetup(
+          final ColorTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = ImageArtUtil.getColorAnalogSetup(
               Arrays.asList(styleSource),
               precision,
               resizedCanvas,
@@ -137,7 +138,7 @@ public abstract class StyleSurvey extends ImageScript {
                   new HashMap<>(),
                   colorSyncResolution, (int) (aspect_ratio * colorSyncResolution)
               ),
-              CVPipe_VGG19.Layer.Layer_0
+              CVPipe_Inception.Strata.Layer_1
           );
           contentColorTransform.transfer(
               subreport,
@@ -185,68 +186,68 @@ public abstract class StyleSurvey extends ImageScript {
     this.dreamCoeff *= 1e1;
     canvas = tiledTexturePaintingPhase(log, canvas.copy(), 200, getStyleSetup(
         styleSource, 200 * styleFactor,
-        CVPipe_VGG19.Layer.Layer_0,
-        CVPipe_VGG19.Layer.Layer_1d,
-        CVPipe_VGG19.Layer.Layer_1e
+        CVPipe_Inception.Strata.Layer_1,
+        CVPipe_Inception.Strata.Layer_4a,
+        CVPipe_Inception.Strata.Layer_4c
     ));
     canvas = tiledTexturePaintingPhase(log, canvas.copy(), 250, getStyleSetup(
         styleSource, 250 * styleFactor,
-        CVPipe_VGG19.Layer.Layer_0,
-        CVPipe_VGG19.Layer.Layer_1d,
-        CVPipe_VGG19.Layer.Layer_1e
+        CVPipe_Inception.Strata.Layer_1,
+        CVPipe_Inception.Strata.Layer_3b,
+        CVPipe_Inception.Strata.Layer_4a
     ));
     canvas = tiledTexturePaintingPhase(log, canvas.copy(), 300, getStyleSetup(
         styleSource, 300 * styleFactor,
-        CVPipe_VGG19.Layer.Layer_1b,
-        CVPipe_VGG19.Layer.Layer_1c,
-        CVPipe_VGG19.Layer.Layer_1d
+        CVPipe_Inception.Strata.Layer_4b,
+        CVPipe_Inception.Strata.Layer_4c,
+        CVPipe_Inception.Strata.Layer_4d
     ));
     canvas = tiledTexturePaintingPhase(log, canvas.copy(), 350, getStyleSetup(
         styleSource, 350 * styleFactor,
-        CVPipe_VGG19.Layer.Layer_1b,
-        CVPipe_VGG19.Layer.Layer_1c,
-        CVPipe_VGG19.Layer.Layer_1d
+        CVPipe_Inception.Strata.Layer_4a,
+        CVPipe_Inception.Strata.Layer_4b,
+        CVPipe_Inception.Strata.Layer_4c
     ));
     canvas = tiledTexturePaintingPhase(log, canvas.copy(), 400, getStyleSetup(
         styleSource, 400 * styleFactor,
-        CVPipe_VGG19.Layer.Layer_0,
-        CVPipe_VGG19.Layer.Layer_1b,
-        CVPipe_VGG19.Layer.Layer_1c
+        CVPipe_Inception.Strata.Layer_1,
+        CVPipe_Inception.Strata.Layer_3a,
+        CVPipe_Inception.Strata.Layer_3b
     ));
     this.dreamCoeff /= 1e1;
 
     canvas = tiledTexturePaintingPhase(log, canvas.copy(), 500, getStyleSetup(
         styleSource, 500 * styleFactor,
-        CVPipe_VGG19.Layer.Layer_1a,
-        CVPipe_VGG19.Layer.Layer_1b,
-        CVPipe_VGG19.Layer.Layer_1c
+        CVPipe_Inception.Strata.Layer_2,
+        CVPipe_Inception.Strata.Layer_3a,
+        CVPipe_Inception.Strata.Layer_3b
     ));
     canvas = tiledTexturePaintingPhase(log, canvas.copy(), 550, getStyleSetup(
         styleSource, 550 * styleFactor,
-        CVPipe_VGG19.Layer.Layer_1a,
-        CVPipe_VGG19.Layer.Layer_1b,
-        CVPipe_VGG19.Layer.Layer_1c
+        CVPipe_Inception.Strata.Layer_2,
+        CVPipe_Inception.Strata.Layer_3b,
+        CVPipe_Inception.Strata.Layer_4a
     ));
     //this.dreamCoeff /= 1e1;
     canvas = tiledTexturePaintingPhase(log, canvas.copy(), 600, getStyleSetup(
         styleSource, 600 * styleFactor,
-        CVPipe_VGG19.Layer.Layer_0,
-        CVPipe_VGG19.Layer.Layer_1a,
-        CVPipe_VGG19.Layer.Layer_1b,
-        CVPipe_VGG19.Layer.Layer_1c
+        CVPipe_Inception.Strata.Layer_1,
+        CVPipe_Inception.Strata.Layer_2,
+        CVPipe_Inception.Strata.Layer_3a,
+        CVPipe_Inception.Strata.Layer_3b
     ));
     return canvas;
   }
 
   @Nonnull
-  public TextureGeneration.StyleSetup<CVPipe_VGG19.Layer> getStyleSetup(
+  public TextureGeneration.StyleSetup<CVPipe_Inception.Strata> getStyleSetup(
       final String styleSource, final int style_resolution,
-      final CVPipe_VGG19.Layer... layers
+      final CVPipe_Inception.Strata... layers
   ) {
-    final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer>> styles = TestUtil.buildMap(x -> {
-      TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients = new TextureGeneration.StyleCoefficients<>(
+    final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata>> styles = TestUtil.buildMap(x -> {
+      TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients = new TextureGeneration.StyleCoefficients<>(
           TextureGeneration.CenteringMode.Origin);
-      for (final CVPipe_VGG19.Layer layer : layers) {
+      for (final CVPipe_Inception.Strata layer : layers) {
         styleCoefficients.set(
             layer,
             coeff_style_mean,
@@ -279,9 +280,9 @@ public abstract class StyleSurvey extends ImageScript {
       final NotebookOutput log,
       Tensor canvas,
       final int width,
-      final TextureGeneration.StyleSetup<CVPipe_VGG19.Layer> styleSetup
+      final TextureGeneration.StyleSetup<CVPipe_Inception.Strata> styleSetup
   ) {
-    TextureGeneration.VGG19 textureGeneration = new TextureGeneration.VGG19();
+    TextureGeneration.Inception textureGeneration = new TextureGeneration.Inception();
     textureGeneration.parallelLossFunctions = true;
     int height = (int) (aspect_ratio * width);
     textureGeneration.setTiling((int) Math.max(Math.min((2.0 * Math.pow(600, 2)) / (width * height), 9), 2));

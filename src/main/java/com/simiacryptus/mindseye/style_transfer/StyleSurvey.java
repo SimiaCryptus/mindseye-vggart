@@ -27,7 +27,7 @@ import com.simiacryptus.mindseye.applications.HadoopUtil;
 import com.simiacryptus.mindseye.applications.StyleTransfer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
@@ -79,7 +79,7 @@ public class StyleSurvey extends ImageScript {
 
   public void accept(@Nonnull NotebookOutput log) {
 
-    StyleTransfer.VGG19 styleTransfer = new StyleTransfer.VGG19();
+    StyleTransfer.Inception styleTransfer = new StyleTransfer.Inception();
     Precision precision = Precision.Float;
     styleTransfer.parallelLossFunctions = true;
     styleTransfer.setTiled(false);
@@ -95,15 +95,15 @@ public class StyleSurvey extends ImageScript {
           for (final CharSequence styleSource : sources) {
             log.p(log.png(ArtistryUtil.load(styleSource, resolution), "Style Image"));
           }
-          final Map<List<CharSequence>, StyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer>> styles = TestUtil.buildMap(x ->
+          final Map<List<CharSequence>, StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>> styles = TestUtil.buildMap(x ->
               x.put(
                   sources,
-                  new StyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer>(
+                  new StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>(
                       StyleTransfer.CenteringMode.Origin)
-                      .set(CVPipe_VGG19.Layer.Layer_0, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                      .set(CVPipe_VGG19.Layer.Layer_1a, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                      .set(CVPipe_VGG19.Layer.Layer_1b, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                      .set(CVPipe_VGG19.Layer.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                      .set(CVPipe_Inception.Strata.Layer_0, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                      .set(CVPipe_Inception.Strata.Layer_1a, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                      .set(CVPipe_Inception.Strata.Layer_1b, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                      .set(CVPipe_Inception.Strata.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
               ));
           Tensor canvasImage = ArtistryUtil.loadTensor(contentSource, resolution);
           canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), resolution, true));
@@ -111,17 +111,17 @@ public class StyleSurvey extends ImageScript {
                   Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), 16, true))),
               1000.0, 1.1, resolution
           ).scale(0.9);
-          StyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new StyleTransfer.StyleSetup<>(
+          StyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new StyleTransfer.StyleSetup<>(
               precision,
               ArtistryUtil.loadTensor(
                   contentSource,
                   canvasImage.getDimensions()[0],
                   canvasImage.getDimensions()[1]
               ),
-              new StyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer>()
-                  .set(CVPipe_VGG19.Layer.Layer_1a, contentMixingCoeff * 1e-1)
-                  .set(CVPipe_VGG19.Layer.Layer_1c, contentMixingCoeff)
-                  .set(CVPipe_VGG19.Layer.Layer_1d, contentMixingCoeff),
+              new StyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
+                  .set(CVPipe_Inception.Strata.Layer_1a, contentMixingCoeff * 1e-1)
+                  .set(CVPipe_Inception.Strata.Layer_1c, contentMixingCoeff)
+                  .set(CVPipe_Inception.Strata.Layer_1d, contentMixingCoeff),
               TestUtil.buildMap(y -> y.putAll(
                   styles.keySet().stream().flatMap(x -> x.stream())
                       .collect(Collectors.toMap(

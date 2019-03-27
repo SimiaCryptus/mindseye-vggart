@@ -22,7 +22,7 @@ package fractal
 import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.lang.CoreSettings
 import com.simiacryptus.mindseye.lang.cudnn.CudaMemory
-import com.simiacryptus.mindseye.models.CVPipe_VGG19
+import com.simiacryptus.mindseye.models.{CVPipe_Inception, CVPipe_VGG19}
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object InitialPyramid_AWS_EC2 extends InitialPyramid_AWS with EC2Runner[Object] {
@@ -46,7 +46,7 @@ object InitialPyramid_AWS_EC2 extends InitialPyramid_AWS with EC2Runner[Object] 
 }
 
 abstract class InitialPyramid_AWS extends InitialPyramid(
-  initialContent = "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/201903035142/etc/fractal.InitialPainting_AWS.11.png",
+  initialContent = "https://data-cb03c.s3.amazonaws.com/reports/201903263806/etc/fractal.InitialPainting_AWS.11.png",
   styleSources = Array("s3a://simiacryptus/photos/shutterstock_781159663.jpg")
 ) with AWSNotebookRunner[Object] {
 
@@ -54,21 +54,21 @@ abstract class InitialPyramid_AWS extends InitialPyramid(
 
   override val maxIterations: Int = 10
 
-  override def style_layers(layer: CVPipe_VGG19.Layer): Double = layer match {
-    case CVPipe_VGG19.Layer.Layer_1a => 1e0
-    case CVPipe_VGG19.Layer.Layer_1b => 1e0
+  override def style_layers(layer: CVPipe_Inception.Strata): Double = layer match {
+    case CVPipe_Inception.Strata.Layer_2 => 1e0
+    case CVPipe_Inception.Strata.Layer_3a => 1e0
     case _ => 0.0
   }
 
-  override def coeff_content(layer: CVPipe_VGG19.Layer): Double = layer match {
-    case CVPipe_VGG19.Layer.Layer_0 => 1e-1
+  override def coeff_content(layer: CVPipe_Inception.Strata): Double = layer match {
+    case CVPipe_Inception.Strata.Layer_1 => 1e-1
     case _ => 0e0
   }
 
-  override def dreamCoeff(layer: CVPipe_VGG19.Layer): Double = layer match {
-    case CVPipe_VGG19.Layer.Layer_0 => 0e0
-    case CVPipe_VGG19.Layer.Layer_1a => 1e-1
-    case CVPipe_VGG19.Layer.Layer_1b => 4e-1
+  override def dreamCoeff(layer: CVPipe_Inception.Strata): Double = layer match {
+    case CVPipe_Inception.Strata.Layer_1 => 0e0
+    case CVPipe_Inception.Strata.Layer_2 => 1e-1
+    case CVPipe_Inception.Strata.Layer_3a => 4e-1
     case _ => 0e0
   }
 

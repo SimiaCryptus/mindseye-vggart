@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.ImageArtUtil;
 import com.simiacryptus.mindseye.applications.SegmentedStyleTransfer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
@@ -68,7 +68,7 @@ public class LayerStyleSurvey extends ImageScript {
       return JsonUtil.toJson(LayerStyleSurvey.this);
     });
 
-    SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer = new SegmentedStyleTransfer.VGG19();
+    SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> styleTransfer = new SegmentedStyleTransfer.Inception();
     Precision precision = Precision.Float;
     int imageClusters = 1;
     styleTransfer.setStyle_masks(imageClusters);
@@ -91,7 +91,7 @@ public class LayerStyleSurvey extends ImageScript {
         }
 
         // Enhance color scheme:
-        Map<CharSequence, ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19>> styleColorTransforms = new HashMap<>();
+        Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms = new HashMap<>();
 
         Tensor canvasBufferedImage = Tensor.fromRGB(TestUtil.resize(
             ArtistryUtil.load(contentSource),
@@ -101,10 +101,10 @@ public class LayerStyleSurvey extends ImageScript {
         canvasBufferedImage.assertAlive();
         final AtomicReference<Tensor> canvasImage = new AtomicReference<>(canvasBufferedImage);
         List<CharSequence> styleKeys = Arrays.asList(styleSources);
-        ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> contentColorTransform = new ColorTransfer.VGG19();
+        ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception();
         // Transfer color scheme:
         Tensor color_space_analog = log.subreport("Color_Space_Analog", sublog -> {
-          //colorSyncContentCoeffMap.set(CVPipe_VGG19.Layer.Layer_1a, 1e-1);
+          //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               contentColorTransform,
@@ -114,7 +114,7 @@ public class LayerStyleSurvey extends ImageScript {
                   canvasBufferedImage,
                   ImageArtUtil.getStyleImages(
                       styleColorTransforms, Math.max(resolution.get(), minStyleWidth), styleSources
-                  ), CVPipe_VGG19.Layer.Layer_0
+                  ), CVPipe_Inception.Strata.Layer_0
               ),
               contentSource,
               startResolution,
@@ -129,18 +129,18 @@ public class LayerStyleSurvey extends ImageScript {
             plasmaResolution, resolution.get(), canvasImage.get()
         ));
 
-        List<CVPipe_VGG19.Layer> layerList = Arrays.asList(
-            CVPipe_VGG19.Layer.Layer_0,
-            CVPipe_VGG19.Layer.Layer_1a,
-            CVPipe_VGG19.Layer.Layer_1b,
-            CVPipe_VGG19.Layer.Layer_1c,
-            CVPipe_VGG19.Layer.Layer_1d,
-            CVPipe_VGG19.Layer.Layer_1e
+        List<CVPipe_Inception.Strata> layerList = Arrays.asList(
+            CVPipe_Inception.Strata.Layer_0,
+            CVPipe_Inception.Strata.Layer_1a,
+            CVPipe_Inception.Strata.Layer_1b,
+            CVPipe_Inception.Strata.Layer_1c,
+            CVPipe_Inception.Strata.Layer_1d,
+            CVPipe_Inception.Strata.Layer_1e
         );
-        for (CVPipe_VGG19.Layer contentLayer : layerList) {
-          log.h1("Content Layer " + contentLayer.name());
-          for (CVPipe_VGG19.Layer styleLayer : layerList) {
-            log.h2("Style Layer " + styleLayer.name());
+        for (CVPipe_Inception.Strata contentLayer : layerList) {
+          log.h1("Content Strata " + contentLayer.name());
+          for (CVPipe_Inception.Strata styleLayer : layerList) {
+            log.h2("Style Strata " + styleLayer.name());
             Tensor result = log.subreport(String.format("%s_%s", styleLayer.name(), contentLayer.name()), sublog -> {
               final Tensor canvasImage1 = canvasImage.get();
               int padding = 20;
@@ -152,7 +152,7 @@ public class LayerStyleSurvey extends ImageScript {
                   getMaxIterations(),
                   isVerbose()
               );
-              final SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
+              final SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
                   precision,
                   contentColorTransform.forwardTransform(
                       ArtistryUtil.loadTensor(
@@ -161,7 +161,7 @@ public class LayerStyleSurvey extends ImageScript {
                           canvasImage1.getDimensions()[1]
                       )),
                   ImageArtUtil.scale(
-                      new SegmentedStyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer>()
+                      new SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
                           .set(contentLayer, 1e0),
                       1e0
                   ),

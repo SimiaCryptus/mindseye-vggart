@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.ImageArtUtil;
 import com.simiacryptus.mindseye.applications.SegmentedStyleTransfer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.pyramid.PyramidUtil;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
@@ -71,7 +71,7 @@ public class TextureFinishing extends ImageScript {
     });
     PyramidUtil.initJS(log);
 
-    SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer = new SegmentedStyleTransfer.VGG19();
+    SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> styleTransfer = new SegmentedStyleTransfer.Inception();
     Precision precision = Precision.Float;
     int imageClusters = 1;
     styleTransfer.setStyle_masks(imageClusters);
@@ -99,11 +99,11 @@ public class TextureFinishing extends ImageScript {
         Arrays.stream(resolutions).forEach(res -> {
           canvasImage.set(Tensor.fromRGB(TestUtil.resize(canvasImage.get().toImage(), (int) res, true)));
           canvasImage.set(log.subreport(String.format("Phase_%s", index.incrementAndGet()), sublog -> {
-            SegmentedStyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer> contentCoefficients = new SegmentedStyleTransfer.ContentCoefficients<>();
-            contentCoefficients.set(CVPipe_VGG19.Layer.Layer_0, 1e-1);
-            Map<CVPipe_VGG19.Layer, Double> styleLayers = new HashMap<>();
-            styleLayers.put(CVPipe_VGG19.Layer.Layer_1a, 1e0);
-            styleLayers.put(CVPipe_VGG19.Layer.Layer_1b, 1e0);
+            SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients = new SegmentedStyleTransfer.ContentCoefficients<>();
+            contentCoefficients.set(CVPipe_Inception.Strata.Layer_1, 1e-1);
+            Map<CVPipe_Inception.Strata, Double> styleLayers = new HashMap<>();
+            styleLayers.put(CVPipe_Inception.Strata.Layer_2, 1e0);
+            styleLayers.put(CVPipe_Inception.Strata.Layer_3a, 1e0);
             final Tensor canvasImage1 = canvasImage.get();
             int padding = 20;
             final int torroidalOffsetX = true ? -padding : 0;
@@ -114,9 +114,9 @@ public class TextureFinishing extends ImageScript {
                 getMaxIterations(),
                 isVerbose()
             );
-            final SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
+            final SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
                 precision,
-                new ColorTransfer.VGG19().forwardTransform(
+                new ColorTransfer.Inception().forwardTransform(
                     ArtistryUtil.loadTensor(
                         contentSource,
                         canvasImage1.getDimensions()[0],

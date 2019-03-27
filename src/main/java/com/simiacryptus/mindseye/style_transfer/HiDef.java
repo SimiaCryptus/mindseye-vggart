@@ -29,7 +29,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.java.ImgTileAssemblyLayer;
 import com.simiacryptus.mindseye.layers.java.ImgTileSelectLayer;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
@@ -91,7 +91,7 @@ public class HiDef extends ImageScript {
   };
 
   public void accept(@Nonnull NotebookOutput log) {
-    StyleTransfer.VGG19 styleTransfer = new StyleTransfer.VGG19();
+    StyleTransfer.Inception styleTransfer = new StyleTransfer.Inception();
     Precision precision = Precision.Float;
     styleTransfer.parallelLossFunctions = true;
     styleTransfer.setTiled(false);
@@ -104,31 +104,31 @@ public class HiDef extends ImageScript {
       for (final CharSequence styleSource : styleSources) {
         log.p(log.png(ArtistryUtil.load(styleSource, resolution), "Style Image"));
       }
-      final Map<List<CharSequence>, StyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer>> styles =
+      final Map<List<CharSequence>, StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>> styles =
           TestUtil.buildMap(x -> x.put(
               Arrays.asList(styleSources),
-              new StyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer>(
+              new StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>(
                   StyleTransfer.CenteringMode.Origin)
                   .set(
-                      CVPipe_VGG19.Layer.Layer_0,
+                      CVPipe_Inception.Strata.Layer_0,
                       coeff_style_mean,
                       coeff_style_cov,
                       dreamCoeff
                   )
                   .set(
-                      CVPipe_VGG19.Layer.Layer_1a,
+                      CVPipe_Inception.Strata.Layer_1a,
                       coeff_style_mean,
                       coeff_style_cov,
                       dreamCoeff
                   )
                   .set(
-                      CVPipe_VGG19.Layer.Layer_1b,
+                      CVPipe_Inception.Strata.Layer_1b,
                       coeff_style_mean,
                       coeff_style_cov,
                       dreamCoeff
                   )
                   .set(
-                      CVPipe_VGG19.Layer.Layer_1c,
+                      CVPipe_Inception.Strata.Layer_1c,
                       coeff_style_mean,
                       coeff_style_cov,
                       dreamCoeff
@@ -140,13 +140,13 @@ public class HiDef extends ImageScript {
           canvasImage.getDimensions()[0],
           canvasImage.getDimensions()[1]
       ));
-      StyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new StyleTransfer.StyleSetup<CVPipe_VGG19.Layer>(
+      StyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new StyleTransfer.StyleSetup<CVPipe_Inception.Strata>(
           precision,
           null,
-          new StyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer>()
-              .set(CVPipe_VGG19.Layer.Layer_1a, contentMixingCoeff * 1e-1)
-              .set(CVPipe_VGG19.Layer.Layer_1c, contentMixingCoeff)
-              .set(CVPipe_VGG19.Layer.Layer_1d, contentMixingCoeff),
+          new StyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
+              .set(CVPipe_Inception.Strata.Layer_1a, contentMixingCoeff * 1e-1)
+              .set(CVPipe_Inception.Strata.Layer_1c, contentMixingCoeff)
+              .set(CVPipe_Inception.Strata.Layer_1d, contentMixingCoeff),
           TestUtil.buildMap(y -> y.putAll(styles.keySet().stream().flatMap(x1 -> x1.stream()).collect(
               Collectors.toMap(x1 -> x1, file -> ArtistryUtil.load(file, resolution))))),
           styles
@@ -171,10 +171,10 @@ public class HiDef extends ImageScript {
    */
   public Tensor styleTransfer(
       @Nonnull final NotebookOutput log,
-      final StyleTransfer.VGG19 styleTransfer,
+      final StyleTransfer.Inception styleTransfer,
       final Tensor canvasImage,
       final Tensor canvasSeed,
-      final StyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup,
+      final StyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup,
       final int width,
       final int height,
       final int strideX,
@@ -193,14 +193,14 @@ public class HiDef extends ImageScript {
       if (canvasTiles.length != canvasSeeds.length)
         throw new AssertionError(canvasTiles.length + " != " + canvasSeeds.length);
       Stream<Tensor> tensorStream = IntStream.range(0, canvasTiles.length).mapToObj(i -> {
-        StyleTransfer.StyleSetup<CVPipe_VGG19.Layer> tileSetup = new StyleTransfer.StyleSetup<>(
+        StyleTransfer.StyleSetup<CVPipe_Inception.Strata> tileSetup = new StyleTransfer.StyleSetup<>(
             styleSetup.precision,
             canvasTiles[i],
             styleSetup.content,
             styleSetup.styleImages,
             styleSetup.styles
         );
-        StyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19>.NeuralSetup measureStyle = styleTransfer.measureStyle(tileSetup);
+        StyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception>.NeuralSetup measureStyle = styleTransfer.measureStyle(tileSetup);
         Tensor transfer = styleTransfer.transfer(
             log,
             canvasSeeds[i],

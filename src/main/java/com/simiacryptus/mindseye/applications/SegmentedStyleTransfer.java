@@ -28,10 +28,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
 import com.simiacryptus.mindseye.layers.java.ImgTileSelectLayer;
-import com.simiacryptus.mindseye.models.CVPipe;
-import com.simiacryptus.mindseye.models.CVPipe_VGG16;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
-import com.simiacryptus.mindseye.models.LayerEnum;
+import com.simiacryptus.mindseye.models.*;
 import com.simiacryptus.mindseye.network.DAGNetwork;
 import com.simiacryptus.mindseye.network.DAGNode;
 import com.simiacryptus.mindseye.network.InnerNode;
@@ -880,9 +877,6 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
 
   }
 
-  /**
-   * The type Vgg 19.
-   */
   public static class VGG19 extends SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> {
     public VGG19() {
     }
@@ -894,6 +888,20 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     @Nonnull
     public CVPipe_VGG19.Layer[] getLayerTypes() {
       return CVPipe_VGG19.Layer.values();
+    }
+
+  }
+  public static class Inception extends SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> {
+    public Inception() {
+    }
+
+    public CVPipe_Inception getNetworkModel() {
+      return CVPipe_Inception.INSTANCE;
+    }
+
+    @Nonnull
+    public CVPipe_Inception.Strata[] getLayerTypes() {
+      return CVPipe_Inception.Strata.values();
     }
 
   }
@@ -924,7 +932,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
   }
 
   /**
-   * The type Layer style params.
+   * The type Strata style params.
    */
   public static class LayerStyleParams {
     /**
@@ -938,7 +946,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     private final double enhance;
 
     /**
-     * Instantiates a new Layer style params.
+     * Instantiates a new Strata style params.
      *
      * @param mean    the mean
      * @param cov     the bandCovariance

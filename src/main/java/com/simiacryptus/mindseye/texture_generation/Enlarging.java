@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.ArtistryUtil;
 import com.simiacryptus.mindseye.applications.TextureGeneration;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.network.PipelineNetwork;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
@@ -86,7 +86,7 @@ public class Enlarging extends ImageScript {
 
   public void accept(@Nonnull NotebookOutput log) {
 
-    TextureGeneration.VGG19 textureGeneration = new TextureGeneration.VGG19();
+    TextureGeneration.Inception textureGeneration = new TextureGeneration.Inception();
     Precision precision = Precision.Float;
     textureGeneration.parallelLossFunctions = true;
     textureGeneration.setTiling(3);
@@ -95,15 +95,15 @@ public class Enlarging extends ImageScript {
       log.p(log.png(ArtistryUtil.load(styleSource, startImageSize), "Style Image"));
     }
     double dreamCoeff = 1e1;
-    final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer>> styles = TestUtil.buildMap(x ->
+    final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata>> styles = TestUtil.buildMap(x ->
         x.put(
             Arrays.asList(styleSources),
-            new TextureGeneration.StyleCoefficients<CVPipe_VGG19.Layer>(
+            new TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata>(
                 TextureGeneration.CenteringMode.Origin)
-                .set(CVPipe_VGG19.Layer.Layer_0, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                .set(CVPipe_VGG19.Layer.Layer_1a, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                .set(CVPipe_VGG19.Layer.Layer_1b, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                .set(CVPipe_VGG19.Layer.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                .set(CVPipe_Inception.Strata.Layer_0, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                .set(CVPipe_Inception.Strata.Layer_1a, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                .set(CVPipe_Inception.Strata.Layer_1b, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                .set(CVPipe_Inception.Strata.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
         ));
     Tensor canvasImage = null;
     for (final double resolution : resolutionStream().toArray()) {
@@ -113,7 +113,7 @@ public class Enlarging extends ImageScript {
       } else {
         canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), size, true));
       }
-      TextureGeneration.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new TextureGeneration.StyleSetup<CVPipe_VGG19.Layer>(precision,
+      TextureGeneration.StyleSetup<CVPipe_Inception.Strata> styleSetup = new TextureGeneration.StyleSetup<CVPipe_Inception.Strata>(precision,
           TestUtil.buildMap(y -> y.putAll(styles.keySet().stream().flatMap(x1 -> x1.stream())
               .collect(Collectors.toMap(x1 -> x1, file -> ArtistryUtil.load(file, size))))), styles);
       log.p("Input Parameters:");

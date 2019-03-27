@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.ImageArtUtil;
 import com.simiacryptus.mindseye.applications.SegmentedStyleTransfer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
@@ -71,7 +71,7 @@ public class FullyFeaturedArtJob extends ImageScript {
       return JsonUtil.toJson(FullyFeaturedArtJob.this);
     });
 
-    SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer = new SegmentedStyleTransfer.VGG19();
+    SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> styleTransfer = new SegmentedStyleTransfer.Inception();
     Precision precision = Precision.Float;
     int image_clusters = 3;
     styleTransfer.setStlye_colorClusters(image_clusters);
@@ -95,12 +95,12 @@ public class FullyFeaturedArtJob extends ImageScript {
         }
 
         // Enhance color scheme:
-        Map<CharSequence, ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19>> styleColorTransforms = log.subreport("Color_Space_Enhancement", sublog -> {
-          ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
-          coefficients.set(CVPipe_VGG19.Layer.Layer_1a, 1e0, 1e0, -1e-1);
-//          coefficients.set(CVPipe_VGG19.Layer.Layer_1b, 1e0, 1e-1, -1e0);
-//          coefficients.set(CVPipe_VGG19.Layer.Layer_1d, (double) 1e-1, (double) 1e-1, 1e0);
-//          coefficients.set(CVPipe_VGG19.Layer.Layer_1e, (double) 1e-1, (double) 1e-1, 1e1);
+        Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms = log.subreport("Color_Space_Enhancement", sublog -> {
+          ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
+          coefficients.set(CVPipe_Inception.Strata.Layer_1a, 1e0, 1e0, -1e-1);
+//          coefficients.set(CVPipe_Inception.Strata.Layer_1b, 1e0, 1e-1, -1e0);
+//          coefficients.set(CVPipe_Inception.Strata.Layer_1d, (double) 1e-1, (double) 1e-1, 1e0);
+//          coefficients.set(CVPipe_Inception.Strata.Layer_1e, (double) 1e-1, (double) 1e-1, 1e1);
           return ImageArtUtil.getColorStyleEnhance(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               precision,
@@ -118,10 +118,10 @@ public class FullyFeaturedArtJob extends ImageScript {
         ));
         canvasBufferedImage.assertAlive();
         final AtomicReference<Tensor> canvasImage = new AtomicReference<>(canvasBufferedImage);
-        ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> contentColorTransform = new ColorTransfer.VGG19().setOrtho(false);
+        ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception().setOrtho(false);
         // Transfer color scheme:
         Tensor color_space_analog = log.subreport("Color_Space_Analog", sublog -> {
-          //colorSyncContentCoeffMap.set(CVPipe_VGG19.Layer.Layer_1a, 1e-1);
+          //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
               contentColorTransform,
@@ -132,7 +132,7 @@ public class FullyFeaturedArtJob extends ImageScript {
                   ImageArtUtil.getStyleImages(
                       styleColorTransforms, Math.max(resolution.get(), minStyleWidth), styleSources
                   ),
-                  CVPipe_VGG19.Layer.Layer_1a
+                  CVPipe_Inception.Strata.Layer_1a
               ),
               contentSource,
               startResolution,
@@ -147,17 +147,17 @@ public class FullyFeaturedArtJob extends ImageScript {
             plasmaResolution, resolution.get(), canvasImage.get()
         ));
 
-        Map<CVPipe_VGG19.Layer, Double> styleLayers = TestUtil.buildMap(m -> {
-          m.put(CVPipe_VGG19.Layer.Layer_1a, 1e-1);
-          m.put(CVPipe_VGG19.Layer.Layer_1b, 1e0);
-          m.put(CVPipe_VGG19.Layer.Layer_1c, 1e0);
-          m.put(CVPipe_VGG19.Layer.Layer_1d, 1e1);
+        Map<CVPipe_Inception.Strata, Double> styleLayers = TestUtil.buildMap(m -> {
+          m.put(CVPipe_Inception.Strata.Layer_1a, 1e-1);
+          m.put(CVPipe_Inception.Strata.Layer_1b, 1e0);
+          m.put(CVPipe_Inception.Strata.Layer_1c, 1e0);
+          m.put(CVPipe_Inception.Strata.Layer_1d, 1e1);
         });
-        SegmentedStyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer> contentCoefficients =
-            new SegmentedStyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer>()
-                .set(CVPipe_VGG19.Layer.Layer_1a, 1e-3)
-                .set(CVPipe_VGG19.Layer.Layer_1b, 1e-2)
-                .set(CVPipe_VGG19.Layer.Layer_1c, 1e1);
+        SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients =
+            new SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
+                .set(CVPipe_Inception.Strata.Layer_1a, 1e-3)
+                .set(CVPipe_Inception.Strata.Layer_1b, 1e-2)
+                .set(CVPipe_Inception.Strata.Layer_1c, 1e1);
 
         {
           log.h1("Phase 0 - Dreaming");
@@ -176,7 +176,7 @@ public class FullyFeaturedArtJob extends ImageScript {
                 getMaxIterations(),
                 isVerbose()
             );
-            final SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
+            final SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
                 precision,
                 contentColorTransform.forwardTransform(
                     ArtistryUtil.loadTensor(
@@ -267,7 +267,7 @@ public class FullyFeaturedArtJob extends ImageScript {
                 getMaxIterations(),
                 isVerbose()
             );
-            final SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
+            final SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
                 precision,
                 contentColorTransform.forwardTransform(
                     ArtistryUtil.loadTensor(
@@ -341,7 +341,7 @@ public class FullyFeaturedArtJob extends ImageScript {
           });
         }
 
-        //contentCoefficients0.set(CVPipe_VGG19.Layer.Layer_1a, 1e-1);
+        //contentCoefficients0.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
 
         while (resolution.updateAndGet(v -> (int) (v * Math.pow(3, 0.5))) < maxResolution) {
           log.h1("Phase n+1 - Enlarge to " + resolution.get());
@@ -355,9 +355,9 @@ public class FullyFeaturedArtJob extends ImageScript {
             coeff_style_mean = 1e1;
             coeff_style_cov = 1e1;
           } else {
-            styleLayers.remove(CVPipe_VGG19.Layer.Layer_1a);
-            styleLayers.remove(CVPipe_VGG19.Layer.Layer_1b);
-            styleLayers.put(CVPipe_VGG19.Layer.Layer_1e, 1.0);
+            styleLayers.remove(CVPipe_Inception.Strata.Layer_1a);
+            styleLayers.remove(CVPipe_Inception.Strata.Layer_1b);
+            styleLayers.put(CVPipe_Inception.Strata.Layer_1e, 1.0);
             dreamCoeff = 1e1;
             contentMixingCoeff = 1e0;
             coeff_style_mean = 1e1;
@@ -375,7 +375,7 @@ public class FullyFeaturedArtJob extends ImageScript {
                 getMaxIterations(),
                 isVerbose()
             );
-            final SegmentedStyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
+            final SegmentedStyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new SegmentedStyleTransfer.StyleSetup<>(
                 precision,
                 contentColorTransform.forwardTransform(
                     ArtistryUtil.loadTensor(

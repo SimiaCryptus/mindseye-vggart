@@ -28,10 +28,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
 import com.simiacryptus.mindseye.layers.cudnn.conv.SimpleConvolutionLayer;
-import com.simiacryptus.mindseye.models.CVPipe;
-import com.simiacryptus.mindseye.models.CVPipe_VGG16;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
-import com.simiacryptus.mindseye.models.LayerEnum;
+import com.simiacryptus.mindseye.models.*;
 import com.simiacryptus.mindseye.network.DAGNetwork;
 import com.simiacryptus.mindseye.network.DAGNode;
 import com.simiacryptus.mindseye.network.InnerNode;
@@ -71,29 +68,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * This notebook implements the Style Transfer protocol outlined in <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a>
- *
- * @param <T> the type parameter
- * @param <U> the type parameter
- */
 public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>> {
 
   private static final Logger logger = LoggerFactory.getLogger(ColorTransfer.class);
-  /**
-   * The Parallel loss functions.
-   */
   public boolean parallelLossFunctions = true;
   private SimpleConvolutionLayer colorForwardTransform;
   private boolean ortho = true;
   private boolean unit = true;
 
-  /**
-   * Invert simple convolution key.
-   *
-   * @param colorForwardTransform the color forward transform
-   * @return the simple convolution key
-   */
   @Nonnull
   public static SimpleConvolutionLayer invert(final SimpleConvolutionLayer colorForwardTransform) {
     try {
@@ -109,12 +91,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     }
   }
 
-  /**
-   * Inverse real matrix.
-   *
-   * @param matrix the matrix
-   * @return the real matrix
-   */
   public static RealMatrix inverse(final RealMatrix matrix) {
     try {
       return MatrixUtils.inverse(matrix);
@@ -124,12 +100,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     }
   }
 
-  /**
-   * Sets matrix.
-   *
-   * @param tensor the tensor
-   * @param matrix the matrix
-   */
   public static void setMatrix(final Tensor tensor, final RealMatrix matrix) {
     tensor.setByCoord(c -> {
       int b = c.getCoords()[2];
@@ -139,12 +109,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     });
   }
 
-  /**
-   * Gets matrix.
-   *
-   * @param tensor the tensor
-   * @return the matrix
-   */
   @Nonnull
   public static RealMatrix getMatrix(final Tensor tensor) {
     RealMatrix matrix = new BlockRealMatrix(3, 3);
@@ -157,22 +121,11 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return matrix;
   }
 
-  /**
-   * Unit transformer simple convolution key.
-   *
-   * @return the simple convolution key
-   */
   @Nonnull
   public static SimpleConvolutionLayer unitTransformer() {
     return unitTransformer(3);
   }
 
-  /**
-   * Unit transformer simple convolution key.
-   *
-   * @param bands the bands
-   * @return the simple convolution key
-   */
   @Nonnull
   public static SimpleConvolutionLayer unitTransformer(final int bands) {
     SimpleConvolutionLayer colorForwardTransform = new SimpleConvolutionLayer(1, 1, bands * bands);
@@ -196,15 +149,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     }).toArray(i -> new int[i][]);
   }
 
-  /**
-   * Style transfer buffered png.
-   *
-   * @param canvasImage     the canvas png
-   * @param styleParameters the style parameters
-   * @param trainingMinutes the training minutes
-   * @param measureStyle    the measureStyle style
-   * @return the buffered png
-   */
   public Tensor transfer(
       final Tensor canvasImage,
       final StyleSetup<T> styleParameters,
@@ -214,18 +158,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return transfer(new NullNotebookOutput(), canvasImage, styleParameters, trainingMinutes, measureStyle, 50, true);
   }
 
-  /**
-   * Style transfer buffered png.
-   *
-   * @param log             the log
-   * @param canvasImage     the canvas png
-   * @param styleParameters the style parameters
-   * @param trainingMinutes the training minutes
-   * @param measureStyle    the measureStyle style
-   * @param maxIterations   the max iterations
-   * @param verbose         the verbose
-   * @return the buffered png
-   */
   public Tensor transfer(
       @Nonnull final NotebookOutput log,
       final Tensor canvasImage,
@@ -261,12 +193,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     }
   }
 
-  /**
-   * Forward transform tensor.
-   *
-   * @param canvas the canvas
-   * @return the tensor
-   */
   @Nonnull
   public Tensor forwardTransform(final Tensor canvas) {
     Layer fwdTransform = getFwdTransform();
@@ -276,12 +202,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return andFree;
   }
 
-  /**
-   * Inverse transform tensor.
-   *
-   * @param canvas the canvas
-   * @return the tensor
-   */
   @Nonnull
   public Tensor inverseTransform(final Tensor canvas) {
     Layer invTransform = getInvTransform();
@@ -290,11 +210,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return andFree;
   }
 
-  /**
-   * Gets fwd transform.
-   *
-   * @return the fwd transform
-   */
   @Nonnull
   public Layer getFwdTransform() {
     SimpleConvolutionLayer colorForwardTransform = getColorForwardTransform();
@@ -306,11 +221,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     );
   }
 
-  /**
-   * Gets inv transform.
-   *
-   * @return the inv transform
-   */
   @Nonnull
   public Layer getInvTransform() {
     PipelineNetwork network = new PipelineNetwork(1);
@@ -326,18 +236,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return network;
   }
 
-  /**
-   * Train simple convolution key.
-   *
-   * @param log             the log
-   * @param styleParameters the style parameters
-   * @param trainingMinutes the training minutes
-   * @param measureStyle    the measureStyle style
-   * @param maxIterations   the max iterations
-   * @param verbose         the verbose
-   * @param canvas          the canvas
-   * @return the simple convolution key
-   */
   @Nonnull
   public SimpleConvolutionLayer train(
       @Nonnull final NotebookOutput log,
@@ -438,17 +336,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     };
   }
 
-  /**
-   * Gets style components.
-   *
-   * @param node          the node
-   * @param network       the network
-   * @param styleParams   the style params
-   * @param mean          the mean
-   * @param covariance    the covariance
-   * @param centeringMode the centering mode
-   * @return the style components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getStyleComponents(
       final DAGNode node,
@@ -531,12 +418,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return styleComponents;
   }
 
-  /**
-   * Measure style neural setup.
-   *
-   * @param style the style
-   * @return the neural setup
-   */
   public NeuralSetup measureStyle(final StyleSetup<T> style) {
     NeuralSetup self = new NeuralSetup(style);
     List<CharSequence> keyList = style.styleImages.keySet().stream().collect(Collectors.toList());
@@ -624,13 +505,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return self;
   }
 
-  /**
-   * Gets fitness components.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @return the fitness components
-   */
   @Nonnull
   public List<Tuple2<Double, DAGNode>> getFitnessComponents(NeuralSetup setup, final Map<T, DAGNode> nodeMap) {
     List<Tuple2<Double, DAGNode>> functions = new ArrayList<>();
@@ -639,13 +513,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return functions;
   }
 
-  /**
-   * Gets style components.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @return the style components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getStyleComponents(NeuralSetup setup, final Map<T, DAGNode> nodeMap) {
     ArrayList<Tuple2<Double, DAGNode>> styleComponents = new ArrayList<>();
@@ -692,12 +559,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return styleComponents;
   }
 
-  /**
-   * Fitness function pipeline network.
-   *
-   * @param setup the setup
-   * @return the pipeline network
-   */
   @Nonnull
   public PipelineNetwork fitnessNetwork(NeuralSetup setup) {
     PipelineNetwork pipelineNetwork = getInstance().getNetwork();
@@ -709,21 +570,9 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return network;
   }
 
-  /**
-   * Get key types t [ ].
-   *
-   * @return the t [ ]
-   */
   @Nonnull
   public abstract T[] getLayerTypes();
 
-  /**
-   * Gets content components.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @return the content components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getContentComponents(NeuralSetup setup, final Map<T, DAGNode> nodeMap) {
     ArrayList<Tuple2<Double, DAGNode>> contentComponents = new ArrayList<>();
@@ -746,43 +595,20 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return contentComponents;
   }
 
-  /**
-   * Gets instance.
-   *
-   * @return the instance
-   */
   public abstract U getInstance();
 
-  /**
-   * Measure style pipeline network.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @param network the network
-   * @return the pipeline network
-   */
   public PipelineNetwork buildNetwork(NeuralSetup setup, final Map<T, DAGNode> nodeMap, final PipelineNetwork network) {
     List<Tuple2<Double, DAGNode>> functions = getFitnessComponents(setup, nodeMap);
     ArtistryUtil.reduce(network, functions, parallelLossFunctions);
     return network;
   }
 
-  /**
-   * Gets color forward transform.
-   *
-   * @return the color forward transform
-   */
   public SimpleConvolutionLayer getColorForwardTransform() {
     SimpleConvolutionLayer colorForwardTransform = this.colorForwardTransform;
     if (null != colorForwardTransform) colorForwardTransform = (SimpleConvolutionLayer) colorForwardTransform.copy();
     return colorForwardTransform;
   }
 
-  /**
-   * Sets color forward transform.
-   *
-   * @param colorForwardTransform the color forward transform
-   */
   public synchronized void setColorForwardTransform(SimpleConvolutionLayer colorForwardTransform) {
     colorForwardTransform.assertAlive();
     if (null != this.colorForwardTransform) this.colorForwardTransform.freeRef();
@@ -808,27 +634,12 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     return this;
   }
 
-  /**
-   * The enum Centering mode.
-   */
   public enum CenteringMode {
-    /**
-     * Dynamic centering mode.
-     */
     Dynamic,
-    /**
-     * Static centering mode.
-     */
     Static,
-    /**
-     * Origin centering mode.
-     */
     Origin
   }
 
-  /**
-   * The type Vgg 16.
-   */
   public static class VGG16 extends ColorTransfer<CVPipe_VGG16.Layer, CVPipe_VGG16> {
 
     public CVPipe_VGG16 getInstance() {
@@ -842,9 +653,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
 
   }
 
-  /**
-   * The type Vgg 19.
-   */
   public static class VGG19 extends ColorTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> {
 
     public CVPipe_VGG19 getInstance() {
@@ -858,24 +666,22 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
 
   }
 
-  /**
-   * The type Content coefficients.
-   *
-   * @param <T> the type parameter
-   */
+  public static class Inception extends ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> {
+
+    public CVPipe_Inception getInstance() {
+      return CVPipe_Inception.INSTANCE;
+    }
+
+    @Nonnull
+    public CVPipe_Inception.Strata[] getLayerTypes() {
+      return CVPipe_Inception.Strata.values();
+    }
+
+  }
+
   public static class ContentCoefficients<T extends LayerEnum<T>> {
-    /**
-     * The Params.
-     */
     public final Map<T, Double> params = new HashMap<>();
 
-    /**
-     * Set content coefficients.
-     *
-     * @param l the l
-     * @param v the v
-     * @return the content coefficients
-     */
     public ContentCoefficients set(final T l, final double v) {
       params.put(l, v);
       return this;
@@ -883,27 +689,11 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
 
   }
 
-  /**
-   * The type Layer style params.
-   */
   public static class LayerStyleParams {
-    /**
-     * The Coeff style mean 0.
-     */
     public final double mean;
-    /**
-     * The Coeff style bandCovariance 0.
-     */
     public final double cov;
     private final double enhance;
 
-    /**
-     * Instantiates a new Layer style params.
-     *
-     * @param mean    the mean
-     * @param cov     the bandCovariance
-     * @param enhance the enhance
-     */
     public LayerStyleParams(final double mean, final double cov, final double enhance) {
       this.mean = mean;
       this.cov = cov;
@@ -911,43 +701,14 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     }
   }
 
-  /**
-   * The type Style setup.
-   *
-   * @param <T> the type parameter
-   */
   public static class StyleSetup<T extends LayerEnum<T>> {
-    /**
-     * The Precision.
-     */
     public final Precision precision;
-    /**
-     * The Style png.
-     */
     public final transient Map<CharSequence, Tensor> styleImages;
-    /**
-     * The Styles.
-     */
     public final Map<List<CharSequence>, StyleCoefficients<T>> styles;
-    /**
-     * The Content.
-     */
     public final ContentCoefficients<T> content;
-    /**
-     * The Content png.
-     */
     public transient Tensor contentImage;
 
 
-    /**
-     * Instantiates a new Style setup.
-     *
-     * @param precision           the precision
-     * @param contentImage        the content png
-     * @param contentCoefficients the content coefficients
-     * @param styleImages         the style png
-     * @param styles              the styles
-     */
     public StyleSetup(
         final Precision precision,
         final Tensor contentImage,
@@ -966,39 +727,15 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
 
   }
 
-  /**
-   * The type Style coefficients.
-   *
-   * @param <T> the type parameter
-   */
   public static class StyleCoefficients<T extends LayerEnum<T>> {
-    /**
-     * The Dynamic center.
-     */
     public final CenteringMode centeringMode;
-    /**
-     * The Params.
-     */
     public final Map<T, LayerStyleParams> params = new HashMap<>();
 
 
-    /**
-     * Instantiates a new Style coefficients.
-     *
-     * @param centeringMode the dynamic center
-     */
     public StyleCoefficients(final CenteringMode centeringMode) {
       this.centeringMode = centeringMode;
     }
 
-    /**
-     * Set style coefficients.
-     *
-     * @param layerType        the key type
-     * @param coeff_style_mean the coeff style mean
-     * @param coeff_style_cov  the coeff style bandCovariance
-     * @return the style coefficients
-     */
     public StyleCoefficients set(final T layerType, final double coeff_style_mean, final double coeff_style_cov) {
       return set(
           layerType,
@@ -1008,15 +745,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
       );
     }
 
-    /**
-     * Set style coefficients.
-     *
-     * @param layerType        the key type
-     * @param coeff_style_mean the coeff style mean
-     * @param coeff_style_cov  the coeff style bandCovariance
-     * @param dream            the dream
-     * @return the style coefficients
-     */
     public StyleCoefficients set(final T layerType, final double coeff_style_mean, final double coeff_style_cov, final double dream) {
       params.put(layerType, new LayerStyleParams(coeff_style_mean, coeff_style_cov, dream));
       return this;
@@ -1024,35 +752,13 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
 
   }
 
-  /**
-   * The type Content target.
-   *
-   * @param <T> the type parameter
-   */
   public static class ContentTarget<T extends LayerEnum<T>> {
-    /**
-     * The Content.
-     */
     public Map<T, Tensor> content = new HashMap<>();
   }
 
-  /**
-   * The type Style target.
-   *
-   * @param <T> the type parameter
-   */
   public class StyleTarget<T extends LayerEnum<T>> extends ReferenceCountingBase {
-    /**
-     * The Cov.
-     */
     public Map<T, Tensor> cov0 = new HashMap<>();
-    /**
-     * The Cov.
-     */
     public Map<T, Tensor> cov1 = new HashMap<>();
-    /**
-     * The Mean.
-     */
     public Map<T, Tensor> mean = new HashMap<>();
 
     @Override
@@ -1063,12 +769,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
       if (null != mean) mean.values().forEach(ReferenceCountingBase::freeRef);
     }
 
-    /**
-     * Add style target.
-     *
-     * @param right the right
-     * @return the style target
-     */
     public StyleTarget<T> add(StyleTarget<T> right) {
       StyleTarget<T> newStyle = new StyleTarget<>();
       Stream.concat(mean.keySet().stream(), right.mean.keySet().stream()).distinct().forEach(layer -> {
@@ -1116,12 +816,6 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
       return newStyle;
     }
 
-    /**
-     * Scale style target.
-     *
-     * @param value the value
-     * @return the style target
-     */
     public StyleTarget<T> scale(double value) {
       StyleTarget<T> newStyle = new StyleTarget<>();
       mean.keySet().stream().distinct().forEach(layer -> {
@@ -1138,30 +832,13 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
 
   }
 
-  /**
-   * The type Neural setup.
-   */
   public class NeuralSetup {
 
-    /**
-     * The Style parameters.
-     */
     public final StyleSetup<T> style;
-    /**
-     * The Content target.
-     */
     public ContentTarget<T> contentTarget = new ContentTarget<>();
-    /**
-     * The Style targets.
-     */
     public Map<CharSequence, StyleTarget<T>> styleTargets = new HashMap<>();
 
 
-    /**
-     * Instantiates a new Neural setup.
-     *
-     * @param style the style
-     */
     public NeuralSetup(final StyleSetup<T> style) {
       this.style = style;
     }

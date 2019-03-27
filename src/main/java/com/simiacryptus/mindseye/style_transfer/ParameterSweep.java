@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.ArtistryUtil;
 import com.simiacryptus.mindseye.applications.StyleTransfer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
@@ -91,7 +91,7 @@ public class ParameterSweep extends ImageScript {
 
   public void accept(@Nonnull NotebookOutput log) {
 
-    StyleTransfer.VGG19 styleTransfer = new StyleTransfer.VGG19();
+    StyleTransfer.Inception styleTransfer = new StyleTransfer.Inception();
     Precision precision = Precision.Float;
     styleTransfer.parallelLossFunctions = true;
     styleTransfer.setTiled(false);
@@ -105,40 +105,40 @@ public class ParameterSweep extends ImageScript {
         for (final CharSequence styleSource : sources) {
           log.p(log.png(ArtistryUtil.load(styleSource, resolution), "Style Image"));
         }
-        //.set(CVPipe_VGG19.Layer.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
+        //.set(CVPipe_Inception.Strata.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
         BufferedImage[] imgs = dreamCoeffStream().mapToObj(x -> x).flatMap(dreamCoeff -> {
           return contentCoeffStream().mapToObj(contentMixingCoeff -> {
-            final Map<List<CharSequence>, StyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer>> styles = TestUtil.buildMap(
+            final Map<List<CharSequence>, StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>> styles = TestUtil.buildMap(
                 x ->
                     x.put(
                         sources,
-                        new StyleTransfer.StyleCoefficients<CVPipe_VGG19.Layer>(
+                        new StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>(
                             StyleTransfer.CenteringMode.Origin)
                             .set(
-                                CVPipe_VGG19.Layer.Layer_0,
+                                CVPipe_Inception.Strata.Layer_0,
                                 coeff_style_mean,
                                 coeff_style_cov,
                                 dreamCoeff
                             )
                             .set(
-                                CVPipe_VGG19.Layer.Layer_1a,
+                                CVPipe_Inception.Strata.Layer_1a,
                                 coeff_style_mean,
                                 coeff_style_cov,
                                 dreamCoeff
                             )
                             .set(
-                                CVPipe_VGG19.Layer.Layer_1b,
+                                CVPipe_Inception.Strata.Layer_1b,
                                 coeff_style_mean,
                                 coeff_style_cov,
                                 dreamCoeff
                             )
                             .set(
-                                CVPipe_VGG19.Layer.Layer_1c,
+                                CVPipe_Inception.Strata.Layer_1c,
                                 coeff_style_mean,
                                 coeff_style_cov,
                                 dreamCoeff
                             )
-                        //.set(CVPipe_VGG19.Layer.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                        //.set(CVPipe_Inception.Strata.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
                     ));
             Tensor canvasImage = ArtistryUtil.loadTensor(
                 contentSource,
@@ -153,17 +153,17 @@ public class ParameterSweep extends ImageScript {
                 TestUtil.resize(canvasImage.toImage(), 16, true)),
                 1000.0, 1.1, resolution
             ).scale(0.9);
-            StyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new StyleTransfer.StyleSetup<>(
+            StyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new StyleTransfer.StyleSetup<>(
                 precision,
                 ArtistryUtil.loadTensor(
                     contentSource,
                     canvasImage.getDimensions()[0],
                     canvasImage.getDimensions()[1]
                 ),
-                new StyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer>()
-                    .set(CVPipe_VGG19.Layer.Layer_1a, contentMixingCoeff * 1e-1)
-                    .set(CVPipe_VGG19.Layer.Layer_1c, contentMixingCoeff)
-                    .set(CVPipe_VGG19.Layer.Layer_1d, contentMixingCoeff),
+                new StyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
+                    .set(CVPipe_Inception.Strata.Layer_1a, contentMixingCoeff * 1e-1)
+                    .set(CVPipe_Inception.Strata.Layer_1c, contentMixingCoeff)
+                    .set(CVPipe_Inception.Strata.Layer_1d, contentMixingCoeff),
                 TestUtil.buildMap(y -> y.putAll(styles.keySet().stream().flatMap(x -> x.stream())
                     .collect(Collectors.toMap(x -> x, file -> ArtistryUtil.load(file, resolution))))),
                 styles

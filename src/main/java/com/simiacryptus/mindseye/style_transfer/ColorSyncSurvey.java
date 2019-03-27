@@ -27,7 +27,7 @@ import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.conv.SimpleConvolutionLayer;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.opt.line.LineSearchCursor;
 import com.simiacryptus.mindseye.opt.orient.LBFGS;
 import com.simiacryptus.mindseye.opt.orient.OrientationStrategy;
@@ -95,7 +95,7 @@ public class ColorSyncSurvey extends ImageScript {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
-              new ColorTransfer.VGG19() {
+              new ColorTransfer.Inception() {
                 @Nonnull
                 @Override
                 public OrientationStrategy<LineSearchCursor> getOrientation() {
@@ -111,7 +111,7 @@ public class ColorSyncSurvey extends ImageScript {
                   };
                 }
               },
-              new ColorTransfer.StyleSetup<CVPipe_VGG19.Layer>(
+              new ColorTransfer.StyleSetup<CVPipe_Inception.Strata>(
                   precision,
                   canvasBufferedImage.copy(),
                   new ColorTransfer.ContentCoefficients<>(),
@@ -119,10 +119,10 @@ public class ColorSyncSurvey extends ImageScript {
                       Math.max(resolution.get(), minStyleWidth), styleSources
                   ),
                   TestUtil.buildMap(map -> {
-                    ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients =
+                    ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients =
                         new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
                     styleCoefficients.set(
-                        CVPipe_VGG19.Layer.Layer_0,
+                        CVPipe_Inception.Strata.Layer_0,
                         1e0,
                         1e0,
                         (double) 0
@@ -140,7 +140,7 @@ public class ColorSyncSurvey extends ImageScript {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
-              new ColorTransfer.VGG19() {
+              new ColorTransfer.Inception() {
                 @Nonnull
                 @Override
                 public OrientationStrategy<LineSearchCursor> getOrientation() {
@@ -156,7 +156,7 @@ public class ColorSyncSurvey extends ImageScript {
                   };
                 }
               },
-              new ColorTransfer.StyleSetup<CVPipe_VGG19.Layer>(
+              new ColorTransfer.StyleSetup<CVPipe_Inception.Strata>(
                   precision,
                   canvasBufferedImage.copy(),
                   new ColorTransfer.ContentCoefficients<>(),
@@ -164,10 +164,10 @@ public class ColorSyncSurvey extends ImageScript {
                       Math.max(resolution.get(), minStyleWidth), styleSources
                   ),
                   TestUtil.buildMap(map -> {
-                    ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients =
+                    ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients =
                         new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
                     styleCoefficients.set(
-                        CVPipe_VGG19.Layer.Layer_0,
+                        CVPipe_Inception.Strata.Layer_0,
                         1e0,
                         1e0,
                         (double) 0
@@ -185,7 +185,7 @@ public class ColorSyncSurvey extends ImageScript {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
-              new ColorTransfer.VGG19() {
+              new ColorTransfer.Inception() {
                 @Nonnull
                 @Override
                 public OrientationStrategy<LineSearchCursor> getOrientation() {
@@ -201,7 +201,7 @@ public class ColorSyncSurvey extends ImageScript {
                   };
                 }
               },
-              new ColorTransfer.StyleSetup<CVPipe_VGG19.Layer>(
+              new ColorTransfer.StyleSetup<CVPipe_Inception.Strata>(
                   precision,
                   canvasBufferedImage.copy(),
                   new ColorTransfer.ContentCoefficients<>(),
@@ -209,10 +209,10 @@ public class ColorSyncSurvey extends ImageScript {
                       Math.max(resolution.get(), minStyleWidth), styleSources
                   ),
                   TestUtil.buildMap(map -> {
-                    ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients =
+                    ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients =
                         new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
                     styleCoefficients.set(
-                        CVPipe_VGG19.Layer.Layer_0,
+                        CVPipe_Inception.Strata.Layer_0,
                         1e0,
                         0,
                         (double) 0
@@ -230,7 +230,7 @@ public class ColorSyncSurvey extends ImageScript {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
-              new ColorTransfer.VGG19() {
+              new ColorTransfer.Inception() {
                 @Nonnull
                 @Override
                 public OrientationStrategy<LineSearchCursor> getOrientation() {
@@ -246,7 +246,7 @@ public class ColorSyncSurvey extends ImageScript {
                   };
                 }
               },
-              new ColorTransfer.StyleSetup<CVPipe_VGG19.Layer>(
+              new ColorTransfer.StyleSetup<CVPipe_Inception.Strata>(
                   precision,
                   canvasBufferedImage.copy(),
                   new ColorTransfer.ContentCoefficients<>(),
@@ -254,10 +254,10 @@ public class ColorSyncSurvey extends ImageScript {
                       Math.max(resolution.get(), minStyleWidth), styleSources
                   ),
                   TestUtil.buildMap(map -> {
-                    ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients =
+                    ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients =
                         new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
                     styleCoefficients.set(
-                        CVPipe_VGG19.Layer.Layer_1a,
+                        CVPipe_Inception.Strata.Layer_1a,
                         1e0,
                         1e0,
                         (double) 0
@@ -275,7 +275,7 @@ public class ColorSyncSurvey extends ImageScript {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
-              new ColorTransfer.VGG19() {
+              new ColorTransfer.Inception() {
                 @Nonnull
                 @Override
                 public OrientationStrategy<LineSearchCursor> getOrientation() {
@@ -291,7 +291,7 @@ public class ColorSyncSurvey extends ImageScript {
                   };
                 }
               },
-              new ColorTransfer.StyleSetup<CVPipe_VGG19.Layer>(
+              new ColorTransfer.StyleSetup<CVPipe_Inception.Strata>(
                   precision,
                   canvasBufferedImage.copy(),
                   new ColorTransfer.ContentCoefficients<>(),
@@ -299,10 +299,10 @@ public class ColorSyncSurvey extends ImageScript {
                       Math.max(resolution.get(), minStyleWidth), styleSources
                   ),
                   TestUtil.buildMap(map -> {
-                    ColorTransfer.StyleCoefficients<CVPipe_VGG19.Layer> styleCoefficients =
+                    ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients =
                         new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Dynamic);
                     styleCoefficients.set(
-                        CVPipe_VGG19.Layer.Layer_0,
+                        CVPipe_Inception.Strata.Layer_0,
                         1e0,
                         1e0,
                         (double) 0

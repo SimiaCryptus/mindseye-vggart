@@ -22,7 +22,7 @@ package com.simiacryptus.mindseye.models;
 import com.simiacryptus.mindseye.network.PipelineNetwork;
 
 /**
- * The interface Layer enum.
+ * The interface Strata enum.
  *
  * @param <T> the type parameter
  */

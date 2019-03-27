@@ -156,7 +156,7 @@ public class ArtisticGradient extends ArtistryAppBase_VGG19 {
                                                     coeff_style_cov,
                                                     dreamCoeff
                                                 )
-                                            //.set(CVPipe_VGG19.Layer.Layer_1d, 1e0, 1e0, dreamCoeff)
+                                            //.set(CVPipe_VGG19.Strata.Layer_1d, 1e0, 1e0, dreamCoeff)
                                         )),
                                         new StyleTransfer.ContentCoefficients<CVPipe_VGG19.Layer>()
                                             .set(

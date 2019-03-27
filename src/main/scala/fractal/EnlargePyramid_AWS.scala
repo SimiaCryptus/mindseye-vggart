@@ -20,7 +20,7 @@
 package fractal
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
-import com.simiacryptus.mindseye.models.CVPipe_VGG19
+import com.simiacryptus.mindseye.models.{CVPipe_Inception, CVPipe_VGG19}
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object EnlargePyramid_AWS_EC2 extends EnlargePyramid_AWS with EC2Runner[Object] {
@@ -34,13 +34,13 @@ object EnlargePyramid_AWS_EC2 extends EnlargePyramid_AWS with EC2Runner[Object] 
 
 
 abstract class EnlargePyramid_AWS extends EnlargePyramid(
-  styleSources = Array("s3a://simiacryptus/photos/shutterstock_87165334.jpg")
+  styleSources = Array("s3a://simiacryptus/photos/shutterstock_781159663.jpg")
 ) with AWSNotebookRunner[Object] {
   override val s3bucket: String = super.s3bucket
 
-  override val startLevel: Int = 4
+  override val startLevel: Int = 2
   override val style_resolution: Int = 1200
-  override val maxIterations: Int = 5
+  override val maxIterations: Int = 10
   override val aspect = 632.0 / 1024.0
   override val inputHref: String = "https://" + bucket + ".s3.us-west-2.amazonaws.com/" + reportPath + "/etc/" + imagePrefix
   override val inputHadoop: String = "s3a://" + bucket + "/" + reportPath + "/etc/" + imagePrefix
@@ -49,23 +49,28 @@ abstract class EnlargePyramid_AWS extends EnlargePyramid(
 
   def bucket: String = "data-cb03c"
 
-  def reportPath: String = "reports/201903041457"
+  def reportPath: String = "reports/201903275317"
 
-  override def style_layers(layer: CVPipe_VGG19.Layer): Double = layer match {
-    case CVPipe_VGG19.Layer.Layer_1a => 1e0
-    case CVPipe_VGG19.Layer.Layer_1b => 1e0
+  override def style_layers(layer: CVPipe_Inception.Strata): Double = layer match {
+//    case CVPipe_Inception.Strata.Layer_2 => 1e0
+//    case CVPipe_Inception.Strata.Layer_3a => 1e0
+    case CVPipe_Inception.Strata.Layer_3b => 1e0
+    case CVPipe_Inception.Strata.Layer_4a => 1e0
+    case CVPipe_Inception.Strata.Layer_4b => 1e0
     case _ => 0.0
   }
 
-  override def coeff_content(layer: CVPipe_VGG19.Layer): Double = layer match {
-    case CVPipe_VGG19.Layer.Layer_0 => 1e-1
+  override def coeff_content(layer: CVPipe_Inception.Strata): Double = layer match {
+    case CVPipe_Inception.Strata.Layer_1 => 1e-1
     case _ => 0e0
   }
 
-  override def dreamCoeff(layer: CVPipe_VGG19.Layer): Double = layer match {
-    case CVPipe_VGG19.Layer.Layer_0 => 0e0
-    case CVPipe_VGG19.Layer.Layer_1a => 1e-1
-    case CVPipe_VGG19.Layer.Layer_1b => 4e-1
+  override def dreamCoeff(layer: CVPipe_Inception.Strata): Double = layer match {
+    case CVPipe_Inception.Strata.Layer_3b => 0e0
+    case CVPipe_Inception.Strata.Layer_3a => 5e-1
+    case CVPipe_Inception.Strata.Layer_4a => 1e0
+    case CVPipe_Inception.Strata.Layer_4b => 1e0
+    case CVPipe_Inception.Strata.Layer_4c => 1e0
     case _ => 0e0
   }
 }

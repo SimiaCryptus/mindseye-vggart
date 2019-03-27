@@ -21,6 +21,7 @@ package com.simiacryptus.mindseye;
 
 import com.simiacryptus.aws.exe.EC2NotebookRunner;
 import com.simiacryptus.aws.exe.LocalNotebookRunner;
+import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.models.CVPipe_VGG19;
 
 import javax.annotation.Nonnull;
@@ -58,12 +59,12 @@ public class AllTests {
 
           @Nonnull
           @Override
-          public List<CVPipe_VGG19.Layer> getLayers() {
+          public List<CVPipe_Inception.Strata> getLayers() {
             return Arrays.asList(
-                CVPipe_VGG19.Layer.Layer_0,
-                CVPipe_VGG19.Layer.Layer_1a,
-                CVPipe_VGG19.Layer.Layer_1b,
-                CVPipe_VGG19.Layer.Layer_1c
+                CVPipe_Inception.Strata.Layer_0,
+                CVPipe_Inception.Strata.Layer_1a,
+                CVPipe_Inception.Strata.Layer_1b,
+                CVPipe_Inception.Strata.Layer_1c
             );
           }
         }
