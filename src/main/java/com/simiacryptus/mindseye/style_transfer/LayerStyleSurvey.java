@@ -19,6 +19,8 @@
 
 package com.simiacryptus.mindseye.style_transfer;
 
+import com.simiacryptus.aws.exe.EC2NotebookRunner;
+import com.simiacryptus.aws.exe.LocalNotebookRunner;
 import com.simiacryptus.mindseye.ImageScript;
 import com.simiacryptus.mindseye.applications.ArtistryUtil;
 import com.simiacryptus.mindseye.applications.ColorTransfer;
@@ -48,15 +50,21 @@ public class LayerStyleSurvey extends ImageScript {
   public CharSequence[] styleSources;
   public String[] contentSources;
 
+  public LayerStyleSurvey() {
+    this(
+        new String[]{"https://data-cb03c.s3.amazonaws.com/reports/20190328060818/etc/com.simiacryptus.mindseye.style_transfer.StyleSurvey.1.png"},
+        new String[]{"https://s3-us-west-2.amazonaws.com/simiacryptus/photos/vangogh-starry-night-ballance1.jpg"});
+  }
+
   public LayerStyleSurvey(final String[] contentSources, final CharSequence[] styleSources) {
     this.contentSources = contentSources;
     this.styleSources = styleSources;
     this.verbose = true;
-    this.maxIterations = 30;
+    this.maxIterations = 50;
     this.trainingMinutes = 30;
     this.maxResolution = 1400;
     startResolution = 600;
-    this.minStyleWidth = 600;
+    this.minStyleWidth = 1200;
     plasmaResolution = startResolution / 8;
   }
 
@@ -124,25 +132,36 @@ public class LayerStyleSurvey extends ImageScript {
         log.p(log.png(color_space_analog.toImage(), "Style-Aligned Content Color"));
         canvasImage.set(color_space_analog);
 
-        // Seed initialization / degradation
-        canvasImage.set(ImageArtUtil.degrade(
-            plasmaResolution, resolution.get(), canvasImage.get()
-        ));
+//        // Seed initialization / degradation
+//        canvasImage.set(ImageArtUtil.degrade(
+//            plasmaResolution, resolution.get(), canvasImage.get()
+//        ));
 
-        List<CVPipe_Inception.Strata> layerList = Arrays.asList(
-            CVPipe_Inception.Strata.Layer_0,
-            CVPipe_Inception.Strata.Layer_1a,
-            CVPipe_Inception.Strata.Layer_1b,
-            CVPipe_Inception.Strata.Layer_1c,
-            CVPipe_Inception.Strata.Layer_1d,
-            CVPipe_Inception.Strata.Layer_1e
+        List<CVPipe_Inception.Strata> styleLayers = Arrays.asList(
+            CVPipe_Inception.Strata.Layer_1,
+            CVPipe_Inception.Strata.Layer_2,
+            CVPipe_Inception.Strata.Layer_3a,
+//            CVPipe_Inception.Strata.Layer_3b,
+            CVPipe_Inception.Strata.Layer_4a,
+            CVPipe_Inception.Strata.Layer_4b,
+//            CVPipe_Inception.Strata.Layer_4c,
+//            CVPipe_Inception.Strata.Layer_4d,
+            CVPipe_Inception.Strata.Layer_4e,
+            CVPipe_Inception.Strata.Layer_5a
+//            CVPipe_Inception.Strata.Layer_5b
         );
-        for (CVPipe_Inception.Strata contentLayer : layerList) {
+//        List<CVPipe_Inception.Strata> contentLayers = styleLayers;
+        List<CVPipe_Inception.Strata> contentLayers = Arrays.asList(
+            CVPipe_Inception.Strata.Layer_1,
+            CVPipe_Inception.Strata.Layer_2,
+            CVPipe_Inception.Strata.Layer_4b
+        );
+        for (CVPipe_Inception.Strata contentLayer : contentLayers) {
           log.h1("Content Strata " + contentLayer.name());
-          for (CVPipe_Inception.Strata styleLayer : layerList) {
+          for (CVPipe_Inception.Strata styleLayer : styleLayers) {
             log.h2("Style Strata " + styleLayer.name());
             Tensor result = log.subreport(String.format("%s_%s", styleLayer.name(), contentLayer.name()), sublog -> {
-              final Tensor canvasImage1 = canvasImage.get();
+              final Tensor canvasImage1 = canvasImage.get().copy();
               int padding = 20;
               final int torroidalOffsetX = false ? -padding : 0;
               final int torroidalOffsetY = false ? -padding : 0;
@@ -161,9 +180,8 @@ public class LayerStyleSurvey extends ImageScript {
                           canvasImage1.getDimensions()[1]
                       )),
                   ImageArtUtil.scale(
-                      new SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
-                          .set(contentLayer, 1e0),
-                      1e0
+                      new SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>().set(contentLayer, 1e0),
+                      1e-1
                   ),
                   ImageArtUtil.getStyleImages(
                       styleColorTransforms, Math.max(resolution.get(), minStyleWidth), styleSources
@@ -177,7 +195,7 @@ public class LayerStyleSurvey extends ImageScript {
                             }),
                             1e0,
                             1e0,
-                            1e-1
+                            0e-2
                         )
                     );
                   })
@@ -237,5 +255,13 @@ public class LayerStyleSurvey extends ImageScript {
     });
   }
 
+
+  public static class EC2 {
+
+
+    public static void main(String... args) throws Exception {
+      EC2NotebookRunner.run(LocalNotebookRunner.getTask(LayerStyleSurvey.class));
+    }
+  }
 
 }

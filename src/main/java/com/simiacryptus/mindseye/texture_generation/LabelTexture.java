@@ -174,11 +174,11 @@ public abstract class LabelTexture extends ImageScript {
         CVPipe_Inception.Strata.Layer_1e
     ));
     canvas = tiledTexturePaintingPhase(subreport, canvas, 340, getStyleSetup(
-        CVPipe_Inception.Strata.Layer_1a,
+        CVPipe_Inception.Strata.Layer_2,
         CVPipe_Inception.Strata.Layer_1c
     ));
     canvas = tiledTexturePaintingPhase(subreport, canvas, 600, getStyleSetup(
-        CVPipe_Inception.Strata.Layer_1a,
+        CVPipe_Inception.Strata.Layer_2,
         CVPipe_Inception.Strata.Layer_1b
     ));
     return canvas;

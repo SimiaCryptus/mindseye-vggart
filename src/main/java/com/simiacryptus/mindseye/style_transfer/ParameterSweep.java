@@ -121,7 +121,7 @@ public class ParameterSweep extends ImageScript {
                                 dreamCoeff
                             )
                             .set(
-                                CVPipe_Inception.Strata.Layer_1a,
+                                CVPipe_Inception.Strata.Layer_2,
                                 coeff_style_mean,
                                 coeff_style_cov,
                                 dreamCoeff
@@ -161,7 +161,7 @@ public class ParameterSweep extends ImageScript {
                     canvasImage.getDimensions()[1]
                 ),
                 new StyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
-                    .set(CVPipe_Inception.Strata.Layer_1a, contentMixingCoeff * 1e-1)
+                    .set(CVPipe_Inception.Strata.Layer_2, contentMixingCoeff * 1e-1)
                     .set(CVPipe_Inception.Strata.Layer_1c, contentMixingCoeff)
                     .set(CVPipe_Inception.Strata.Layer_1d, contentMixingCoeff),
                 TestUtil.buildMap(y -> y.putAll(styles.keySet().stream().flatMap(x -> x.stream())

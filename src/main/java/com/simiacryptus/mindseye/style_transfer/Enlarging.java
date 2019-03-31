@@ -120,13 +120,13 @@ public class Enlarging extends ImageScript {
                   Arrays.asList(styleSources),
                   new StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>(StyleTransfer.CenteringMode.Origin)
                       .set(CVPipe_Inception.Strata.Layer_0, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                      .set(CVPipe_Inception.Strata.Layer_1a, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                      .set(CVPipe_Inception.Strata.Layer_2, coeff_style_mean, coeff_style_cov, dreamCoeff)
                       .set(CVPipe_Inception.Strata.Layer_1b, coeff_style_mean, coeff_style_cov, dreamCoeff)
                       .set(CVPipe_Inception.Strata.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
                   //.set(CVPipe_Inception.Strata.Layer_1d, coeff_style_mean, coeff_style_cov, dreamCoeff)
               )),
           new StyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
-              .set(CVPipe_Inception.Strata.Layer_1a, contentMixingCoeff * 1e-1)
+              .set(CVPipe_Inception.Strata.Layer_2, contentMixingCoeff * 1e-1)
               .set(CVPipe_Inception.Strata.Layer_1c, contentMixingCoeff)
               .set(CVPipe_Inception.Strata.Layer_1d, contentMixingCoeff),
           getTrainingMinutes(), getMaxIterations());

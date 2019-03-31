@@ -81,7 +81,7 @@ public class Simple extends ImageScript {
             new TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata>(
                 TextureGeneration.CenteringMode.Origin)
                 .set(CVPipe_Inception.Strata.Layer_0, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                .set(CVPipe_Inception.Strata.Layer_1a, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                .set(CVPipe_Inception.Strata.Layer_2, coeff_style_mean, coeff_style_cov, dreamCoeff)
                 .set(CVPipe_Inception.Strata.Layer_1b, coeff_style_mean, coeff_style_cov, dreamCoeff)
                 .set(CVPipe_Inception.Strata.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
         ));

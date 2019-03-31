@@ -24,6 +24,7 @@ import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.MutableResult;
 import com.simiacryptus.mindseye.lang.Result;
 import com.simiacryptus.mindseye.lang.Tensor;
+import com.simiacryptus.mindseye.lang.cudnn.MultiPrecision;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.ImgBandSelectLayer;
 import com.simiacryptus.mindseye.layers.cudnn.ImgConcatLayer;
@@ -263,7 +264,7 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
       Map<T, PipelineNetwork> prototypes = getInstance().getPrototypes();
       Layer network = prototypes.get(layer);
       assert null != network : prototypes.toString();
-      ArtistryUtil.setPrecision((DAGNetwork) network, Precision.Float);
+      MultiPrecision.setPrecision((DAGNetwork) network, Precision.Float);
       network.setFrozen(true);
       Result imageFeatures = network.evalAndFree(new MutableResult(img));
       Tensor featureImage = imageFeatures.getData().get(0);
@@ -278,7 +279,7 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
               new ImgBandSelectLayer(i, i + 1),
               new SumReducerLayer()
           );
-          ArtistryUtil.setPrecision(net, Precision.Float);
+          MultiPrecision.setPrecision(net, Precision.Float);
           double[] singleDelta;
           try {
             Result eval = net.eval(imageFeatures);
@@ -328,7 +329,7 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
     Tensor concat = ImgConcatLayer.eval(tensors);
     tensors.forEach(ReferenceCountingBase::freeRef);
     PipelineNetwork analyze = analyze(null, log, concat);
-    ArtistryUtil.setPrecision(analyze, Precision.Float);
+    MultiPrecision.setPrecision(analyze, Precision.Float);
     Tensor reclustered = analyze.eval(concat).getDataAndFree().getAndFree(0);
     analyze.freeRef();
     concat.freeRef();

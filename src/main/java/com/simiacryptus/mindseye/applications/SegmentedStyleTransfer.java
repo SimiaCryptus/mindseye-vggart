@@ -25,6 +25,7 @@ import com.simiacryptus.mindseye.eval.ArrayTrainable;
 import com.simiacryptus.mindseye.eval.Trainable;
 import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
+import com.simiacryptus.mindseye.lang.cudnn.MultiPrecision;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
 import com.simiacryptus.mindseye.layers.java.ImgTileSelectLayer;
@@ -34,7 +35,8 @@ import com.simiacryptus.mindseye.network.DAGNode;
 import com.simiacryptus.mindseye.network.InnerNode;
 import com.simiacryptus.mindseye.network.PipelineNetwork;
 import com.simiacryptus.mindseye.opt.IterativeTrainer;
-import com.simiacryptus.mindseye.opt.line.BisectionSearch;
+import com.simiacryptus.mindseye.opt.line.QuadraticSearch;
+import com.simiacryptus.mindseye.opt.orient.GradientDescent;
 import com.simiacryptus.mindseye.opt.orient.TrustRegionStrategy;
 import com.simiacryptus.mindseye.opt.region.RangeConstraint;
 import com.simiacryptus.mindseye.opt.region.TrustRegion;
@@ -295,7 +297,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       network.setFrozen(true);
       if (null != server) ArtistryUtil.addLayersHandler(network, server);
       if (tiled) network = ArtistryUtil.tileCycle(network, 3);
-      ArtistryUtil.setPrecision(network, styleParameters.precision);
+      MultiPrecision.setPrecision(network, styleParameters.precision);
       TestUtil.instrumentPerformance(network);
       Trainable trainable1 = getTrainable(canvas, network);
       network.freeRef();
@@ -317,7 +319,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       trainingLog.run(() -> {
         new IterativeTrainer(trainable)
             .setMonitor(TestUtil.getMonitor(history))
-            .setOrientation(new TrustRegionStrategy() {
+            .setOrientation(new TrustRegionStrategy(new GradientDescent()) {
               @Override
               public TrustRegion getRegionPolicy(final Layer layer) {
                 return new RangeConstraint().setMin(1e-2).setMax(256);
@@ -325,7 +327,9 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
             })
             .setMaxIterations(maxIterations)
             .setIterationsPerSample(100)
-            .setLineSearchFactory(name -> new BisectionSearch().setSpanTol(1e-1).setCurrentRate(1e6))
+//            .setLineSearchFactory(name -> new BisectionSearch().setSpanTol(1e-1).setCurrentRate(1e6).s(1e6))
+            .setLineSearchFactory(name -> new QuadraticSearch().setRelativeTolerance(1e-1).setCurrentRate(1e4).setMaxRate(5e5))
+//            .setLineSearchFactory(name -> new ArmijoWolfeSearch().setAlpha(1e4).setMaxAlpha(1e6))
             .setTimeout(trainingMinutes, TimeUnit.MINUTES)
             .setTerminateThreshold(Double.NEGATIVE_INFINITY)
             .runAndFree();
@@ -377,7 +381,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       System.gc();
       Layer network = layerType.network();
       try {
-        ArtistryUtil.setPrecision((DAGNetwork) network, style.precision);
+        MultiPrecision.setPrecision((DAGNetwork) network, style.precision);
         //network = new ImgTileSubnetLayer(network, 400,400,400,400);
         if (null != style.contentImage) {
           Tensor content = network.eval(style.contentImage).getDataAndFree().getAndFree(0);
@@ -428,7 +432,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       System.gc();
       Layer network = layerType.network();
       try {
-        ArtistryUtil.setPrecision((DAGNetwork) network, style.precision);
+        MultiPrecision.setPrecision((DAGNetwork) network, style.precision);
         for (Map.Entry<CharSequence, Tensor> styleEntry : styleInputs.entrySet()) {
           CharSequence key = styleEntry.getKey();
           SegmentedStyleTarget<T> segmentedStyleTarget = self.styleTargets.get(key);
@@ -542,7 +546,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       try {
         wrapAvg = ArtistryUtil.wrapTiledAvg(network.copy(), 400);
         System.gc();
-        ArtistryUtil.setPrecision((DAGNetwork) wrapAvg, Precision.Float);
+        MultiPrecision.setPrecision((DAGNetwork) wrapAvg, Precision.Float);
         mean = wrapAvg.eval(image).getDataAndFree().getAndFree(0);
         if (mean.length() > 0 && styleTarget.mean.put(layerType, mean) != null) throw new AssertionError();
       } finally {
@@ -553,7 +557,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       try {
         gram = ArtistryUtil.wrapTiledAvg(ArtistryUtil.gram(network.copy()), 400);
         System.gc();
-        ArtistryUtil.setPrecision((DAGNetwork) gram, Precision.Float);
+        MultiPrecision.setPrecision((DAGNetwork) gram, Precision.Float);
         Tensor cov0 = gram.eval(image).getDataAndFree().getAndFree(0);
         if (cov0.length() > 0 && styleTarget.cov0.put(layerType, cov0) != null) throw new AssertionError();
       } finally {
@@ -561,7 +565,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       }
       try {
         gram = ArtistryUtil.wrapTiledAvg(ArtistryUtil.gram(network.copy(), mean), 400);
-        ArtistryUtil.setPrecision((DAGNetwork) gram, Precision.Float);
+        MultiPrecision.setPrecision((DAGNetwork) gram, Precision.Float);
         System.gc();
         Tensor cov1 = gram.eval(image).getDataAndFree().getAndFree(0);
         if (cov1.length() > 0 && styleTarget.cov1.put(layerType, cov1) != null) throw new AssertionError();
@@ -702,7 +706,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       mainFunctions.add(new Tuple2<>(1.0, importNode));
     });
     ArtistryUtil.reduce(mainNetwork, mainFunctions, parallelLossFunctions);
-    ArtistryUtil.setPrecision(mainNetwork, setup.style.precision);
+    MultiPrecision.setPrecision(mainNetwork, setup.style.precision);
     return mainNetwork;
   }
 

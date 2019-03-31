@@ -118,7 +118,7 @@ public class ParameterSweep extends ImageScript {
                       dreamCoeff
                   )
                   .set(
-                      CVPipe_Inception.Strata.Layer_1a,
+                      CVPipe_Inception.Strata.Layer_2,
                       coeff_style_mean,
                       coeff_style_cov,
                       dreamCoeff

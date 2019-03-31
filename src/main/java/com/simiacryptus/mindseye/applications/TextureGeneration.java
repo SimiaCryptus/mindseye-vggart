@@ -24,6 +24,7 @@ import com.simiacryptus.mindseye.eval.ArrayTrainable;
 import com.simiacryptus.mindseye.eval.Trainable;
 import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
+import com.simiacryptus.mindseye.lang.cudnn.MultiPrecision;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
 import com.simiacryptus.mindseye.models.*;
@@ -187,7 +188,7 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
       final int trainingMinutes,
       final int maxIterations,
       Precision precision) {
-    ArtistryUtil.setPrecision(network, precision);
+    MultiPrecision.setPrecision(network, precision);
     @Nonnull ArrayList<StepRecord> history = new ArrayList<>();
     String training_name = String.format("etc/training_%s.png", Long.toHexString(MarkdownNotebookOutput.random.nextLong()));
     log.p(String.format("<a href=\"%s\"><img src=\"%s\"></a>", training_name, training_name));
@@ -328,7 +329,7 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     for (final T layerType : getLayerTypes()) {
       System.gc();
       final PipelineNetwork network = layerType.network();
-      ArtistryUtil.setPrecision(network, style.precision);
+      MultiPrecision.setPrecision(network, style.precision);
       for (int i = 0; i < styleInputs.size(); i++) {
         Tensor styleInput = styleInputs.get(i);
         CharSequence key = keyList.get(i);
@@ -340,7 +341,7 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
         Tensor mean;
         {
           PipelineNetwork wrapTiledAvg = ArtistryUtil.wrapTiledAvg(network.copy(), 600);
-          ArtistryUtil.setPrecision(wrapTiledAvg, style.precision);
+          MultiPrecision.setPrecision(wrapTiledAvg, style.precision);
           mean = wrapTiledAvg.eval(styleInput).getDataAndFree().getAndFree(0);
           wrapTiledAvg.freeRef();
         }
@@ -362,14 +363,14 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
         Tensor cov0;
         {
           PipelineNetwork wrapTiledAvg = ArtistryUtil.wrapTiledAvg(ArtistryUtil.gram(network.copy()), 600);
-          ArtistryUtil.setPrecision(wrapTiledAvg, style.precision);
+          MultiPrecision.setPrecision(wrapTiledAvg, style.precision);
           cov0 = wrapTiledAvg.eval(styleInput).getDataAndFree().getAndFree(0);
           wrapTiledAvg.freeRef();
         }
         Tensor cov1;
         {
           PipelineNetwork wrapTiledAvg = ArtistryUtil.wrapTiledAvg(ArtistryUtil.gram(network.copy(), mean), 600);
-          ArtistryUtil.setPrecision(wrapTiledAvg, style.precision);
+          MultiPrecision.setPrecision(wrapTiledAvg, style.precision);
           cov1 = wrapTiledAvg.eval(styleInput).getDataAndFree().getAndFree(0);
           wrapTiledAvg.freeRef();
         }
@@ -443,7 +444,7 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     ids.forEach((l, id) -> nodes.put(l, pipelineNetwork.getChildNode(id)));
     PipelineNetwork network = buildNetwork(setup, nodes, pipelineNetwork);
     //network = withClamp(network);
-    ArtistryUtil.setPrecision(network, setup.style.precision);
+    MultiPrecision.setPrecision(network, setup.style.precision);
     return network;
   }
 

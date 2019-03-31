@@ -25,6 +25,7 @@ import com.simiacryptus.mindseye.eval.ArrayTrainable;
 import com.simiacryptus.mindseye.eval.Trainable;
 import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
+import com.simiacryptus.mindseye.lang.cudnn.MultiPrecision;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
 import com.simiacryptus.mindseye.layers.cudnn.conv.SimpleConvolutionLayer;
@@ -319,7 +320,7 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
             )
         )
     ).freeRef();
-    ArtistryUtil.setPrecision(trainingAssembly, styleParameters.precision);
+    MultiPrecision.setPrecision(trainingAssembly, styleParameters.precision);
     return trainingAssembly;
   }
 
@@ -431,7 +432,7 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
       System.gc();
       Layer network = layerType.network();
       try {
-        ArtistryUtil.setPrecision((DAGNetwork) network, style.precision);
+        MultiPrecision.setPrecision((DAGNetwork) network, style.precision);
         //network = new ImgTileSubnetLayer(network, 400,400,400,400);
         Tensor content = null == contentInput ? null : network.eval(contentInput).getDataAndFree().getAndFree(0);
         if (null != content) {
@@ -566,7 +567,7 @@ public abstract class ColorTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     Map<T, UUID> ids = getInstance().getNodes();
     ids.forEach((l, id) -> nodes.put(l, pipelineNetwork.getChildNode(id)));
     PipelineNetwork network = buildNetwork(setup, nodes, pipelineNetwork);
-    ArtistryUtil.setPrecision(network, setup.style.precision);
+    MultiPrecision.setPrecision(network, setup.style.precision);
     return network;
   }
 

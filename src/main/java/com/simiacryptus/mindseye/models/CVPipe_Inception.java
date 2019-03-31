@@ -87,7 +87,7 @@ public class CVPipe_Inception implements CVPipe<com.simiacryptus.mindseye.models
     strataList.stream().forEach(strata->{
       Layer tfLayer = new TFConverter().convert(TFConverter.getLayer(imageNetworkPipeline, strata.index));
       nodes.put(strata, pipelineNetwork.wrap(tfLayer).getId());
-      prototypes.put(strata, pipelineNetwork.copy());
+      prototypes.put(strata, (PipelineNetwork) pipelineNetwork.copy().freeze());
     });
     return pipelineNetwork;
   }
@@ -131,7 +131,7 @@ public class CVPipe_Inception implements CVPipe<com.simiacryptus.mindseye.models
     public final PipelineNetwork network() {
       PipelineNetwork pipelineNetwork = INSTANCE.getPrototypes().get(this);
       if (null == pipelineNetwork) throw new IllegalStateException(this.toString());
-      return null == pipelineNetwork ? null : pipelineNetwork.copy();
+      return null == pipelineNetwork ? null : (PipelineNetwork) pipelineNetwork.copy().freeze();
     }
   }
 }

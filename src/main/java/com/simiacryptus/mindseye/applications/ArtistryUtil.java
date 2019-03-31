@@ -362,20 +362,6 @@ public class ArtistryUtil {
   }
 
   /**
-   * Sets precision.
-   *
-   * @param network   the network
-   * @param precision the precision
-   */
-  public static void setPrecision(final DAGNetwork network, final Precision precision) {
-    network.visitLayers(layer -> {
-      if (layer instanceof MultiPrecision) {
-        ((MultiPrecision) layer).setPrecision(precision);
-      }
-    });
-  }
-
-  /**
    * Pca tensor.
    *
    * @param cov   the bandCovariance

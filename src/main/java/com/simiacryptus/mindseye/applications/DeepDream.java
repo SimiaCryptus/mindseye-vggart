@@ -24,6 +24,7 @@ import com.simiacryptus.mindseye.eval.ArrayTrainable;
 import com.simiacryptus.mindseye.eval.Trainable;
 import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
+import com.simiacryptus.mindseye.lang.cudnn.MultiPrecision;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
 import com.simiacryptus.mindseye.models.CVPipe;
@@ -154,7 +155,7 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
     });
     TestUtil.monitorImage(canvasImage, false, false);
     network.setFrozen(true);
-    ArtistryUtil.setPrecision(network, precision);
+    MultiPrecision.setPrecision(network, precision);
     TestUtil.instrumentPerformance(network);
     if (null != server) ArtistryUtil.addLayersHandler(network, server);
     if (tiled) network = ArtistryUtil.tileCycle(network, 3);
@@ -270,7 +271,7 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
     ids.forEach((l, id) -> nodes.put(l, pipelineNetwork.getChildNode(id)));
     PipelineNetwork network = processStats(setup, nodes, pipelineNetwork);
     //network = withClamp(network);
-    ArtistryUtil.setPrecision(network, setup.style.precision);
+    MultiPrecision.setPrecision(network, setup.style.precision);
     return network;
   }
 

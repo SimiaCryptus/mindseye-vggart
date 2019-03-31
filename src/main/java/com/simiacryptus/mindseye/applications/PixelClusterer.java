@@ -25,6 +25,7 @@ import com.simiacryptus.mindseye.eval.ArrayTrainable;
 import com.simiacryptus.mindseye.eval.Trainable;
 import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
+import com.simiacryptus.mindseye.lang.cudnn.MultiPrecision;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
 import com.simiacryptus.mindseye.layers.cudnn.conv.ConvolutionLayer;
@@ -222,7 +223,7 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
       log.eval(() -> {
         int[] dimensions = metrics.getDimensions();
         PipelineNetwork netEntropy = model.andThenWrap(entropyNetwork(dimensions[0] * dimensions[1], entropyBias));
-        ArtistryUtil.setPrecision(netEntropy, Precision.Float);
+        MultiPrecision.setPrecision(netEntropy, Precision.Float);
         Trainable trainable = null;
         try {
           trainable = getTrainable(metrics, netEntropy);
@@ -349,7 +350,7 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
    */
   @Nonnull
   public Trainable getTrainable(final Tensor metrics, final DAGNetwork netEntropy) {
-    ArtistryUtil.setPrecision(netEntropy, Precision.Float);
+    MultiPrecision.setPrecision(netEntropy, Precision.Float);
     return new ArrayTrainable(netEntropy, 1).setVerbose(true).setMask(false).setData(Arrays.asList(new Tensor[][]{{metrics}}));
   }
 

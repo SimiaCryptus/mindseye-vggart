@@ -25,6 +25,7 @@ import com.simiacryptus.mindseye.eval.ArrayTrainable;
 import com.simiacryptus.mindseye.eval.Trainable;
 import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
+import com.simiacryptus.mindseye.lang.cudnn.MultiPrecision;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
 import com.simiacryptus.mindseye.models.*;
@@ -168,7 +169,7 @@ public abstract class StyleTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     Trainable trainable = trainingLog.eval(() -> {
       PipelineNetwork network = fitnessNetwork(measureStyle);
       network.setFrozen(true);
-      ArtistryUtil.setPrecision(network, styleParameters.precision);
+      MultiPrecision.setPrecision(network, styleParameters.precision);
       TestUtil.instrumentPerformance(network);
       final FileHTTPD server = log.getHttpd();
       if (null != server) ArtistryUtil.addLayersHandler(network, server);
@@ -329,7 +330,7 @@ public abstract class StyleTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
       System.gc();
       Layer network = layerType.network();
       try {
-        ArtistryUtil.setPrecision((DAGNetwork) network, style.precision);
+        MultiPrecision.setPrecision((DAGNetwork) network, style.precision);
         //network = new ImgTileSubnetLayer(network, 400,400,400,400);
         Tensor content = network.eval(style.contentImage).getDataAndFree().getAndFree(0);
         self.contentTarget.content.put(layerType, content);
@@ -475,7 +476,7 @@ public abstract class StyleTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     ids.forEach((l, id) -> nodes.put(l, pipelineNetwork.getChildNode(id)));
     PipelineNetwork network = buildNetwork(setup, nodes, pipelineNetwork);
     //network = withClamp(network);
-    ArtistryUtil.setPrecision(network, setup.style.precision);
+    MultiPrecision.setPrecision(network, setup.style.precision);
     return network;
   }
 

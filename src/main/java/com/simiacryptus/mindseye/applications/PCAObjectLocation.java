@@ -20,6 +20,7 @@
 package com.simiacryptus.mindseye.applications;
 
 import com.simiacryptus.mindseye.lang.*;
+import com.simiacryptus.mindseye.lang.cudnn.MultiPrecision;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.BandReducerLayer;
 import com.simiacryptus.mindseye.layers.cudnn.PoolingLayer;
@@ -155,8 +156,8 @@ public abstract class PCAObjectLocation {
 
     ImageClassifier locator = getLocatorNetwork();
     Layer locatorNetwork = locator.getNetwork();
-    ArtistryUtil.setPrecision((DAGNetwork) classifyNetwork, Precision.Float);
-    ArtistryUtil.setPrecision((DAGNetwork) locatorNetwork, Precision.Float);
+    MultiPrecision.setPrecision((DAGNetwork) classifyNetwork, Precision.Float);
+    MultiPrecision.setPrecision((DAGNetwork) locatorNetwork, Precision.Float);
 
     Tensor[][] inputData = loadImages_library();
 //    Tensor[][] inputData = loadImage_Caltech101(log);

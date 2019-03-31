@@ -257,7 +257,7 @@ public class ColorSyncSurvey extends ImageScript {
                     ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients =
                         new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
                     styleCoefficients.set(
-                        CVPipe_Inception.Strata.Layer_1a,
+                        CVPipe_Inception.Strata.Layer_2,
                         1e0,
                         1e0,
                         (double) 0

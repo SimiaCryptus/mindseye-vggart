@@ -93,7 +93,7 @@ public class Simple extends ImageScript {
               new StyleTransfer.StyleCoefficients<CVPipe_Inception.Strata>(
                   StyleTransfer.CenteringMode.Origin)
                   .set(CVPipe_Inception.Strata.Layer_0, coeff_style_mean, coeff_style_cov, dreamCoeff)
-                  .set(CVPipe_Inception.Strata.Layer_1a, coeff_style_mean, coeff_style_cov, dreamCoeff)
+                  .set(CVPipe_Inception.Strata.Layer_2, coeff_style_mean, coeff_style_cov, dreamCoeff)
                   .set(CVPipe_Inception.Strata.Layer_1b, coeff_style_mean, coeff_style_cov, dreamCoeff)
                   .set(CVPipe_Inception.Strata.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
           ));
@@ -110,7 +110,7 @@ public class Simple extends ImageScript {
               canvasImage.getDimensions()[1]
           ),
           new StyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
-              .set(CVPipe_Inception.Strata.Layer_1a, contentMixingCoeff * 1e-1)
+              .set(CVPipe_Inception.Strata.Layer_2, contentMixingCoeff * 1e-1)
               .set(CVPipe_Inception.Strata.Layer_1c, contentMixingCoeff)
               .set(CVPipe_Inception.Strata.Layer_1d, contentMixingCoeff), TestUtil.buildMap(y -> y.putAll(styles.keySet().stream().flatMap(x1 -> x1.stream())
           .collect(Collectors.toMap(x1 -> x1, file -> ArtistryUtil.load(file, resolution))))), styles);

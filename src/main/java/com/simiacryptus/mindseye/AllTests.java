@@ -22,7 +22,6 @@ package com.simiacryptus.mindseye;
 import com.simiacryptus.aws.exe.EC2NotebookRunner;
 import com.simiacryptus.aws.exe.LocalNotebookRunner;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
-import com.simiacryptus.mindseye.models.CVPipe_VGG19;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -62,7 +61,7 @@ public class AllTests {
           public List<CVPipe_Inception.Strata> getLayers() {
             return Arrays.asList(
                 CVPipe_Inception.Strata.Layer_0,
-                CVPipe_Inception.Strata.Layer_1a,
+                CVPipe_Inception.Strata.Layer_2,
                 CVPipe_Inception.Strata.Layer_1b,
                 CVPipe_Inception.Strata.Layer_1c
             );

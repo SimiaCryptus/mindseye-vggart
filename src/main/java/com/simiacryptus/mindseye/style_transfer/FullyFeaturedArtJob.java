@@ -97,7 +97,7 @@ public class FullyFeaturedArtJob extends ImageScript {
         // Enhance color scheme:
         Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms = log.subreport("Color_Space_Enhancement", sublog -> {
           ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
-          coefficients.set(CVPipe_Inception.Strata.Layer_1a, 1e0, 1e0, -1e-1);
+          coefficients.set(CVPipe_Inception.Strata.Layer_2, 1e0, 1e0, -1e-1);
 //          coefficients.set(CVPipe_Inception.Strata.Layer_1b, 1e0, 1e-1, -1e0);
 //          coefficients.set(CVPipe_Inception.Strata.Layer_1d, (double) 1e-1, (double) 1e-1, 1e0);
 //          coefficients.set(CVPipe_Inception.Strata.Layer_1e, (double) 1e-1, (double) 1e-1, 1e1);
@@ -132,7 +132,7 @@ public class FullyFeaturedArtJob extends ImageScript {
                   ImageArtUtil.getStyleImages(
                       styleColorTransforms, Math.max(resolution.get(), minStyleWidth), styleSources
                   ),
-                  CVPipe_Inception.Strata.Layer_1a
+                  CVPipe_Inception.Strata.Layer_2
               ),
               contentSource,
               startResolution,
@@ -148,14 +148,14 @@ public class FullyFeaturedArtJob extends ImageScript {
         ));
 
         Map<CVPipe_Inception.Strata, Double> styleLayers = TestUtil.buildMap(m -> {
-          m.put(CVPipe_Inception.Strata.Layer_1a, 1e-1);
+          m.put(CVPipe_Inception.Strata.Layer_2, 1e-1);
           m.put(CVPipe_Inception.Strata.Layer_1b, 1e0);
           m.put(CVPipe_Inception.Strata.Layer_1c, 1e0);
           m.put(CVPipe_Inception.Strata.Layer_1d, 1e1);
         });
         SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients =
             new SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata>()
-                .set(CVPipe_Inception.Strata.Layer_1a, 1e-3)
+                .set(CVPipe_Inception.Strata.Layer_2, 1e-3)
                 .set(CVPipe_Inception.Strata.Layer_1b, 1e-2)
                 .set(CVPipe_Inception.Strata.Layer_1c, 1e1);
 
@@ -355,7 +355,7 @@ public class FullyFeaturedArtJob extends ImageScript {
             coeff_style_mean = 1e1;
             coeff_style_cov = 1e1;
           } else {
-            styleLayers.remove(CVPipe_Inception.Strata.Layer_1a);
+            styleLayers.remove(CVPipe_Inception.Strata.Layer_2);
             styleLayers.remove(CVPipe_Inception.Strata.Layer_1b);
             styleLayers.put(CVPipe_Inception.Strata.Layer_1e, 1.0);
             dreamCoeff = 1e1;
