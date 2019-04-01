@@ -212,15 +212,6 @@ public class ArtistryUtil {
     canvas.set(Tensor.fromRGB(newImage));
   }
 
-  /**
-   * Paint plasma tensor.
-   *
-   * @param bands          the bands
-   * @param noiseAmplitude the noise amplitude
-   * @param noisePower     the noise power
-   * @param size           the size
-   * @return the tensor
-   */
   public static Tensor paint_Plasma(int bands, final double noiseAmplitude, final double noisePower, final int size) {
     return expandPlasma(initSquare(bands), noiseAmplitude, noisePower, size, size);
   }
@@ -235,15 +226,6 @@ public class ArtistryUtil {
     return new Tensor(2, 2, bands).setByCoord(c -> baseColor.get(0, 0, c.getCoords()[2]));
   }
 
-  /**
-   * Expand plasma tensor.
-   *
-   * @param image          the png
-   * @param noiseAmplitude the noise amplitude
-   * @param noisePower     the noise power
-   * @param width          the width
-   * @return the tensor
-   */
   @Nonnull
   public static Tensor expandPlasma(Tensor image, final double noiseAmplitude, final double noisePower, final int width, final int height) {
     image.addRef();
