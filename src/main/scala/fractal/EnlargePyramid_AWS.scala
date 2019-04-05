@@ -20,7 +20,7 @@
 package fractal
 
 import com.simiacryptus.aws.exe.EC2NodeSettings
-import com.simiacryptus.mindseye.models.{CVPipe_Inception, CVPipe_VGG19}
+import com.simiacryptus.mindseye.models.CVPipe_Inception
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object EnlargePyramid_AWS_EC2 extends EnlargePyramid_AWS with EC2Runner[Object] {
@@ -52,8 +52,8 @@ abstract class EnlargePyramid_AWS extends EnlargePyramid(
   def reportPath: String = "reports/201903275317"
 
   override def style_layers(layer: CVPipe_Inception.Strata): Double = layer match {
-//    case CVPipe_Inception.Strata.Layer_2 => 1e0
-//    case CVPipe_Inception.Strata.Layer_3a => 1e0
+    //    case CVPipe_Inception.Strata.Layer_2 => 1e0
+    //    case CVPipe_Inception.Strata.Layer_3a => 1e0
     case CVPipe_Inception.Strata.Layer_3b => 1e0
     case CVPipe_Inception.Strata.Layer_4a => 1e0
     case CVPipe_Inception.Strata.Layer_4b => 1e0

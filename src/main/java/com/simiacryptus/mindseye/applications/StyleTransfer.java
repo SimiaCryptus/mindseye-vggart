@@ -602,6 +602,7 @@ public abstract class StyleTransfer<T extends LayerEnum<T>, U extends CVPipe<T>>
     }
 
   }
+
   public static class Inception extends StyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> {
 
     public CVPipe_Inception getInstance() {

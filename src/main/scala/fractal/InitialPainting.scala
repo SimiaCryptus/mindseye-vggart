@@ -115,8 +115,6 @@ abstract class InitialPainting
     contentColorTransform.forwardTransform(inputCanvas)
   }
 
-  def aspect_ratio: Double = 1.0
-
   def trainingMinutes: Int = 10
 
   def maxIterations: Int = 20
@@ -124,5 +122,7 @@ abstract class InitialPainting
   def isVerbose: Boolean = false
 
   def precision: Precision = Precision.Float
+
+  def aspect_ratio: Double = 1.0
 
 }

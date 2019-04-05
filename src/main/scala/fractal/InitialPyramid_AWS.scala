@@ -22,7 +22,7 @@ package fractal
 import com.simiacryptus.aws.exe.EC2NodeSettings
 import com.simiacryptus.mindseye.lang.CoreSettings
 import com.simiacryptus.mindseye.lang.cudnn.CudaMemory
-import com.simiacryptus.mindseye.models.{CVPipe_Inception, CVPipe_VGG19}
+import com.simiacryptus.mindseye.models.CVPipe_Inception
 import com.simiacryptus.sparkbook.{AWSNotebookRunner, EC2Runner}
 
 object InitialPyramid_AWS_EC2 extends InitialPyramid_AWS with EC2Runner[Object] {

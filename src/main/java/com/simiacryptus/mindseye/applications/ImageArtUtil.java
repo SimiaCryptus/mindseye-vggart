@@ -51,7 +51,7 @@ public class ImageArtUtil {
     return image;
   }
 
-//  @Nonnull
+  //  @Nonnull
 //  public static ColorTransfer.StyleSetup<CVPipe_Inception.Strata> getColorAnalogSetup(
 //      final List<CharSequence> styleKeys,
 //      final Precision precision,
@@ -137,6 +137,7 @@ public class ImageArtUtil {
       return colorTransfer == null ? tensor : colorTransfer.forwardTransform(tensor);
     }))));
   }
+
   @Nonnull
   public static Map<CharSequence, Tensor> getStyleImages2(
       final CharSequence[] styleSources,

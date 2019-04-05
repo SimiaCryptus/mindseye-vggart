@@ -25,8 +25,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.simiacryptus.lang.Tuple2;
 import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
-import com.simiacryptus.mindseye.lang.cudnn.MultiPrecision;
-import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.layers.cudnn.*;
 import com.simiacryptus.mindseye.layers.cudnn.conv.ConvolutionLayer;
 import com.simiacryptus.mindseye.layers.java.AvgReducerLayer;

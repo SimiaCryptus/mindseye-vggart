@@ -27,7 +27,6 @@ import com.simiacryptus.mindseye.applications.TextureGeneration;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
-import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 

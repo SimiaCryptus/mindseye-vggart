@@ -35,6 +35,9 @@ public class CVPipe_Inception implements CVPipe<com.simiacryptus.mindseye.models
 
   public static final Logger logger = LoggerFactory.getLogger(CVPipe_Inception.class);
   public static final CVPipe_Inception INSTANCE = build();
+  private final Map<com.simiacryptus.mindseye.models.CVPipe_Inception.Strata, UUID> nodes = new HashMap<>();
+  private final Map<com.simiacryptus.mindseye.models.CVPipe_Inception.Strata, PipelineNetwork> prototypes = new HashMap<>();
+  private PipelineNetwork pipelineNetwork = null;
 
   private CVPipe_Inception() {
   }
@@ -70,10 +73,6 @@ public class CVPipe_Inception implements CVPipe<com.simiacryptus.mindseye.models
     return Collections.unmodifiableMap(prototypes);
   }
 
-  private PipelineNetwork pipelineNetwork = null;
-  private final Map<com.simiacryptus.mindseye.models.CVPipe_Inception.Strata, UUID> nodes = new HashMap<>();
-  private final Map<com.simiacryptus.mindseye.models.CVPipe_Inception.Strata, PipelineNetwork> prototypes = new HashMap<>();
-
   @Override
   public PipelineNetwork getNetwork() {
     return pipelineNetwork.copy();
@@ -84,7 +83,7 @@ public class CVPipe_Inception implements CVPipe<com.simiacryptus.mindseye.models
     PipelineNetwork pipelineNetwork = new PipelineNetwork();
     ImageNetworkPipeline imageNetworkPipeline = ImageNetworkPipeline.inception5h();
     List<com.simiacryptus.mindseye.models.CVPipe_Inception.Strata> strataList = Arrays.stream(CVPipe_Inception.Strata.values()).sorted(Comparator.comparing(x -> x.index)).collect(Collectors.toList());
-    strataList.stream().forEach(strata->{
+    strataList.stream().forEach(strata -> {
       Layer tfLayer = new TFConverter().convert(TFConverter.getLayer(imageNetworkPipeline, strata.index));
       nodes.put(strata, pipelineNetwork.wrap(tfLayer).getId());
       prototypes.put(strata, (PipelineNetwork) pipelineNetwork.copy().freeze());

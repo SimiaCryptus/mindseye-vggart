@@ -498,7 +498,9 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
       return CVPipe_VGG19.Layer.values();
     }
 
-  }public static class Inception extends TextureGeneration<CVPipe_Inception.Strata, CVPipe_Inception> {
+  }
+
+  public static class Inception extends TextureGeneration<CVPipe_Inception.Strata, CVPipe_Inception> {
 
     public CVPipe_Inception getInstance() {
       return CVPipe_Inception.INSTANCE;

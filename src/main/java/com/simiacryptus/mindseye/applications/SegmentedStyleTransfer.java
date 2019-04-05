@@ -895,6 +895,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     }
 
   }
+
   public static class Inception extends SegmentedStyleTransfer<CVPipe_Inception.Strata, CVPipe_Inception> {
     public Inception() {
     }
