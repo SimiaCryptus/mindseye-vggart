@@ -25,7 +25,7 @@ import java.util.function.Function
 import com.simiacryptus.mindseye.test.TestUtil
 import com.simiacryptus.notebook.NotebookOutput
 import com.simiacryptus.sparkbook.NotebookRunner
-import com.simiacryptus.sparkbook.util.Java8Util.cvt
+import com.simiacryptus.sparkbook.util.Java8Util.toJavaFunction
 import com.simiacryptus.sparkbook.util.LocalRunner
 
 object EnlargePyramid_Test extends EnlargePyramid(
@@ -46,7 +46,7 @@ object EnlargePyramid_Test extends EnlargePyramid(
   def bucket: String = "mindseye-art-7f168"
 
   override def getImageEnlargingFunction(log: NotebookOutput, width: Int, height: Int, trainingMinutes: Int, maxIterations: Int, verbose: Boolean, magLevels: Int, padding: Int, styleSources: CharSequence*): Function[BufferedImage, BufferedImage] = {
-    cvt((img: BufferedImage) => TestUtil.resize(img, img.getWidth * 2, true))
+    toJavaFunction((img: BufferedImage) => TestUtil.resize(img, img.getWidth * 2, true))
   }
 
 }
