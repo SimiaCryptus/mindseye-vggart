@@ -96,6 +96,8 @@ abstract class InitialPainting
 
   def resolutionSchedule: Array[Int] = Array(100, 160, 220, 300, 400, 512)
 
+  def aspect_ratio: Double = 1.0
+
   def plasma_magnitude: Double = 1.0
 
   def colorAlign
@@ -122,7 +124,5 @@ abstract class InitialPainting
   def isVerbose: Boolean = false
 
   def precision: Precision = Precision.Float
-
-  def aspect_ratio: Double = 1.0
 
 }
