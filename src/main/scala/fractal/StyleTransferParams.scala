@@ -38,30 +38,6 @@ trait StyleTransferParams {
     )
   }
 
-  def dreamCoeff(layer: CVPipe_Inception.Strata) = 5e-1 * style_layers(layer)
-
-  def coeff_style_cov(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
-
-  def coeff_style_mean(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
-
-  //  def dreamCoeff(layer: CVPipe_Inception.Strata) = 5e-1 * style_layers(layer)
-
-  //  def coeff_style_cov(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
-
-  //  def style_layers(layer: CVPipe_Inception.Strata): Double = layer match {
-  //    case CVPipe_Inception.Strata.Layer_1 => 1e0
-  //    case CVPipe_Inception.Strata.Layer_2 => 1e0
-  //    case _ => 0.0
-  //  }
-
-  def style_layers(layer: CVPipe_Inception.Strata): Double = layer match {
-    case CVPipe_Inception.Strata.Layer_1 => 1e0
-    case CVPipe_Inception.Strata.Layer_2 => 1e0
-    case _ => 0.0
-  }
-
-  //  def coeff_style_mean(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
-
   def getStyleSetup_TextureGeneration2(precision: Precision, styleSources: Seq[CharSequence], style_resolution: Int): TextureGeneration.StyleSetup[CVPipe_Inception.Strata] = {
     val styleCoefficients = new TextureGeneration.StyleCoefficients[CVPipe_Inception.Strata](TextureGeneration.CenteringMode.Origin)
     CVPipe_Inception.Strata.values().foreach((layer: CVPipe_Inception.Strata) => styleCoefficients.set(layer, coeff_style_mean(layer), coeff_style_cov(layer), dreamCoeff(layer)))
@@ -85,6 +61,30 @@ trait StyleTransferParams {
       Map(styleSources.toList.asJava -> styleCoefficients)
     )
   }
+
+  def dreamCoeff(layer: CVPipe_Inception.Strata) = 5e-1 * style_layers(layer)
+
+  //  def dreamCoeff(layer: CVPipe_Inception.Strata) = 5e-1 * style_layers(layer)
+
+  //  def coeff_style_cov(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
+
+  //  def style_layers(layer: CVPipe_Inception.Strata): Double = layer match {
+  //    case CVPipe_Inception.Strata.Layer_1 => 1e0
+  //    case CVPipe_Inception.Strata.Layer_2 => 1e0
+  //    case _ => 0.0
+  //  }
+
+  def coeff_style_cov(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
+
+  //  def coeff_style_mean(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
+
+  def style_layers(layer: CVPipe_Inception.Strata): Double = layer match {
+    case CVPipe_Inception.Strata.Layer_1 => 1e0
+    case CVPipe_Inception.Strata.Layer_2 => 1e0
+    case _ => 0.0
+  }
+
+  def coeff_style_mean(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
 
   def coeff_content(layer: CVPipe_Inception.Strata) = layer match {
     case CVPipe_Inception.Strata.Layer_1 => 1e-1
