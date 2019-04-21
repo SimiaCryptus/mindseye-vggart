@@ -50,7 +50,11 @@ trait StyleTransferParams {
 
   def dreamCoeff(layer: CVPipe_Inception.Strata) = 5e-1 * style_layers(layer)
 
-  def coeff_style_cov(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
+  def style_layers(layer: CVPipe_Inception.Strata): Double = layer match {
+    case CVPipe_Inception.Strata.Layer_1 => 1e0
+    case CVPipe_Inception.Strata.Layer_2 => 1e0
+    case _ => 0.0
+  }
 
   //  def dreamCoeff(layer: CVPipe_Inception.Strata) = 5e-1 * style_layers(layer)
 
@@ -62,15 +66,11 @@ trait StyleTransferParams {
   //    case _ => 0.0
   //  }
 
-  def coeff_style_mean(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
+  def coeff_style_cov(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
 
   //  def coeff_style_mean(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
 
-  def style_layers(layer: CVPipe_Inception.Strata): Double = layer match {
-    case CVPipe_Inception.Strata.Layer_1 => 1e0
-    case CVPipe_Inception.Strata.Layer_2 => 1e0
-    case _ => 0.0
-  }
+  def coeff_style_mean(layer: CVPipe_Inception.Strata) = 1e0 * style_layers(layer)
 
   def getStyleSetup_SegmentedStyleTransfer(precision: Precision, styleSources: Seq[CharSequence], style_resolution: Int): SegmentedStyleTransfer.StyleSetup[CVPipe_Inception.Strata] = {
     val contentCoefficients: SegmentedStyleTransfer.ContentCoefficients[CVPipe_Inception.Strata] = new SegmentedStyleTransfer.ContentCoefficients[CVPipe_Inception.Strata]
