@@ -119,7 +119,7 @@ public abstract class ImageClassifierTestBase extends NotebookReportBase {
 
 //    log.p("CudaSystem Statistics:");
 //    log.run(() -> {
-//      return TestUtil.toFormattedJson(CudaSystem.getExecutionStatistics());
+//      return TFUtil.toFormattedJson(CudaSystem.getExecutionStatistics());
 //    });
 
   }
