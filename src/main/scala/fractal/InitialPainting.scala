@@ -88,21 +88,15 @@ abstract class InitialPainting
     canvasCopy.get
   }
 
-  def resolutionSchedule: Array[Int] = Array(100, 160, 220, 300, 400, 512)
-
-  def aspect_ratio: Double = 1.0
-
-  def trainingMinutes: Int = 10
-
-  def maxIterations: Int = 20
-
-  def isVerbose: Boolean = false
-
   def init(log: NotebookOutput) = {
     val width = resolutionSchedule(0)
     val height = (aspect_ratio * width).toInt
     colorAlign(log, ArtistryUtil.paint_Plasma(3, 1000.0, 1.1, width, height).scale(plasma_magnitude))
   }
+
+  def resolutionSchedule: Array[Int] = Array(100, 160, 220, 300, 400, 512)
+
+  def aspect_ratio: Double = 1.0
 
   def plasma_magnitude: Double = 1.0
 
@@ -122,6 +116,12 @@ abstract class InitialPainting
     contentColorTransform.transfer(log, resizedCanvas, styleSetup, trainingMinutes, styleFingerprint, maxIterations, isVerbose)
     contentColorTransform.forwardTransform(inputCanvas)
   }
+
+  def trainingMinutes: Int = 10
+
+  def maxIterations: Int = 20
+
+  def isVerbose: Boolean = false
 
   def precision: Precision = Precision.Float
 
