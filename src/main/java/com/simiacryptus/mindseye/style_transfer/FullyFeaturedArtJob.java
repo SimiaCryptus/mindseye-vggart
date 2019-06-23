@@ -39,9 +39,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * The type Style survey.
- */
 public class FullyFeaturedArtJob extends ImageScript {
 
   public final int minStyleWidth;

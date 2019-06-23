@@ -40,39 +40,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * The type Style survey.
- */
 public class StyleSurvey extends ImageScript {
 
-  /**
-   * The Resolution.
-   */
   public int resolution = 600;
-  /**
-   * The Coeff style mean.
-   */
   public double coeff_style_mean = 1e1;
-  /**
-   * The Content mixing coeff.
-   */
   public double contentMixingCoeff = 1e1;
-  /**
-   * The Dream coeff.
-   */
   public double dreamCoeff = 1e0;
 
-  /**
-   * The Coeff style bandCovariance.
-   */
   public double coeff_style_cov = 1e0;
-  /**
-   * The Style sources.
-   */
   public CharSequence[] styleSources = HadoopUtil.getFiles("git://github.com/jcjohnson/fast-neural-style.git/master/images/styles/").toArray(new CharSequence[]{});
-  /**
-   * The Content sources.
-   */
   public String[] contentSources = {
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/1920px-Taj_Mahal_%28Edited%29.jpeg"
   };
@@ -157,32 +133,14 @@ public class StyleSurvey extends ImageScript {
     });
   }
 
-  /**
-   * The type Local.
-   */
   public static class Local {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       LocalNotebookRunner.run(LocalNotebookRunner.getTask(StyleSurvey.class));
     }
   }
 
-  /**
-   * The type Ec 2.
-   */
   public static class EC2 {
 
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       EC2NotebookRunner.run(LocalNotebookRunner.getTask(StyleSurvey.class));
     }

@@ -41,23 +41,11 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-/**
- * The type Hi def.
- */
 public abstract class LabelTexture extends ImageScript {
 
   public final double coeff_style_mean;
-  /**
-   * The Coeff style bandCovariance.
-   */
   public final double coeff_style_cov;
-  /**
-   * The Style sources.
-   */
   public final String[] styleSources;
-  /**
-   * The Dream coeff.
-   */
   public final double dreamCoeff;
   private final int style_resolution;
   private final String[] text;

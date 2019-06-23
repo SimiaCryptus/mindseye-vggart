@@ -22,17 +22,11 @@ package com.simiacryptus.mindseye;
 import com.simiacryptus.lang.SerializableConsumer;
 import com.simiacryptus.notebook.NotebookOutput;
 
-/**
- * The type Image script.
- */
 public abstract class ImageScript implements SerializableConsumer<NotebookOutput> {
   public boolean verbose = true;
   public int maxIterations = 20;
   public int trainingMinutes = 20;
 
-  /**
-   * The Verbose.
-   */
   public boolean isVerbose() {
     return verbose;
   }
@@ -42,9 +36,6 @@ public abstract class ImageScript implements SerializableConsumer<NotebookOutput
     return this;
   }
 
-  /**
-   * The Max iterations.
-   */
   public int getMaxIterations() {
     return maxIterations;
   }
@@ -54,9 +45,6 @@ public abstract class ImageScript implements SerializableConsumer<NotebookOutput
     return this;
   }
 
-  /**
-   * The Training minutes.
-   */
   public int getTrainingMinutes() {
     return trainingMinutes;
   }

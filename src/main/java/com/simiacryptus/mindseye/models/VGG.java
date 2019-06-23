@@ -28,17 +28,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
-/**
- * The type Vgg.
- */
 public abstract class VGG extends ImageClassifier {
 
-  /**
-   * From zip vgg 16.
-   *
-   * @param file the file
-   * @return the vgg 16
-   */
   public static VGG fromZip(@Nonnull File file) {
     try {
       return new VGG.Static(Layer.fromZip(new ZipFile(file)));
@@ -1054,16 +1045,8 @@ public abstract class VGG extends ImageClassifier {
             "toilet tissue, toilet paper, bathroom tissue\n").split("\n")).map(x -> x.trim()).collect(Collectors.toList());
   }
 
-  /**
-   * The type Vgg 16 zip.
-   */
   public static class Static extends VGG16 {
 
-    /**
-     * Instantiates a new Static.
-     *
-     * @param network the network
-     */
     public Static(Layer network) {
       this.cachedLayer = network;
     }

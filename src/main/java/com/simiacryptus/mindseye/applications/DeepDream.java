@@ -57,41 +57,15 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/**
- * This notebook implements the Style Transfer protocol outlined in <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a>
- *
- * @param <T> the type parameter
- * @param <U> the type parameter
- */
 public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
   private static final Logger logger = LoggerFactory.getLogger(DeepDream.class);
   private boolean tiled = false;
 
-  /**
-   * Deep dream buffered png.
-   *
-   * @param canvasImage     the canvas png
-   * @param styleParameters the style parameters
-   * @param trainingMinutes the training minutes
-   * @return the buffered png
-   */
   @Nonnull
   public Tensor deepDream(final Tensor canvasImage, final StyleSetup<T> styleParameters, final int trainingMinutes) {
     return deepDream(null, new NullNotebookOutput(), canvasImage, styleParameters, trainingMinutes, 50, true);
   }
 
-  /**
-   * Style transfer buffered png.
-   *
-   * @param server          the server
-   * @param log             the log
-   * @param canvasImage     the canvas png
-   * @param styleParameters the style parameters
-   * @param trainingMinutes the training minutes
-   * @param maxIterations   the max iterations
-   * @param verbose         the verbose
-   * @return the buffered png
-   */
   @Nonnull
   public Tensor deepDream(
       final FileHTTPD server,
@@ -121,18 +95,6 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return result;
   }
 
-  /**
-   * Train buffered png.
-   *
-   * @param server          the server
-   * @param log             the log
-   * @param canvasImage     the canvas png
-   * @param network         the network
-   * @param precision       the precision
-   * @param trainingMinutes the training minutes
-   * @param maxIterations   the max iterations
-   * @return the buffered png
-   */
   @Nonnull
   public Tensor train(
       final FileHTTPD server,
@@ -169,15 +131,6 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return canvasImage;
   }
 
-  /**
-   * Train.
-   *
-   * @param log             the log
-   * @param network         the network
-   * @param canvas          the canvas
-   * @param trainingMinutes the training minutes
-   * @param maxIterations   the max iterations
-   */
   public void train(
       @Nonnull final NotebookOutput log,
       final PipelineNetwork network,
@@ -224,24 +177,11 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
     });
   }
 
-  /**
-   * Gets trainable.
-   *
-   * @param network the network
-   * @param canvas  the canvas
-   * @return the trainable
-   */
   @Nonnull
   public Trainable getTrainable(final PipelineNetwork network, final Tensor canvas) {
     return new ArrayTrainable(network, 1).setVerbose(true).setMask(true).setData(Arrays.asList(new Tensor[][]{{canvas}}));
   }
 
-  /**
-   * Measure style neural setup.
-   *
-   * @param style the style
-   * @return the neural setup
-   */
   public NeuralSetup<T> processStats(final StyleSetup<T> style) {
     NeuralSetup<T> self = new NeuralSetup<>(style);
     self.contentTarget = new ContentTarget<>();
@@ -257,12 +197,6 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return self;
   }
 
-  /**
-   * Fitness function pipeline network.
-   *
-   * @param setup the setup
-   * @return the pipeline network
-   */
   @Nonnull
   public PipelineNetwork fitnessNetwork(NeuralSetup<T> setup) {
     PipelineNetwork pipelineNetwork = getInstance().getNetwork();
@@ -275,13 +209,6 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return network;
   }
 
-  /**
-   * Gets fitness components.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @return the fitness components
-   */
   @Nonnull
   public List<Tuple2<Double, DAGNode>> getFitnessComponents(NeuralSetup<T> setup, final Map<T, DAGNode> nodeMap) {
     List<Tuple2<Double, DAGNode>> functions = new ArrayList<>();
@@ -289,21 +216,9 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return functions;
   }
 
-  /**
-   * Get key types t [ ].
-   *
-   * @return the t [ ]
-   */
   @Nonnull
   public abstract T[] getLayerTypes();
 
-  /**
-   * Gets content components.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @return the content components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getContentComponents(NeuralSetup<T> setup, final Map<T, DAGNode> nodeMap) {
     ArrayList<Tuple2<Double, DAGNode>> contentComponents = new ArrayList<>();
@@ -334,50 +249,23 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return contentComponents;
   }
 
-  /**
-   * Measure style pipeline network.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @param network the network
-   * @return the pipeline network
-   */
   public PipelineNetwork processStats(NeuralSetup<T> setup, final Map<T, DAGNode> nodeMap, final PipelineNetwork network) {
     List<Tuple2<Double, DAGNode>> functions = getFitnessComponents(setup, nodeMap);
     functions.stream().filter(x -> x._1 != 0).reduce((a, b) -> new Tuple2<>(1.0, network.wrap(new BinarySumLayer(a._1, b._1), a._2, b._2))).get();
     return network;
   }
 
-  /**
-   * Gets instance.
-   *
-   * @return the instance
-   */
   public abstract U getInstance();
 
-  /**
-   * Is tiled boolean.
-   *
-   * @return the boolean
-   */
   public boolean isTiled() {
     return tiled;
   }
 
-  /**
-   * Sets tiled.
-   *
-   * @param tiled the tiled
-   * @return the tiled
-   */
   public DeepDream<T, U> setTiled(boolean tiled) {
     this.tiled = tiled;
     return this;
   }
 
-  /**
-   * The type Vgg 16.
-   */
   public static class VGG16 extends DeepDream<CVPipe_VGG16.Layer, CVPipe_VGG16> {
 
     public CVPipe_VGG16 getInstance() {
@@ -391,9 +279,6 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
 
   }
 
-  /**
-   * The type Vgg 19.
-   */
   public static class VGG19 extends DeepDream<CVPipe_VGG19.Layer, CVPipe_VGG19> {
 
     public CVPipe_VGG19 getInstance() {
@@ -407,33 +292,12 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
 
   }
 
-  /**
-   * The type Style setup.
-   *
-   * @param <T> the type parameter
-   */
   public static class StyleSetup<T extends LayerEnum<T>> {
-    /**
-     * The Precision.
-     */
     public final Precision precision;
-    /**
-     * The Content png.
-     */
     public final transient Tensor contentImage;
-    /**
-     * The Content.
-     */
     public final Map<T, ContentCoefficients> coefficients;
 
 
-    /**
-     * Instantiates a new Style setup.
-     *
-     * @param precision           the precision
-     * @param contentImage        the content png
-     * @param contentCoefficients the content coefficients
-     */
     public StyleSetup(final Precision precision, final Tensor contentImage, Map<T, ContentCoefficients> contentCoefficients) {
       this.precision = precision;
       this.contentImage = contentImage;
@@ -442,64 +306,25 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
 
   }
 
-  /**
-   * The type Content coefficients.
-   */
   public static class ContentCoefficients {
-    /**
-     * The Rms.
-     */
     public final double rms;
-    /**
-     * The Gain.
-     */
     public final double gain;
 
-    /**
-     * Instantiates a new Content coefficients.
-     *
-     * @param rms  the rms
-     * @param gain the gain
-     */
     public ContentCoefficients(final double rms, final double gain) {
       this.rms = rms;
       this.gain = gain;
     }
   }
 
-  /**
-   * The type Content target.
-   *
-   * @param <T> the type parameter
-   */
   public static class ContentTarget<T extends LayerEnum<T>> {
-    /**
-     * The Content.
-     */
     public Map<T, Tensor> content = new HashMap<>();
   }
 
-  /**
-   * The type Neural setup.
-   *
-   * @param <T> the type parameter
-   */
   public class NeuralSetup<T extends LayerEnum<T>> {
 
-    /**
-     * The Style parameters.
-     */
     public final StyleSetup<T> style;
-    /**
-     * The Content target.
-     */
     public ContentTarget<T> contentTarget = new ContentTarget<>();
 
-    /**
-     * Instantiates a new Neural setup.
-     *
-     * @param style the style
-     */
     public NeuralSetup(final StyleSetup<T> style) {
       this.style = style;
     }

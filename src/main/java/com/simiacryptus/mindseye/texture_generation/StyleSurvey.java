@@ -41,19 +41,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-/**
- * The type Hi def.
- */
 public abstract class StyleSurvey extends ImageScript {
 
   public final double coeff_style_mean;
-  /**
-   * The Coeff style bandCovariance.
-   */
   public final double coeff_style_cov;
-  /**
-   * The Style sources.
-   */
   public final String[] styleSources;
   private final double plasma_intensity;
   private final int style_resolution;
@@ -62,9 +53,6 @@ public abstract class StyleSurvey extends ImageScript {
   private final Color color;
   private final String fontName;
   private final int style;
-  /**
-   * The Dream coeff.
-   */
   public double dreamCoeff;
   double aspect_ratio;
   Precision precision = Precision.Float;

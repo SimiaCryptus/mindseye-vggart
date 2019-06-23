@@ -29,9 +29,6 @@ import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
-/**
- * The type Style survey.
- */
 public class InitPyramid extends ViewJSTest {
 
   public InitPyramid(final CharSequence[] styleSources) {

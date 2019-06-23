@@ -48,28 +48,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * The type Object location.
- *
- * @param <T> the type parameter
- * @param <U> the type parameter
- */
 public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>> extends PixelClusterer<T, U> {
 
   private static final Logger logger = LoggerFactory.getLogger(ImageSegmenter.class);
 
-  /**
-   * Instantiates a new Image segmenter.
-   *
-   * @param clusters                   the clusters
-   * @param orientation                the orientation
-   * @param globalDistributionEmphasis the global distribution emphasis
-   * @param selectionEntropyAdj        the selection entropy adj
-   * @param maxIterations              the max iterations
-   * @param timeoutMinutes             the timeout minutes
-   * @param seedPcaPower               the seed pca power
-   * @param seedMagnitude              the seed magnitude
-   */
   public ImageSegmenter(
       final int clusters,
       final int orientation,
@@ -97,32 +79,14 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
     );
   }
 
-  /**
-   * Instantiates a new Image segmenter.
-   *
-   * @param clusters the clusters
-   */
   public ImageSegmenter(final int clusters) {
     super(clusters);
   }
 
-  /**
-   * Quick masks list.
-   *
-   * @param img the img
-   * @return the list
-   */
   public static List<Tensor> quickMasks(final Tensor img) {
     return quickMasks(img, 3);
   }
 
-  /**
-   * Quick masks list.
-   *
-   * @param img      the img
-   * @param clusters
-   * @return the list
-   */
   public static List<Tensor> quickMasks(final Tensor img, final int clusters) {
     return quickMasks(img, clusters, clusters, clusters);
   }
@@ -197,14 +161,6 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
     return spatialClusters;
   }
 
-  /**
-   * Alpha png mask buffered png.
-   *
-   * @param log  the log
-   * @param img  the img
-   * @param mask the mask
-   * @return the buffered png
-   */
   public static BufferedImage alphaImageMask(@Nonnull final NotebookOutput log, final Tensor img, Tensor mask) {
     return log.eval(() -> {
       return img.mapCoords(c -> img.get(c) * mask.get(
@@ -215,13 +171,6 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
     });
   }
 
-  /**
-   * Alpha png mask buffered png.
-   *
-   * @param img  the img
-   * @param mask the mask
-   * @return the buffered png
-   */
   public static BufferedImage alphaImageMask(final Tensor img, Tensor mask) {
     Tensor tensor = img.mapCoords(c -> img.get(c) * mask.get(
         c.getCoords()[0],
@@ -233,13 +182,6 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
     return image;
   }
 
-  /**
-   * Display png mask.
-   *
-   * @param log  the log
-   * @param img  the img
-   * @param mask the mask
-   */
   public static void displayImageMask(@Nonnull final NotebookOutput log, final Tensor img, Tensor mask) {
     Tensor scale = mask.scale(255.0);
     Tensor alphaMask = mask.normalizeDistribution().scaleInPlace(255.0);
@@ -249,14 +191,6 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
     scale.freeRef();
   }
 
-  /**
-   * Feature clusters list.
-   *
-   * @param log    the log
-   * @param img    the img
-   * @param layers the layers
-   * @return the list
-   */
   public List<Tensor> featureClusters(@Nonnull final NotebookOutput log, final Tensor img, final T... layers) {
     if (1 >= getClusters()) return Arrays.asList(img.map(x -> 1.0));
     return Arrays.stream(getLayerTypes()).filter(x -> Arrays.asList(layers).contains(x)).flatMap(layer -> {
@@ -316,14 +250,6 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
     }).collect(Collectors.toList());
   }
 
-  /**
-   * Spatial clusters list.
-   *
-   * @param log          the log
-   * @param img          the img
-   * @param featureMasks the feature masks
-   * @return the list
-   */
   public List<Tensor> spatialClusters(@Nonnull final NotebookOutput log, final Tensor img, final List<Tensor> featureMasks) {
     List<Tensor> tensors = featureMasks.stream().map(Tensor::sumChannels).collect(Collectors.toList());
     Tensor concat = ImgConcatLayer.eval(tensors);
@@ -345,47 +271,17 @@ public abstract class ImageSegmenter<T extends LayerEnum<T>, U extends CVPipe<T>
     return tensorList;
   }
 
-  /**
-   * Gets instance.
-   *
-   * @return the instance
-   */
   public abstract U getInstance();
 
-  /**
-   * Get key types t [ ].
-   *
-   * @return the t [ ]
-   */
   @Nonnull
   public abstract T[] getLayerTypes();
 
-  /**
-   * The type Vgg 19.
-   */
   public static class VGG19 extends ImageSegmenter<CVPipe_VGG19.Layer, CVPipe_VGG19> {
 
-    /**
-     * Instantiates a new Vgg 19.
-     *
-     * @param clusters the clusters
-     */
     public VGG19(final int clusters) {
       super(clusters);
     }
 
-    /**
-     * Instantiates a new Vgg 19.
-     *
-     * @param clusters                   the clusters
-     * @param orientation                the orientation
-     * @param globalDistributionEmphasis the global distribution emphasis
-     * @param selectionEntropyAdj        the selection entropy adj
-     * @param maxIterations              the max iterations
-     * @param timeoutMinutes             the timeout minutes
-     * @param seedPcaPower               the seed pca power
-     * @param seedMagnitude              the seed magnitude
-     */
     public VGG19(
         final int clusters,
         final int orientation,

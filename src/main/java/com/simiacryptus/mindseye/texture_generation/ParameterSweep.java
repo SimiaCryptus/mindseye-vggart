@@ -41,52 +41,23 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
-/**
- * The type Parameter sweep.
- */
 public class ParameterSweep extends ImageScript {
 
 
-  /**
-   * The Start png size.
-   */
   public int startImageSize = 200;
-  /**
-   * The Coeff style mean.
-   */
   public double coeff_style_mean = 1e1;
-  /**
-   * The Coeff style bandCovariance.
-   */
   public double coeff_style_cov = 1e0;
-  /**
-   * The Style sources.
-   */
   public String[] styleSources = {
       "git://github.com/jcjohnson/fast-neural-style.git/master/images/styles/starry_night_crop.jpg"
   };
 
-  /**
-   * The Resolution.
-   */
   public int resolution = 512;
 
-  /**
-   * Init buffered png.
-   *
-   * @param width the width
-   * @return the buffered png
-   */
   @Nonnull
   public BufferedImage init(final int width) {
     return ArtistryUtil.paint_Plasma(3, 1000.0, 1.1, width).toImage();
   }
 
-  /**
-   * Dream coeff stream double stream.
-   *
-   * @return the double stream
-   */
   public DoubleStream dreamCoeffStream() {
     return TestUtil.geometricStream(1e0, 1e1, 3).get();
   }
@@ -174,31 +145,13 @@ public class ParameterSweep extends ImageScript {
     });
   }
 
-  /**
-   * The type Local.
-   */
   public static class Local {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       LocalNotebookRunner.run(LocalNotebookRunner.getTask(ParameterSweep.class));
     }
   }
 
-  /**
-   * The type Ec 2.
-   */
   public static class EC2 {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       EC2NotebookRunner.run(LocalNotebookRunner.getTask(ParameterSweep.class));
     }

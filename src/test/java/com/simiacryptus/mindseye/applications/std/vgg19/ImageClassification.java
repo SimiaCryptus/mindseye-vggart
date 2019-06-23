@@ -26,33 +26,15 @@ import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
 
-/**
- * We load a pretrained convolutional neural network (VGG16) along apply the CalTech101 png dataset to perform a
- * demonstration of Image Recognition.
- */
 public abstract class ImageClassification extends ImageClassificationBase {
 
-  /**
-   * Gets target class.
-   *
-   * @return the target class
-   */
   @Nonnull
   protected Class<?> getTargetClass() {
     return VGG19.class;
   }
 
-  /**
-   * The type HDF5_JBLAS.
-   */
   public static class HFD5 extends ImageClassification {
 
-    /**
-     * Load model png classifier.
-     *
-     * @param log the log
-     * @return the png classifier
-     */
     @Override
     public ImageClassifier loadModel(@Nonnull final NotebookOutput log) {
       return log.eval(() -> {

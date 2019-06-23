@@ -33,9 +33,6 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * The type Style survey.
- */
 public class ColorEnhancementSurvey extends ImageScript {
 
   public final int minStyleWidth;

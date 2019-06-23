@@ -41,50 +41,23 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * The type Hi def.
- */
 public class HiDef extends ImageScript {
 
-  /**
-   * The Content mixing coeff.
-   */
   public final double contentMixingCoeff = 1e0;
-  /**
-   * The Dream coeff.
-   */
   public final double dreamCoeff = 1e0;
 
 
-  /**
-   * The Resolution.
-   */
   public int resolution = 1200;
-  /**
-   * The Coeff style mean.
-   */
   public double coeff_style_mean = 1e1;
-  /**
-   * The Coeff style bandCovariance.
-   */
   public double coeff_style_cov = 1e0;
-  /**
-   * The Style sources.
-   */
   public String[] styleSources = {
       "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg"
   };
-  /**
-   * The Content sources.
-   */
   public String[] contentSources = {
 //    "https://lh3.googleusercontent.com/wYifEEStf4s7gQlNlCawQe5Nd2MIWbSt-hv4_qk7A5hZuJy93bCWH1J3MwfCG5kVVjy20LOQ1n0LmwwZUpK6dVrFSl6hymJSPhDDGw7rl1IFjZ20MfhnY8qK8uVmDf-KCgw6E63iDLriehw-RacEt37hl4gsGIa4obv9jM6l3zT86m2R_23UjNNIw3ueAjxO0UjNO-hNXVUTK7sXAnvPa4C-60fmFJgX2mArcNHfBRSEId1NNP57xcllkgXt_FVwE8wKRFqPKbZS_vQ0QB8tfji_vGXyIXgney0I0k4oIb5y_Jdz0W7eUKhW_CD_3sgUD68fHuZk_uSHsz0R8BQcXSXYAKm0rumvgMk6-tD82hxbYf8kBoq60Qoq-XDY90y7J0yp7VOgp6wevZ8Gfvn0P-1cmY9DKLjRh8JBj_299QlzTeecFqWRfUcI7pU7JoHOAtecbiV57BO3MGXpGKyHQOZjMaXHOpo4Za6kG4I4YzLMR2m01hRY3b-Vf_PnA7fCs4kF73wMPpz8h26G4w8H3jUqB_rhi5N3JIybgf2eLArqNh-me0LDnlqyVf4esT5UgchvwOd6qsN2cBzqycGVKqDrh1FPmEwJ7dE_dlz0d8hzK9Uiw2TyYEXZteW5ICdwtOPM0Qxa_IDfQYIlh7dVE77H0w-ffoF8=w489-h652-no",
       "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/1024px-The_Earth_seen_from_Apollo_17.jpg"
   };
 
-  /**
-   * The Content seeds.
-   */
   public String[] contentSeeds = {
 //    "https://lh3.googleusercontent.com/wYifEEStf4s7gQlNlCawQe5Nd2MIWbSt-hv4_qk7A5hZuJy93bCWH1J3MwfCG5kVVjy20LOQ1n0LmwwZUpK6dVrFSl6hymJSPhDDGw7rl1IFjZ20MfhnY8qK8uVmDf-KCgw6E63iDLriehw-RacEt37hl4gsGIa4obv9jM6l3zT86m2R_23UjNNIw3ueAjxO0UjNO-hNXVUTK7sXAnvPa4C-60fmFJgX2mArcNHfBRSEId1NNP57xcllkgXt_FVwE8wKRFqPKbZS_vQ0QB8tfji_vGXyIXgney0I0k4oIb5y_Jdz0W7eUKhW_CD_3sgUD68fHuZk_uSHsz0R8BQcXSXYAKm0rumvgMk6-tD82hxbYf8kBoq60Qoq-XDY90y7J0yp7VOgp6wevZ8Gfvn0P-1cmY9DKLjRh8JBj_299QlzTeecFqWRfUcI7pU7JoHOAtecbiV57BO3MGXpGKyHQOZjMaXHOpo4Za6kG4I4YzLMR2m01hRY3b-Vf_PnA7fCs4kF73wMPpz8h26G4w8H3jUqB_rhi5N3JIybgf2eLArqNh-me0LDnlqyVf4esT5UgchvwOd6qsN2cBzqycGVKqDrh1FPmEwJ7dE_dlz0d8hzK9Uiw2TyYEXZteW5ICdwtOPM0Qxa_IDfQYIlh7dVE77H0w-ffoF8=w489-h652-no",
       "https://mindseye-art-7f168.s3.us-west-2.amazonaws.com/reports/20180421230041/etc/com.simiacryptus.mindseye.style_transfer.Enlarging.8.png"
@@ -155,20 +128,6 @@ public class HiDef extends ImageScript {
     }
   }
 
-  /**
-   * Style transfer buffered png.
-   *
-   * @param log           the log
-   * @param styleTransfer the style transfer
-   * @param canvasImage   the canvas png
-   * @param canvasSeed    the canvas seed
-   * @param styleSetup    the style setup
-   * @param width         the width
-   * @param height        the height
-   * @param strideX       the stride x
-   * @param strideY       the stride y
-   * @return the buffered png
-   */
   public Tensor styleTransfer(
       @Nonnull final NotebookOutput log,
       final StyleTransfer.Inception styleTransfer,
@@ -224,31 +183,13 @@ public class HiDef extends ImageScript {
     }
   }
 
-  /**
-   * The type Local.
-   */
   public static class Local {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       LocalNotebookRunner.run(LocalNotebookRunner.getTask(HiDef.class));
     }
   }
 
-  /**
-   * The type Ec 2.
-   */
   public static class EC2 {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       EC2NotebookRunner.run(LocalNotebookRunner.getTask(HiDef.class));
     }

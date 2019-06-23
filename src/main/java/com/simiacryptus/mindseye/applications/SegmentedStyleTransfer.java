@@ -65,19 +65,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * This notebook implements the Style Transfer protocol outlined in <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a>
- *
- * @param <T> the type parameter
- * @param <U> the type parameter
- */
 public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends CVPipe<T>> {
 
   private static final Logger logger = LoggerFactory.getLogger(SegmentedStyleTransfer.class);
   private final Map<MaskJob, Set<Tensor>> maskCache = new ConcurrentHashMap<>();
-  /**
-   * The Parallel loss functions.
-   */
   public boolean parallelLossFunctions = true;
   private boolean tiled = false;
   private int content_masks = 3;
@@ -87,24 +78,10 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
   private int stlye_colorClusters = 3;
   private int style_textureClusters = 3;
 
-  /**
-   * Alpha list list.
-   *
-   * @param styleInput the style input
-   * @param tensors    the tensors
-   * @return the list
-   */
   public static List<Tensor> alphaList(final Tensor styleInput, final Set<Tensor> tensors) {
     return tensors.stream().map(x -> alpha(styleInput, x)).collect(Collectors.toList());
   }
 
-  /**
-   * Alpha tensor.
-   *
-   * @param content the content
-   * @param mask    the mask
-   * @return the tensor
-   */
   public static Tensor alpha(final Tensor content, final Tensor mask) {
     int xbands = mask.getDimensions()[2] - 1;
     return content.mapCoords(c -> {
@@ -128,13 +105,6 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     return dot;
   }
 
-  /**
-   * Alpha map map.
-   *
-   * @param styleInput the style input
-   * @param tensors    the tensors
-   * @return the map
-   */
   public static Map<Tensor, Tensor> alphaMap(final Tensor styleInput, final Set<Tensor> tensors) {
     assert null != styleInput;
     assert null != tensors;
@@ -142,29 +112,11 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     return tensors.stream().distinct().collect(Collectors.toMap(x -> x, x -> alpha(styleInput, x)));
   }
 
-  /**
-   * Gets trainable.
-   *
-   * @param canvas  the canvas
-   * @param network the network
-   * @return the trainable
-   */
   @Nonnull
   public Trainable getTrainable(final Tensor canvas, final PipelineNetwork network) {
     return new ArrayTrainable(network, 1).setVerbose(true).setMask(true).setData(Arrays.asList(new Tensor[][]{{canvas}}));
   }
 
-  /**
-   * Gets style components.
-   *
-   * @param node          the node
-   * @param network       the network
-   * @param styleParams   the style params
-   * @param mean          the mean
-   * @param covariance    the covariance
-   * @param centeringMode the centering mode
-   * @return the style components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getStyleComponents(
       final DAGNode node,
@@ -237,17 +189,6 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     return styleComponents;
   }
 
-  /**
-   * Transfer.
-   *
-   * @param log             the log
-   * @param styleParameters the style parameters
-   * @param trainingMinutes the training minutes
-   * @param measureStyle    the measureStyle style
-   * @param maxIterations   the max iterations
-   * @param verbose         the verbose
-   * @param canvas          the canvas
-   */
   public Tensor transfer(
       @Nonnull final NotebookOutput log,
       final StyleSetup<T> styleParameters,
@@ -352,13 +293,6 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     }
   }
 
-  /**
-   * Measure style neural setup.
-   *
-   * @param log   the log
-   * @param style the style
-   * @return the neural setup
-   */
   public NeuralSetup measureStyle(final NotebookOutput log, final StyleSetup<T> style) {
     NeuralSetup self = new NeuralSetup(style);
     measureStyles(log, style, self);
@@ -599,14 +533,6 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     }).collect(Collectors.toSet());
   }
 
-  /**
-   * Gets style components.
-   *
-   * @param setup    the setup
-   * @param nodeMap  the node buildMap
-   * @param selector the selector
-   * @return the style components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getStyleComponents(
       NeuralSetup<T> setup,
@@ -641,15 +567,6 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     return styleComponents;
   }
 
-  /**
-   * Gets style components.
-   *
-   * @param nodeMap            the node map
-   * @param layerType          the key type
-   * @param styleCoefficients  the style coefficients
-   * @param chooseStyleSegment the choose style segment
-   * @return the style components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getStyleComponents(
       final Map<T, DAGNode> nodeMap,
@@ -730,21 +647,9 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     return UUID.fromString(replacements.getOrDefault(id.toString(), id.toString()));
   }
 
-  /**
-   * Get key types t [ ].
-   *
-   * @return the t [ ]
-   */
   @Nonnull
   public abstract T[] getLayerTypes();
 
-  /**
-   * Gets content components.
-   *
-   * @param setup   the setup
-   * @param nodeMap the node buildMap
-   * @return the content components
-   */
   @Nonnull
   public ArrayList<Tuple2<Double, DAGNode>> getContentComponents(NeuralSetup<T> setup, final Map<T, DAGNode> nodeMap) {
     ArrayList<Tuple2<Double, DAGNode>> contentComponents = new ArrayList<>();
@@ -762,28 +667,12 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     return contentComponents;
   }
 
-  /**
-   * Gets instance.
-   *
-   * @return the instance
-   */
   public abstract U getNetworkModel();
 
-  /**
-   * Is tiled boolean.
-   *
-   * @return the boolean
-   */
   public boolean isTiled() {
     return tiled;
   }
 
-  /**
-   * Sets tiled.
-   *
-   * @param tiled the tiled
-   * @return the tiled
-   */
   public SegmentedStyleTransfer<T, U> setTiled(boolean tiled) {
     this.tiled = tiled;
     return this;
@@ -847,27 +736,12 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     return maskCache;
   }
 
-  /**
-   * The enum Centering mode.
-   */
   public enum CenteringMode {
-    /**
-     * Dynamic centering mode.
-     */
     Dynamic,
-    /**
-     * Static centering mode.
-     */
     Static,
-    /**
-     * Origin centering mode.
-     */
     Origin
   }
 
-  /**
-   * The type Vgg 16.
-   */
   public static class VGG16 extends SegmentedStyleTransfer<CVPipe_VGG16.Layer, CVPipe_VGG16> {
 
     public CVPipe_VGG16 getNetworkModel() {
@@ -911,24 +785,9 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
 
   }
 
-  /**
-   * The type Content coefficients.
-   *
-   * @param <T> the type parameter
-   */
   public static class ContentCoefficients<T extends LayerEnum<T>> {
-    /**
-     * The Params.
-     */
     public final Map<T, Double> params = new HashMap<>();
 
-    /**
-     * Set content coefficients.
-     *
-     * @param l the l
-     * @param v the v
-     * @return the content coefficients
-     */
     public ContentCoefficients<T> set(final T l, final double v) {
       params.put(l, v);
       return this;
@@ -936,27 +795,11 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
 
   }
 
-  /**
-   * The type Strata style params.
-   */
   public static class LayerStyleParams {
-    /**
-     * The Coeff style mean 0.
-     */
     public final double mean;
-    /**
-     * The Coeff style bandCovariance 0.
-     */
     public final double cov;
     private final double enhance;
 
-    /**
-     * Instantiates a new Strata style params.
-     *
-     * @param mean    the mean
-     * @param cov     the bandCovariance
-     * @param enhance the enhance
-     */
     public LayerStyleParams(final double mean, final double cov, final double enhance) {
       this.mean = mean;
       this.cov = cov;
@@ -964,43 +807,14 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     }
   }
 
-  /**
-   * The type Style setup.
-   *
-   * @param <T> the type parameter
-   */
   public static class StyleSetup<T extends LayerEnum<T>> {
-    /**
-     * The Precision.
-     */
     public final Precision precision;
-    /**
-     * The Style png.
-     */
     public final transient Map<CharSequence, Tensor> styleImages;
-    /**
-     * The Styles.
-     */
     public final Map<List<CharSequence>, StyleCoefficients<T>> styles;
-    /**
-     * The Content.
-     */
     public final ContentCoefficients<T> content;
-    /**
-     * The Content png.
-     */
     public transient Tensor contentImage;
 
 
-    /**
-     * Instantiates a new Style setup.
-     *
-     * @param precision           the precision
-     * @param contentImage        the content png
-     * @param contentCoefficients the content coefficients
-     * @param styleImages         the style png
-     * @param styles              the styles
-     */
     public StyleSetup(
         final Precision precision,
         final Tensor contentImage,
@@ -1018,39 +832,15 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
 
   }
 
-  /**
-   * The type Style coefficients.
-   *
-   * @param <T> the type parameter
-   */
   public static class StyleCoefficients<T extends LayerEnum<T>> {
-    /**
-     * The Dynamic center.
-     */
     public final CenteringMode centeringMode;
-    /**
-     * The Params.
-     */
     public final Map<T, LayerStyleParams> params = new HashMap<>();
 
 
-    /**
-     * Instantiates a new Style coefficients.
-     *
-     * @param centeringMode the dynamic center
-     */
     public StyleCoefficients(final CenteringMode centeringMode) {
       this.centeringMode = centeringMode;
     }
 
-    /**
-     * Set style coefficients.
-     *
-     * @param layerType        the key type
-     * @param coeff_style_mean the coeff style mean
-     * @param coeff_style_cov  the coeff style bandCovariance
-     * @return the style coefficients
-     */
     public StyleCoefficients<T> set(final T layerType, final double coeff_style_mean, final double coeff_style_cov) {
       return set(
           layerType,
@@ -1060,15 +850,6 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       );
     }
 
-    /**
-     * Set style coefficients.
-     *
-     * @param layerType        the key type
-     * @param coeff_style_mean the coeff style mean
-     * @param coeff_style_cov  the coeff style bandCovariance
-     * @param dream            the dream
-     * @return the style coefficients
-     */
     public StyleCoefficients<T> set(final T layerType, final double coeff_style_mean, final double coeff_style_cov, final double dream) {
       params.put(layerType, new LayerStyleParams(coeff_style_mean, coeff_style_cov, dream));
       return this;
@@ -1076,15 +857,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
 
   }
 
-  /**
-   * The type Content target.
-   *
-   * @param <T> the type parameter
-   */
   public static class ContentTarget<T extends LayerEnum<T>> {
-    /**
-     * The Content.
-     */
     public Map<T, Tensor> content = new HashMap<>();
   }
 
@@ -1134,23 +907,9 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     }
   }
 
-  /**
-   * The type Segmented style target.
-   *
-   * @param <T> the type parameter
-   */
   public static class SegmentedStyleTarget<T extends LayerEnum<T>> {
-    /**
-     * The Segments.
-     */
     private final Map<Tensor, StyleTarget<T>> segments = new HashMap<>();
 
-    /**
-     * Gets segment.
-     *
-     * @param styleMask the style mask
-     * @return the segment
-     */
     public StyleTarget<T> getSegment(final Tensor styleMask) {
       synchronized (segments) {
         StyleTarget<T> styleTarget = segments.computeIfAbsent(styleMask, x -> {
@@ -1164,23 +923,9 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     }
   }
 
-  /**
-   * The type Style target.
-   *
-   * @param <T> the type parameter
-   */
   public static class StyleTarget<T extends LayerEnum<T>> extends ReferenceCountingBase {
-    /**
-     * The Cov.
-     */
     public Map<T, Tensor> cov0 = new HashMap<>();
-    /**
-     * The Cov.
-     */
     public Map<T, Tensor> cov1 = new HashMap<>();
-    /**
-     * The Mean.
-     */
     public Map<T, Tensor> mean = new HashMap<>();
 
     @Override
@@ -1191,12 +936,6 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       if (null != mean) mean.values().forEach(ReferenceCountingBase::freeRef);
     }
 
-    /**
-     * Add style target.
-     *
-     * @param right the right
-     * @return the style target
-     */
     public StyleTarget<T> add(StyleTarget<T> right) {
       StyleTarget<T> newStyle = new StyleTarget<>();
       Stream.concat(mean.keySet().stream(), right.mean.keySet().stream()).distinct().forEach(layer -> {
@@ -1244,12 +983,6 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       return newStyle;
     }
 
-    /**
-     * Scale style target.
-     *
-     * @param value the value
-     * @return the style target
-     */
     public StyleTarget<T> scale(double value) {
       StyleTarget<T> newStyle = new StyleTarget<>();
       mean.keySet().stream().distinct().forEach(layer -> {
@@ -1268,29 +1001,12 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
 
   public static class NeuralSetup<T extends LayerEnum<T>> {
 
-    /**
-     * The Style parameters.
-     */
     public final StyleSetup<T> style;
-    /**
-     * The Content target.
-     */
     public ContentTarget<T> contentTarget = new ContentTarget<>();
-    /**
-     * The Style targets.
-     */
     public Map<CharSequence, SegmentedStyleTarget<T>> styleTargets = new HashMap<>();
-    /**
-     * The Content source.
-     */
     public Tensor contentSource;
 
 
-    /**
-     * Instantiates a new Neural setup.
-     *
-     * @param style the style
-     */
     public NeuralSetup(final StyleSetup<T> style) {
       this.style = style;
     }

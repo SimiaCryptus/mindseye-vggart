@@ -60,47 +60,19 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-/**
- * The type Image classifier.
- */
 public abstract class ImageClassifier implements NetworkFactory {
 
-  /**
-   * The constant log.
-   */
   protected static final Logger logger = LoggerFactory.getLogger(ImageClassifier.class);
-  /**
-   * The Network.
-   */
   protected volatile Layer cachedLayer;
-  /**
-   * The Prototype.
-   */
   @Nullable
   protected
   Tensor prototype = new Tensor(224, 224, 3);
-  /**
-   * The Cnt.
-   */
   protected int cnt = 1;
-  /**
-   * The Precision.
-   */
   @Nonnull
   protected
   Precision precision = Precision.Float;
   private int batchSize;
 
-  /**
-   * Predict list.
-   *
-   * @param network    the network
-   * @param count      the count
-   * @param categories the categories
-   * @param batchSize  the batch size
-   * @param data       the data
-   * @return the list
-   */
   public static List<LinkedHashMap<CharSequence, Double>> predict(
       @Nonnull Layer network,
       int count,
@@ -111,18 +83,6 @@ public abstract class ImageClassifier implements NetworkFactory {
     return predict(network, count, categories, batchSize, true, false, data);
   }
 
-  /**
-   * Predict list.
-   *
-   * @param network    the network
-   * @param count      the count
-   * @param categories the categories
-   * @param batchSize  the batch size
-   * @param asyncGC    the async gc
-   * @param nullGC     the null gc
-   * @param data       the data
-   * @return the list
-   */
   public static List<LinkedHashMap<CharSequence, Double>> predict(
       @Nonnull Layer network,
       int count,
@@ -166,25 +126,11 @@ public abstract class ImageClassifier implements NetworkFactory {
     }
   }
 
-  /**
-   * Gets training monitor.
-   *
-   * @param history the history
-   * @param network the network
-   * @return the training monitor
-   */
   @Nonnull
   public static TrainingMonitor getTrainingMonitor(@Nonnull ArrayList<StepRecord> history, final PipelineNetwork network) {
     return TestUtil.getMonitor(history);
   }
 
-  /**
-   * Add.
-   *
-   * @param layer the key
-   * @param model the model
-   * @return the key
-   */
   @Nonnull
   protected static Layer add(@Nonnull Layer layer, @Nonnull PipelineNetwork model) {
     name(layer);
@@ -212,14 +158,6 @@ public abstract class ImageClassifier implements NetworkFactory {
     }
   }
 
-  /**
-   * Evaluate prototype tensor.
-   *
-   * @param layer         the key
-   * @param prevPrototype the prev prototype
-   * @param cnt           the cnt
-   * @return the tensor
-   */
   @Nonnull
   protected static Tensor evaluatePrototype(@Nonnull final Layer layer, final Tensor prevPrototype, int cnt) {
     int numberOfParameters = layer.state().stream().mapToInt(x -> x.length).sum();
@@ -238,11 +176,6 @@ public abstract class ImageClassifier implements NetworkFactory {
     }
   }
 
-  /**
-   * Name.
-   *
-   * @param layer the key
-   */
   protected static void name(final Layer layer) {
     if (layer.getName().contains(layer.getId().toString())) {
       if (layer instanceof ConvolutionLayer) {
@@ -268,12 +201,6 @@ public abstract class ImageClassifier implements NetworkFactory {
     }
   }
 
-  /**
-   * Sets precision.
-   *
-   * @param model     the model
-   * @param precision the precision
-   */
   public static void setPrecision(DAGNetwork model, final Precision precision) {
     model.visitLayers(layer -> {
       if (layer instanceof MultiPrecision) {
@@ -282,12 +209,6 @@ public abstract class ImageClassifier implements NetworkFactory {
     });
   }
 
-  /**
-   * Deep dream.
-   *
-   * @param log   the log
-   * @param image the png
-   */
   public void deepDream(@Nonnull final NotebookOutput log, final Tensor image) {
     @Nonnull ArrayList<StepRecord> history = new ArrayList<>();
     String training_name = String.format("etc/training_%s.png", Long.toHexString(MarkdownNotebookOutput.random.nextLong()));
@@ -335,15 +256,6 @@ public abstract class ImageClassifier implements NetworkFactory {
     }
   }
 
-  /**
-   * Predict list.
-   *
-   * @param network    the network
-   * @param count      the count
-   * @param categories the categories
-   * @param data       the data
-   * @return the list
-   */
   public List<LinkedHashMap<CharSequence, Double>> predict(
       @Nonnull Layer network,
       int count,
@@ -353,66 +265,26 @@ public abstract class ImageClassifier implements NetworkFactory {
     return predict(network, count, categories, Math.max(data.length, getBatchSize()), data);
   }
 
-  /**
-   * Gets categories.
-   *
-   * @return the categories
-   */
   public abstract List<CharSequence> getCategories();
 
-  /**
-   * Predict list.
-   *
-   * @param count the count
-   * @param data  the data
-   * @return the list
-   */
   public List<LinkedHashMap<CharSequence, Double>> predict(int count, Tensor... data) {
     return predict(getNetwork(), count, getCategories(), data);
   }
 
-  /**
-   * Predict list.
-   *
-   * @param network the network
-   * @param count   the count
-   * @param data    the data
-   * @return the list
-   */
   public List<LinkedHashMap<CharSequence, Double>> predict(@Nonnull Layer network, int count, Tensor[] data) {
     return predict(network, count, getCategories(), data);
   }
 
-  /**
-   * Gets batch size.
-   *
-   * @return the batch size
-   */
   public int getBatchSize() {
     return batchSize;
   }
 
-  /**
-   * Sets batch size.
-   *
-   * @param batchSize the batch size
-   * @return the batch size
-   */
   @Nonnull
   public ImageClassifier setBatchSize(int batchSize) {
     this.batchSize = batchSize;
     return this;
   }
 
-  /**
-   * Deep dream.
-   *
-   * @param log                 the log
-   * @param image               the png
-   * @param targetCategoryIndex the target category index
-   * @param totalCategories     the total categories
-   * @param config              the config
-   */
   public void deepDream(
       @Nonnull final NotebookOutput log,
       final Tensor image,
@@ -448,25 +320,8 @@ public abstract class ImageClassifier implements NetworkFactory {
 
   }
 
-  /**
-   * Build network key.
-   *
-   * @return the key
-   */
   protected abstract Layer buildNetwork();
 
-  /**
-   * Deep dream.
-   *
-   * @param log                 the log
-   * @param image               the png
-   * @param targetCategoryIndex the target category index
-   * @param totalCategories     the total categories
-   * @param config              the config
-   * @param network             the network
-   * @param lossLayer           the loss key
-   * @param targetValue         the target value
-   */
   public void deepDream(
       @Nonnull final NotebookOutput log,
       final Tensor image,
@@ -537,11 +392,6 @@ public abstract class ImageClassifier implements NetworkFactory {
     });
   }
 
-  /**
-   * Sets precision.
-   *
-   * @param model the model
-   */
   protected void setPrecision(DAGNetwork model) {
     setPrecision(model, precision);
   }

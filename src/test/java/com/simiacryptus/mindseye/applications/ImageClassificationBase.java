@@ -34,16 +34,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- * The type Image classification base.
- */
 public abstract class ImageClassificationBase extends ArtistryAppBase {
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     log.h1("Model");
     log.p("In this demonstration, we will show how to load an png recognition network and use it to identify object in images.");
@@ -80,12 +72,6 @@ public abstract class ImageClassificationBase extends ArtistryAppBase {
     log.setFrontMatterProperty("status", "OK");
   }
 
-  /**
-   * Load data tensor [ ].
-   *
-   * @param log the log
-   * @return the tensor [ ]
-   */
   public Tensor[] loadData(@Nonnull final NotebookOutput log) {
     return log.eval(() -> {
       return Caltech101.trainingDataStream().sorted(getShuffleComparator()).map(labeledObj -> {
@@ -96,20 +82,8 @@ public abstract class ImageClassificationBase extends ArtistryAppBase {
     });
   }
 
-  /**
-   * Load model png classifier.
-   *
-   * @param log the log
-   * @return the png classifier
-   */
   public abstract ImageClassifier loadModel(@Nonnull NotebookOutput log);
 
-  /**
-   * Gets shuffle comparator.
-   *
-   * @param <T> the type parameter
-   * @return the shuffle comparator
-   */
   public <T> Comparator<T> getShuffleComparator() {
     final int seed = (int) ((System.nanoTime() >>> 8) % (Integer.MAX_VALUE - 84));
     return Comparator.comparingInt(a1 -> System.identityHashCode(a1) ^ seed);

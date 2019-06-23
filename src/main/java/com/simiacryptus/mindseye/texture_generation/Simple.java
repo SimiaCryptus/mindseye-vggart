@@ -36,33 +36,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * The type Simple.
- */
 public class Simple extends ImageScript {
 
 
-  /**
-   * The Coeff style mean.
-   */
   public double coeff_style_mean = 1e1;
-  /**
-   * The Coeff style bandCovariance.
-   */
   public double coeff_style_cov = 1e0;
-  /**
-   * The Style sources.
-   */
   public String[] styleSources = {
       "git://github.com/jcjohnson/fast-neural-style.git/master/images/styles/starry_night_crop.jpg"
   };
-  /**
-   * The Resolution.
-   */
   public int resolution = 800;
-  /**
-   * The Dream coeff.
-   */
   public double dreamCoeff = 1e1;
 
   public void accept(@Nonnull NotebookOutput log) {
@@ -101,31 +83,13 @@ public class Simple extends ImageScript {
     );
   }
 
-  /**
-   * The type Local.
-   */
   public static class Local {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       LocalNotebookRunner.run(LocalNotebookRunner.getTask(Simple.class));
     }
   }
 
-  /**
-   * The type Ec 2.
-   */
   public static class EC2 {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       EC2NotebookRunner.run(LocalNotebookRunner.getTask(Simple.class));
     }

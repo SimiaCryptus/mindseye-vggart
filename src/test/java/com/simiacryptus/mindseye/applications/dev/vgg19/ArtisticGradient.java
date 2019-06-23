@@ -42,18 +42,8 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
-/**
- * The type Style transfer vgg 19.
- */
 public class ArtisticGradient extends ArtistryAppBase_VGG19 {
 
-  /**
-   * Init buffered png.
-   *
-   * @param contentSource the content source
-   * @param width         the width
-   * @return the buffered png
-   */
   @Nonnull
   public static BufferedImage init(final CharSequence contentSource, final int width) {
     BufferedImage canvasImage;
@@ -66,14 +56,6 @@ public class ArtisticGradient extends ArtistryAppBase_VGG19 {
     return canvasImage;
   }
 
-  /**
-   * Create buildMap.
-   *
-   * @param <K>       the type parameter
-   * @param <V>       the type parameter
-   * @param configure the configure
-   * @return the buildMap
-   */
   @Nonnull
   public static <K, V> Map<K, V> create(Consumer<Map<K, V>> configure) {
     Map<K, V> map = new HashMap<>();
@@ -81,11 +63,6 @@ public class ArtisticGradient extends ArtistryAppBase_VGG19 {
     return map;
   }
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     StyleTransfer.VGG19 styleTransfer = new StyleTransfer.VGG19();
     init(log);
@@ -178,32 +155,10 @@ public class ArtisticGradient extends ArtistryAppBase_VGG19 {
     log.setFrontMatterProperty("status", "OK");
   }
 
-  /**
-   * Write gif.
-   *
-   * @param log         the log
-   * @param imageStream the png stream
-   */
   public void writeGif(@Nonnull final NotebookOutput log, final Stream<BufferedImage> imageStream) {
     log.p(TestUtil.animatedGif(log, imageStream.toArray(i -> new BufferedImage[i])));
   }
 
-  /**
-   * Style transfer buffered png.
-   *
-   * @param log                 the log
-   * @param styleTransfer       the style transfer
-   * @param precision           the precision
-   * @param imageSize           the png size
-   * @param growthFactor        the growth factor
-   * @param contentSource       the content source
-   * @param styles              the styles
-   * @param contentCoefficients the content coefficients
-   * @param trainingMinutes     the training minutes
-   * @param maxIterations       the max iterations
-   * @param phases              the phases
-   * @return the buffered png
-   */
   public Tensor styleTransfer(
       @Nonnull final NotebookOutput log,
       final StyleTransfer.VGG19 styleTransfer,

@@ -29,13 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * The type Multi key vgg 16.
- */
 public class CVPipe_VGG16 implements CVPipe<CVPipe_VGG16.Layer> {
-  /**
-   * The constant INSTANCE.
-   */
   public static final CVPipe_VGG16 INSTANCE = build();
   private final Map<Layer, UUID> nodes = new HashMap<>();
   private final Map<Layer, PipelineNetwork> prototypes = new HashMap<>();
@@ -139,52 +133,18 @@ public class CVPipe_VGG16 implements CVPipe<CVPipe_VGG16.Layer> {
     return network.copy();
   }
 
-  /**
-   * The enum Strata type.
-   */
   public enum Layer implements LayerEnum<Layer> {
-    /**
-     * Strata 0 key type.
-     */
     Layer_0,
-    /**
-     * Strata 1 a key type.
-     */
     Layer_1a,
-    /**
-     * Strata 1 b key type.
-     */
     Layer_1b,
-    /**
-     * Strata 1 c key type.
-     */
     Layer_1c,
-    /**
-     * Strata 1 d key type.
-     */
     Layer_1d,
-    /**
-     * Strata 1 e key type.
-     */
-    Layer_1e, /**
-     * Strata 2 a key type.
-     */
-    Layer_2a, /**
-     * Strata 2 b key type.
-     */
-    Layer_2b, /**
-     * Strata 3 a key type.
-     */
-    Layer_3a, /**
-     * Strata 3 b key type.
-     */
+    Layer_1e,
+    Layer_2a,
+    Layer_2b,
+    Layer_3a,
     Layer_3b;
 
-    /**
-     * Texture pipeline network.
-     *
-     * @return the pipeline network
-     */
     public final PipelineNetwork network() {
       PipelineNetwork pipelineNetwork = INSTANCE.getPrototypes().get(this);
       if (null == pipelineNetwork) throw new IllegalStateException(this.toString());

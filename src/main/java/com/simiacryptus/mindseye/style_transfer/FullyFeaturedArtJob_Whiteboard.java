@@ -22,9 +22,6 @@ package com.simiacryptus.mindseye.style_transfer;
 import com.simiacryptus.aws.exe.EC2NotebookRunner;
 import com.simiacryptus.aws.exe.LocalNotebookRunner;
 
-/**
- * The type Style survey.
- */
 public class FullyFeaturedArtJob_Whiteboard extends FullyFeaturedArtJob {
 
   public FullyFeaturedArtJob_Whiteboard() {
@@ -38,31 +35,13 @@ public class FullyFeaturedArtJob_Whiteboard extends FullyFeaturedArtJob {
     plasmaResolution = 800;
   }
 
-  /**
-   * The type Local.
-   */
   public static class Local {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       LocalNotebookRunner.run(LocalNotebookRunner.getTask(FullyFeaturedArtJob_Whiteboard.class));
     }
   }
 
-  /**
-   * The type Ec 2.
-   */
   public static class EC2 {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       EC2NotebookRunner.run(LocalNotebookRunner.getTask(FullyFeaturedArtJob_Whiteboard.class));
     }

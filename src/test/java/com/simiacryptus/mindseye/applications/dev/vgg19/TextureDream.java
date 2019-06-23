@@ -38,16 +38,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-/**
- * The type Style transfer vgg 19.
- */
 public class TextureDream extends ArtistryAppBase_VGG19 {
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     TextureGeneration.VGG19 styleTransfer = new TextureGeneration.VGG19();
     DeepDream.VGG19 deepDream = new DeepDream.VGG19();
@@ -207,14 +199,6 @@ public class TextureDream extends ArtistryAppBase_VGG19 {
     log.setFrontMatterProperty("status", "OK");
   }
 
-  /**
-   * Create buildMap.
-   *
-   * @param <K>       the type parameter
-   * @param <V>       the type parameter
-   * @param configure the configure
-   * @return the buildMap
-   */
   @Nonnull
   public <K, V> Map<K, V> create(Consumer<Map<K, V>> configure) {
     Map<K, V> map = new HashMap<>();

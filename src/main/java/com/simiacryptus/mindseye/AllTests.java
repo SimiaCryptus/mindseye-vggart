@@ -27,9 +27,6 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * The type All tests.
- */
 public class AllTests {
 
   @Nonnull
@@ -75,32 +72,14 @@ public class AllTests {
     return scripts;
   }
 
-  /**
-   * The type Local.
-   */
   public static class Local {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       LocalNotebookRunner.run(
           getTests());
     }
   }
 
-  /**
-   * The type Ec 2.
-   */
   public static class EC2 {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       EC2NotebookRunner.run(getTests());
     }

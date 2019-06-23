@@ -39,18 +39,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * The type Image classifier apply base.
- */
 public class ImageSegmentation extends ArtistryAppBase_VGG19 {
 
   private static final Logger logger = LoggerFactory.getLogger(ImageSegmentation.class);
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     for (final Tensor img : loadImages_library()) {
       log.p(log.png(img.toImage(), ""));
@@ -90,11 +82,6 @@ public class ImageSegmentation extends ArtistryAppBase_VGG19 {
     }
   }
 
-  /**
-   * Load images 1 tensor [ ] [ ].
-   *
-   * @return the tensor [ ] [ ]
-   */
   public Tensor[] loadImages_library() {
     List<CharSequence> localFiles = ArtistryUtil.getLocalFiles("H:\\SimiaCryptus\\Artistry\\Owned\\");
     Collections.shuffle(localFiles);

@@ -58,16 +58,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * The type Artistry util.
- */
 public class ArtistryUtil {
-  /**
-   * Add layers handler.
-   *
-   * @param painterNetwork the painter network
-   * @param server         the server
-   */
   public static void addLayersHandler(final DAGNetwork painterNetwork, final FileHTTPD server) {
     if (null != server) server.addGET("layers.json", "application/json", out -> {
       try {
@@ -79,14 +70,6 @@ public class ArtistryUtil {
     });
   }
 
-  /**
-   * Gram pipeline network.
-   *
-   * @param network      the network
-   * @param mean         the mean
-   * @param pcaTransform the pca transform
-   * @return the pipeline network
-   */
   @Nonnull
   public static PipelineNetwork gram(final PipelineNetwork network, Tensor mean, Tensor pcaTransform) {
     int[] dimensions = pcaTransform.getDimensions();
@@ -101,14 +84,6 @@ public class ArtistryUtil {
     return network;
   }
 
-  /**
-   * Square avg pipeline network.
-   *
-   * @param network      the network
-   * @param mean         the mean
-   * @param pcaTransform the pca transform
-   * @return the pipeline network
-   */
   @Nonnull
   public static PipelineNetwork squareAvg(final PipelineNetwork network, Tensor mean, Tensor pcaTransform) {
     int[] dimensions = pcaTransform.getDimensions();
@@ -124,12 +99,6 @@ public class ArtistryUtil {
     return network;
   }
 
-  /**
-   * Paint low res.
-   *
-   * @param canvas the canvas
-   * @param scale  the scale
-   */
   public static void paint_LowRes(final Tensor canvas, final int scale) {
     BufferedImage originalImage = canvas.toImage();
     canvas.set(Tensor.fromRGB(TestUtil.resize(
@@ -138,11 +107,6 @@ public class ArtistryUtil {
     )));
   }
 
-  /**
-   * Paint lines.
-   *
-   * @param canvas the canvas
-   */
   public static void paint_Lines(final Tensor canvas) {
     BufferedImage originalImage = canvas.toImage();
     BufferedImage newImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -160,12 +124,6 @@ public class ArtistryUtil {
     canvas.set(Tensor.fromRGB(newImage));
   }
 
-  /**
-   * Paint circles.
-   *
-   * @param canvas the canvas
-   * @param scale  the scale
-   */
   public static void paint_Circles(final Tensor canvas, final int scale) {
     BufferedImage originalImage = canvas.toImage();
     BufferedImage newImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -250,13 +208,6 @@ public class ArtistryUtil {
     return tensor;
   }
 
-  /**
-   * Expand plasma tensor.
-   *
-   * @param seed  the seed
-   * @param noise the noise
-   * @return the tensor
-   */
   public static Tensor expandPlasma(final Tensor seed, double noise) {
     int bands = seed.getDimensions()[2];
     int width = seed.getDimensions()[0] * 2;
@@ -315,24 +266,12 @@ public class ArtistryUtil {
     return returnValue;
   }
 
-  /**
-   * Avg pipeline network.
-   *
-   * @param network the network
-   * @return the pipeline network
-   */
   @Nonnull
   public static PipelineNetwork avg(final PipelineNetwork network) {
     network.wrap(new BandReducerLayer().setMode(PoolingLayer.PoolingMode.Avg)).freeRef();
     return network;
   }
 
-  /**
-   * With clamp pipeline network.
-   *
-   * @param network1 the network 1
-   * @return the pipeline network
-   */
   @Nonnull
   public static PipelineNetwork withClamp(final PipelineNetwork network1) {
     PipelineNetwork network = new PipelineNetwork(1);
@@ -341,13 +280,6 @@ public class ArtistryUtil {
     return network;
   }
 
-  /**
-   * Pca tensor.
-   *
-   * @param cov   the bandCovariance
-   * @param power the power
-   * @return the tensor
-   */
   @Nonnull
   public static Tensor pca(final Tensor cov, final double power) {
     final int inputbands = (int) Math.sqrt(cov.getDimensions()[2]);
@@ -365,12 +297,6 @@ public class ArtistryUtil {
     return kernel;
   }
 
-  /**
-   * Gets clamp.
-   *
-   * @param max the max
-   * @return the clamp
-   */
   @Nonnull
   public static PipelineNetwork getClamp(final int max) {
     @Nonnull PipelineNetwork clamp = new PipelineNetwork(1);
@@ -381,12 +307,6 @@ public class ArtistryUtil {
     return clamp;
   }
 
-  /**
-   * To json string.
-   *
-   * @param obj the style parameters
-   * @return the string
-   */
   public static CharSequence toJson(final Object obj) {
     String json;
     try {
@@ -399,38 +319,17 @@ public class ArtistryUtil {
     return json;
   }
 
-  /**
-   * Load buffered png.
-   *
-   * @param image the style
-   * @return the buffered png
-   */
   @Nonnull
   public static BufferedImage load(final CharSequence image) {
     return HadoopUtil.getImage(image);
   }
 
-  /**
-   * Load buffered png.
-   *
-   * @param image     the png
-   * @param imageSize the png size
-   * @return the buffered png
-   */
   @Nonnull
   public static BufferedImage load(final CharSequence image, final int imageSize) {
     BufferedImage source = HadoopUtil.getImage(image);
     return imageSize <= 0 ? source : TestUtil.resize(source, imageSize, true);
   }
 
-  /**
-   * Load buffered png.
-   *
-   * @param image  the png
-   * @param width  the width
-   * @param height the height
-   * @return the buffered png
-   */
   @Nonnull
   public static BufferedImage load(final CharSequence image, final int width, final int height) {
     BufferedImage bufferedImage = HadoopUtil.getImage(image);
@@ -438,13 +337,6 @@ public class ArtistryUtil {
     return bufferedImage;
   }
 
-  /**
-   * Gram pipeline network.
-   *
-   * @param network the network
-   * @param mean    the mean
-   * @return the pipeline network
-   */
   @Nonnull
   public static PipelineNetwork gram(final Layer network, Tensor mean) {
     if (!(network instanceof PipelineNetwork)) {
@@ -461,12 +353,6 @@ public class ArtistryUtil {
     }
   }
 
-  /**
-   * Gram pipeline network.
-   *
-   * @param network the network
-   * @return the pipeline network
-   */
   @Nonnull
   public static PipelineNetwork gram(final Layer network) {
     if (!(network instanceof PipelineNetwork)) {
@@ -480,44 +366,20 @@ public class ArtistryUtil {
     }
   }
 
-  /**
-   * Randomize buffered png.
-   *
-   * @param contentImage the content png
-   * @return the buffered png
-   */
   @Nonnull
   public static BufferedImage randomize(final BufferedImage contentImage) {
     return randomize(contentImage, x -> FastRandom.INSTANCE.random());
   }
 
-  /**
-   * Randomize buffered png.
-   *
-   * @param contentImage the content png
-   * @param f            the f
-   * @return the buffered png
-   */
   @Nonnull
   public static BufferedImage randomize(final BufferedImage contentImage, final DoubleUnaryOperator f) {
     return Tensor.fromRGB(contentImage).map(f).toRgbImage();
   }
 
-  /**
-   * Paint noise.
-   *
-   * @param canvas the canvas
-   */
   public static void paint_noise(final Tensor canvas) {
     canvas.setByCoord(c -> FastRandom.INSTANCE.random());
   }
 
-  /**
-   * Wrap avg key.
-   *
-   * @param subnet the subnet
-   * @return the key
-   */
   protected static PipelineNetwork wrapAvg(final Layer subnet) {
     PipelineNetwork network = new PipelineNetwork(1);
     network.wrap(subnet).freeRef();
@@ -525,28 +387,12 @@ public class ArtistryUtil {
     return network;
   }
 
-  /**
-   * Wrap tiled avg key.
-   *
-   * @param subnet the subnet
-   * @param size   the size
-   * @return the key
-   */
   protected static PipelineNetwork wrapTiledAvg(final Layer subnet, final int size) {
     ImgTileSubnetLayer tileSubnetLayer = new ImgTileSubnetLayer(subnet, size, size, size, size);
     subnet.freeRef();
     return wrapAvg(tileSubnetLayer);
   }
 
-  /**
-   * Log exception with default t.
-   *
-   * @param <T>          the type parameter
-   * @param log          the log
-   * @param fn           the fn
-   * @param defaultValue the default value
-   * @return the t
-   */
   public static <T> T logExceptionWithDefault(@Nonnull final NotebookOutput log, Supplier<T> fn, T defaultValue) {
     try {
       return fn.get();
@@ -561,35 +407,16 @@ public class ArtistryUtil {
     }
   }
 
-  /**
-   * Reduce.
-   *
-   * @param network               the network
-   * @param functions             the functions
-   * @param parallelLossFunctions the parallel loss functions
-   */
   public static void reduce(final DAGNetwork network, final List<Tuple2<Double, DAGNode>> functions, final boolean parallelLossFunctions) {
     functions.stream().filter(x -> x._1 != 0).reduce((a, b) -> {
       return new Tuple2<>(1.0, network.wrap(new BinarySumLayer(a._1, b._1), a._2, b._2).setParallel(parallelLossFunctions));
     }).get();
   }
 
-  /**
-   * Gets files.
-   *
-   * @param file the file
-   * @return the files
-   */
   public static List<CharSequence> getHadoopFiles(CharSequence file) {
     return HadoopUtil.getFiles(file);
   }
 
-  /**
-   * Gets local files.
-   *
-   * @param file the file
-   * @return the local files
-   */
   public static List<CharSequence> getLocalFiles(CharSequence file) {
     File[] array = new File(file.toString()).listFiles();
     if (null == array) throw new IllegalArgumentException("Not Found: " + file);
@@ -597,13 +424,6 @@ public class ArtistryUtil {
   }
 
 
-  /**
-   * Tile cycle pipeline network.
-   *
-   * @param network the network
-   * @param splits
-   * @return the pipeline network
-   */
   public static PipelineNetwork tileCycle(final PipelineNetwork network, final int splits) {
     PipelineNetwork netNet = new PipelineNetwork(1);
     netNet.wrap(

@@ -37,9 +37,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * The type Tiled trainable.
- */
 public class TiledTrainable extends ReferenceCountingBase implements Trainable {
   private final PipelineNetwork network;
   private final Tensor canvas;
@@ -51,13 +48,6 @@ public class TiledTrainable extends ReferenceCountingBase implements Trainable {
   private final int padding;
   private boolean verbose;
 
-  /**
-   * Instantiates a new Tiled trainable.
-   *
-   * @param network the network
-   * @param canvas  the canvas
-   * @param padding
-   */
   public TiledTrainable(final PipelineNetwork network, final Tensor canvas, final int padding, NotebookOutput log) {
     this.network = network;
     this.network.addRef();

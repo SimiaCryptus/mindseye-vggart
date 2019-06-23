@@ -33,9 +33,6 @@ import java.util.Arrays;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-/**
- * The type Style survey.
- */
 public class ViewJSTest extends ImageScript {
 
   public CharSequence[] styleSources;

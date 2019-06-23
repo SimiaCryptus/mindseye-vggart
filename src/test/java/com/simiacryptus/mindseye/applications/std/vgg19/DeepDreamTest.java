@@ -35,16 +35,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * The type Deep dream vgg 19.
- */
 public class DeepDreamTest extends ArtistryAppBase_VGG19 {
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     DeepDream<CVPipe_VGG19.Layer, CVPipe_VGG19> dreamBase = new DeepDream.VGG19();
     init(log);

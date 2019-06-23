@@ -60,12 +60,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * The type Pixel clusterer.
- *
- * @param <T> the type parameter
- * @param <U> the type parameter
- */
 public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
   private static final Logger logger = LoggerFactory.getLogger(PixelClusterer.class);
   private final boolean recenter;
@@ -82,23 +76,6 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
   private double seedMagnitude;
   private boolean rescale;
 
-  /**
-   * Instantiates a new Pixel clusterer.
-   *
-   * @param clusters                   the clusters
-   * @param orientation                the orientation
-   * @param globalDistributionEmphasis the global distribution emphasis
-   * @param selectionEntropyAdj        the selection entropy adj
-   * @param maxIterations              the max iterations
-   * @param timeoutMinutes             the timeout minutes
-   * @param seedPcaPower               the seed pca power
-   * @param seedMagnitude              the seed magnitude
-   * @param rescale                    the rescale
-   * @param recenter                   the recenter
-   * @param globalBias                 the global bias
-   * @param globalGain                 the global gain
-   * @param entropyBias                the entropy bias
-   */
   public PixelClusterer(
       final int clusters,
       final int orientation,
@@ -129,11 +106,6 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
     this.entropyBias = entropyBias;
   }
 
-  /**
-   * Instantiates a new Pixel clusterer.
-   *
-   * @param clusters the clusters
-   */
   public PixelClusterer(final int clusters) {
     this(
         clusters,
@@ -152,15 +124,6 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
     );
   }
 
-  /**
-   * Band covariance double [ ].
-   *
-   * @param pixelStream the pixel stream
-   * @param pixels      the pixels
-   * @param mean        the mean
-   * @param rms         the rms
-   * @return the double [ ]
-   */
   public static double[] bandCovariance(final Stream<double[]> pixelStream, final int pixels, final double[] mean, final double[] rms) {
     return Arrays.stream(pixelStream.map(pixel -> {
       double[] crossproduct = RecycleBin.DOUBLES.obtain(pixel.length * pixel.length);
@@ -209,14 +172,6 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return matrix;
   }
 
-  /**
-   * Analyze key.
-   *
-   * @param layer   the key
-   * @param log     the log
-   * @param metrics the metrics
-   * @return the key
-   */
   public PipelineNetwork analyze(final T layer, final NotebookOutput log, final Tensor metrics) {
     Layer model = modelingNetwork(layer, metrics);
     for (final double entropyBias : entropyBias) {
@@ -237,13 +192,6 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return model.freeAndThenWrap(new SoftmaxActivationLayer().setMode(SoftmaxActivationLayer.SoftmaxMode.CHANNEL));
   }
 
-  /**
-   * Modeling network key.
-   *
-   * @param layer   the key
-   * @param metrics the metrics
-   * @return the key
-   */
   public Layer modelingNetwork(final T layer, final Tensor metrics) {
     return modelingNetwork(
         getGlobalBias(),
@@ -257,19 +205,6 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
     );
   }
 
-  /**
-   * Modeling network key.
-   *
-   * @param globalBias    the global bias
-   * @param globalGain    the global gain
-   * @param metrics       the metrics
-   * @param recenter      the recenter
-   * @param rescale       the rescale
-   * @param clusters      the clusters
-   * @param seedMagnitude the seed magnitude
-   * @param seedPcaPower  the seed pca power
-   * @return the key
-   */
   @Nonnull
   public Layer modelingNetwork(
       final double globalBias,
@@ -341,26 +276,12 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return pipelineNetwork;
   }
 
-  /**
-   * Gets trainable.
-   *
-   * @param metrics    the metrics
-   * @param netEntropy the net entropy
-   * @return the trainable
-   */
   @Nonnull
   public Trainable getTrainable(final Tensor metrics, final DAGNetwork netEntropy) {
     MultiPrecision.setPrecision(netEntropy, Precision.Float);
     return new ArrayTrainable(netEntropy, 1).setVerbose(true).setMask(false).setData(Arrays.asList(new Tensor[][]{{metrics}}));
   }
 
-  /**
-   * Entropy network key.
-   *
-   * @param pixels      the pixels
-   * @param entropyBias the entropy bias
-   * @return the key
-   */
   @Nonnull
   public Layer entropyNetwork(final int pixels, final double entropyBias) {
     PipelineNetwork netEntropy = new PipelineNetwork(1);
@@ -386,12 +307,6 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
     return netEntropy;
   }
 
-  /**
-   * Train plot canvas.
-   *
-   * @param trainable the trainable
-   * @return the plot canvas
-   */
   public JPanel train(final Trainable trainable) {
     @Nonnull ArrayList<StepRecord> history = new ArrayList<>();
     try {
@@ -419,121 +334,55 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
     }
   }
 
-  /**
-   * Gets clusters.
-   *
-   * @return the clusters
-   */
   public int getClusters() {
     return clusters;
   }
 
-  /**
-   * Sets clusters.
-   *
-   * @param clusters the clusters
-   * @return the clusters
-   */
   public PixelClusterer setClusters(int clusters) {
     this.clusters = clusters;
     return this;
   }
 
-  /**
-   * Gets orientation.
-   *
-   * @return the orientation
-   */
   public int getOrientation() {
     return orientation;
   }
 
-  /**
-   * Sets orientation.
-   *
-   * @param orientation the orientation
-   * @return the orientation
-   */
   public PixelClusterer setOrientation(int orientation) {
     this.orientation = orientation;
     return this;
   }
 
-  /**
-   * Gets global distribution emphasis.
-   *
-   * @return the global distribution emphasis
-   */
   public double getGlobalDistributionEmphasis() {
     return globalDistributionEmphasis;
   }
 
-  /**
-   * Sets global distribution emphasis.
-   *
-   * @param globalDistributionEmphasis the global distribution emphasis
-   * @return the global distribution emphasis
-   */
   public PixelClusterer setGlobalDistributionEmphasis(double globalDistributionEmphasis) {
     this.globalDistributionEmphasis = globalDistributionEmphasis;
     return this;
   }
 
-  /**
-   * Gets selection entropy adj.
-   *
-   * @return the selection entropy adj
-   */
   public double getSelectionEntropyAdj() {
     return selectionEntropyAdj;
   }
 
-  /**
-   * Sets selection entropy adj.
-   *
-   * @param selectionEntropyAdj the selection entropy adj
-   * @return the selection entropy adj
-   */
   public PixelClusterer setSelectionEntropyAdj(double selectionEntropyAdj) {
     this.selectionEntropyAdj = selectionEntropyAdj;
     return this;
   }
 
-  /**
-   * Gets max iterations.
-   *
-   * @return the max iterations
-   */
   public int getMaxIterations() {
     return maxIterations;
   }
 
-  /**
-   * Sets max iterations.
-   *
-   * @param maxIterations the max iterations
-   * @return the max iterations
-   */
   public PixelClusterer setMaxIterations(int maxIterations) {
     this.maxIterations = maxIterations;
     return this;
   }
 
-  /**
-   * Gets timeout minutes.
-   *
-   * @return the timeout minutes
-   */
   public int getTimeoutMinutes() {
     return timeoutMinutes;
   }
 
-  /**
-   * Sets timeout minutes.
-   *
-   * @param timeoutMinutes the timeout minutes
-   * @return the timeout minutes
-   */
   public PixelClusterer setTimeoutMinutes(int timeoutMinutes) {
     this.timeoutMinutes = timeoutMinutes;
     return this;
@@ -552,87 +401,40 @@ public class PixelClusterer<T extends LayerEnum<T>, U extends CVPipe<T>> {
         '}';
   }
 
-  /**
-   * Gets seed pca power.
-   *
-   * @return the seed pca power
-   */
   public double getSeedPcaPower() {
     return seedPcaPower;
   }
 
-  /**
-   * Sets seed pca power.
-   *
-   * @param seedPcaPower the seed pca power
-   * @return the seed pca power
-   */
   public PixelClusterer setSeedPcaPower(double seedPcaPower) {
     this.seedPcaPower = seedPcaPower;
     return this;
   }
 
-  /**
-   * Gets seed magnitude.
-   *
-   * @return the seed magnitude
-   */
   public double getSeedMagnitude() {
     return seedMagnitude;
   }
 
-  /**
-   * Sets seed magnitude.
-   *
-   * @param seedMagnitude the seed magnitude
-   * @return the seed magnitude
-   */
   public PixelClusterer setSeedMagnitude(double seedMagnitude) {
     this.seedMagnitude = seedMagnitude;
     return this;
   }
 
-  /**
-   * Is recenter boolean.
-   *
-   * @return the boolean
-   */
   public boolean isRecenter() {
     return recenter;
   }
 
-  /**
-   * Is rescale boolean.
-   *
-   * @return the boolean
-   */
   public boolean isRescale() {
     return rescale;
   }
 
-  /**
-   * Sets rescale.
-   *
-   * @param rescale the rescale
-   */
   public void setRescale(boolean rescale) {
     this.rescale = rescale;
   }
 
-  /**
-   * Gets global bias.
-   *
-   * @return the global bias
-   */
   public double getGlobalBias() {
     return globalBias;
   }
 
-  /**
-   * Gets global gain.
-   *
-   * @return the global gain
-   */
   public double getGlobalGain() {
     return globalGain;
   }

@@ -38,43 +38,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
-/**
- * The type Enlarging.
- */
 public class Enlarging extends ImageScript {
 
-  /**
-   * The Start png size.
-   */
   public int startImageSize = 250;
-  /**
-   * The Coeff style mean.
-   */
   public double coeff_style_mean = 1e1;
-  /**
-   * The Coeff style bandCovariance.
-   */
   public double coeff_style_cov = 1e0;
-  /**
-   * The Style sources.
-   */
   public String[] styleSources = {
       "git://github.com/jcjohnson/fast-neural-style.git/master/images/styles/starry_night_crop.jpg"
   };
-  /**
-   * The Content sources.
-   */
   public String[] contentSources = {
       "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/1024px-The_Earth_seen_from_Apollo_17.jpg"
   };
 
-  /**
-   * Init buffered png.
-   *
-   * @param contentSource the content source
-   * @param width         the width
-   * @return the buffered png
-   */
   @Nonnull
   public BufferedImage init(final CharSequence contentSource, final int width) {
     BufferedImage canvasImage;
@@ -87,11 +62,6 @@ public class Enlarging extends ImageScript {
     return canvasImage;
   }
 
-  /**
-   * Resolution stream double stream.
-   *
-   * @return the double stream
-   */
   public DoubleStream resolutionStream() {
     return TestUtil.geometricStream(startImageSize, 800, 3).get();
   }
@@ -134,19 +104,6 @@ public class Enlarging extends ImageScript {
     });
   }
 
-  /**
-   * Style transfer buffered png.
-   *
-   * @param log                 the log
-   * @param styleTransfer       the style transfer
-   * @param precision           the precision
-   * @param contentSource       the content source
-   * @param styles              the styles
-   * @param contentCoefficients the content coefficients
-   * @param trainingMinutes     the training minutes
-   * @param maxIterations       the max iterations
-   * @return the buffered png
-   */
   public Tensor styleTransfer(
       @Nonnull final NotebookOutput log,
       final StyleTransfer.Inception styleTransfer,
@@ -180,31 +137,13 @@ public class Enlarging extends ImageScript {
     return canvasImage;
   }
 
-  /**
-   * The type Local.
-   */
   public static class Local {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       LocalNotebookRunner.run(LocalNotebookRunner.getTask(Enlarging.class));
     }
   }
 
-  /**
-   * The type Ec 2.
-   */
   public static class EC2 {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       EC2NotebookRunner.run(LocalNotebookRunner.getTask(Enlarging.class));
     }

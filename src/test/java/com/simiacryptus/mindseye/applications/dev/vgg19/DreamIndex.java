@@ -38,16 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * The type Style transfer vgg 19.
- */
 public class DreamIndex extends ArtistryAppBase_VGG19 {
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     TextureGeneration.VGG19 styleTransfer = new TextureGeneration.VGG19();
     DeepDream.VGG19 deepDream = new DeepDream.VGG19();

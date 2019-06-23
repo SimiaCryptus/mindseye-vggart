@@ -36,40 +36,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * The type Simple.
- */
 public class Simple extends ImageScript {
 
-  /**
-   * The Content mixing coeff.
-   */
   public final double contentMixingCoeff = 1e1;
-  /**
-   * The Dream coeff.
-   */
   public final double dreamCoeff = 1e-1;
-  /**
-   * The Resolution.
-   */
   public int resolution = 400;
-  /**
-   * The Coeff style mean.
-   */
   public double coeff_style_mean = 1e1;
-  /**
-   * The Coeff style bandCovariance.
-   */
   public double coeff_style_cov = 1e0;
-  /**
-   * The Style sources.
-   */
   public String[] styleSources = {
       "git://github.com/jcjohnson/fast-neural-style.git/master/images/styles/starry_night_crop.jpg"
   };
-  /**
-   * The Content sources.
-   */
   public String[] contentSources = {
       "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/1024px-The_Earth_seen_from_Apollo_17.jpg"
   };
@@ -120,31 +96,13 @@ public class Simple extends ImageScript {
     });
   }
 
-  /**
-   * The type Local.
-   */
   public static class Local {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       LocalNotebookRunner.run(LocalNotebookRunner.getTask(Simple.class));
     }
   }
 
-  /**
-   * The type Ec 2.
-   */
   public static class EC2 {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       EC2NotebookRunner.run(LocalNotebookRunner.getTask(Simple.class));
     }

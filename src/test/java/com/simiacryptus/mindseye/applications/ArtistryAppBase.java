@@ -30,28 +30,15 @@ import javax.annotation.Nonnull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * The type ArtistryAppBase demo.
- */
 public abstract class ArtistryAppBase extends NotebookReportBase {
 
   private static final Logger logger = LoggerFactory.getLogger(ArtistryAppBase.class);
 
-  /**
-   * Test.
-   *
-   * @throws Throwable the throwable
-   */
   @Test
   public final void run() {
     run(notebookOutput -> run(notebookOutput), getClass().getSimpleName() + "_" + new SimpleDateFormat("yyyyMMddHHmm").format(new Date()));
   }
 
-  /**
-   * Run.
-   *
-   * @param notebookOutput the notebook output
-   */
   protected abstract void run(final NotebookOutput notebookOutput);
 
   @Nonnull
@@ -60,11 +47,6 @@ public abstract class ArtistryAppBase extends NotebookReportBase {
     return ReportType.Applications;
   }
 
-  /**
-   * Init.
-   *
-   * @param log the log
-   */
   public void init(final NotebookOutput log) {
     TestUtil.addGlobalHandlers(log.getHttpd());
     //server.dataReciever

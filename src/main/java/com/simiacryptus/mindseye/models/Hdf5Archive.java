@@ -42,11 +42,6 @@ import java.util.stream.Collectors;
 
 import static org.bytedeco.javacpp.hdf5.*;
 
-/**
- * Class for reading arrays and JSON strings from HDF5 achive files. Originally part of deeplearning4j.
- *
- * @author dave @skymind.io
- */
 public class Hdf5Archive {
   private static final Logger log = LoggerFactory.getLogger(Hdf5Archive.class);
 
@@ -64,20 +59,10 @@ public class Hdf5Archive {
   @Nonnull
   private final File filename;
 
-  /**
-   * Instantiates a new Hdf 5 archive.
-   *
-   * @param filename the archive filename
-   */
   public Hdf5Archive(@Nonnull String filename) {
     this(new File(filename));
   }
 
-  /**
-   * Instantiates a new Hdf 5 archive.
-   *
-   * @param filename the filename
-   */
   public Hdf5Archive(@Nonnull File filename) {
     this.filename = filename;
     try {
@@ -149,13 +134,6 @@ public class Hdf5Archive {
     }
   }
 
-  /**
-   * Read data setBytes as ND4J array from group path.
-   *
-   * @param datasetName Name of data setBytes
-   * @param groups      Array of zero or more ancestor groups from root to parent.
-   * @return tensor tensor
-   */
   @Nullable
   public Tensor readDataSet(CharSequence datasetName, @Nonnull CharSequence... groups) {
     if (groups.length == 0) {
@@ -167,13 +145,6 @@ public class Hdf5Archive {
     return a;
   }
 
-  /**
-   * Read JSON-formatted string attribute from group path.
-   *
-   * @param attributeName Name of attribute
-   * @param groups        Array of zero or more ancestor groups from root to parent.
-   * @return string string
-   */
   @Nullable
   public CharSequence readAttributeAsJson(String attributeName, @Nonnull String... groups) {
     if (groups.length == 0) {
@@ -185,13 +156,6 @@ public class Hdf5Archive {
     return s;
   }
 
-  /**
-   * Read string attribute from group path.
-   *
-   * @param attributeName Name of attribute
-   * @param groups        Array of zero or more ancestor groups from root to parent.
-   * @return string string
-   */
   @Nullable
   public CharSequence readAttributeAsString(String attributeName, @Nonnull String... groups) {
     if (groups.length == 0) {
@@ -203,13 +167,6 @@ public class Hdf5Archive {
     return s;
   }
 
-  /**
-   * Check whether group path contains string attribute.
-   *
-   * @param attributeName Name of attribute
-   * @param groups        Array of zero or more ancestor groups from root to parent.
-   * @return Boolean indicating whether attribute exists in group path.
-   */
   public boolean hasAttribute(String attributeName, @Nonnull String... groups) {
     if (groups.length == 0) {
       return this.file.attrExists(attributeName);
@@ -220,12 +177,6 @@ public class Hdf5Archive {
     return b;
   }
 
-  /**
-   * Gets attributes.
-   *
-   * @param groups the groups
-   * @return the attributes
-   */
   @Nonnull
   public Map<CharSequence, Object> getAttributes(@Nonnull String... groups) {
     if (groups.length == 0) {
@@ -238,12 +189,6 @@ public class Hdf5Archive {
     return attributes;
   }
 
-  /**
-   * Gets attributes.
-   *
-   * @param group the group
-   * @return the attributes
-   */
   @Nonnull
   public Map<CharSequence, Object> getAttributes(@Nonnull Group group) {
     int numAttrs = group.getNumAttrs();
@@ -293,12 +238,6 @@ public class Hdf5Archive {
     }
   }
 
-  /**
-   * Get list of data sets from group path.
-   *
-   * @param groups Array of zero or more ancestor groups from root to parent.
-   * @return data sets
-   */
   @Nonnull
   public List<CharSequence> getDataSets(@Nonnull String... groups) {
     if (groups.length == 0) {
@@ -310,12 +249,6 @@ public class Hdf5Archive {
     return ls;
   }
 
-  /**
-   * Get list of groups from group path.
-   *
-   * @param groups Array of zero or more ancestor groups from root to parent.
-   * @return groups groups
-   */
   @Nonnull
   public List<CharSequence> getGroups(@Nonnull String... groups) {
     if (groups.length == 0) {
@@ -327,13 +260,6 @@ public class Hdf5Archive {
     return ls;
   }
 
-  /**
-   * Read data setBytes as ND4J array from HDF5 group.
-   *
-   * @param fileGroup   HDF5 file or group
-   * @param datasetName Name of data setBytes
-   * @return
-   */
   @Nullable
   private Tensor readDataSet(@Nonnull Group fileGroup, CharSequence datasetName) {
     DataSet dataset = fileGroup.openDataSet(datasetName.toString());
@@ -401,13 +327,6 @@ public class Hdf5Archive {
     return data;
   }
 
-  /**
-   * Get list of objects apply a given type from a file group.
-   *
-   * @param fileGroup HDF5 file or group
-   * @param objType   Type of object as integer
-   * @return
-   */
   @Nonnull
   private List<CharSequence> getObjects(@Nonnull Group fileGroup, int objType) {
     @Nonnull List<CharSequence> groups = new ArrayList<CharSequence>();
@@ -420,12 +339,6 @@ public class Hdf5Archive {
     return groups;
   }
 
-  /**
-   * Read JSON-formatted string attribute.
-   *
-   * @param attribute HDF5 attribute to read as JSON formatted string.
-   * @return
-   */
   @Nullable
   private String readAttributeAsJson(@Nonnull Attribute attribute) {
     VarLenType vl = attribute.getVarLenType();
@@ -460,12 +373,6 @@ public class Hdf5Archive {
     return s;
   }
 
-  /**
-   * Read attribute as string.
-   *
-   * @param attribute HDF5 attribute to read as string.
-   * @return
-   */
   @Nullable
   private String readAttributeAsString(@Nonnull Attribute attribute) {
     VarLenType vl = attribute.getVarLenType();
@@ -499,24 +406,11 @@ public class Hdf5Archive {
     return s;
   }
 
-  /**
-   * Read string attribute from group path.
-   *
-   * @param attributeName Name of attribute
-   * @param bufferSize    buffer size to read
-   * @return string string
-   */
   @Nonnull
   public CharSequence readAttributeAsFixedLengthString(String attributeName, int bufferSize) {
     return readAttributeAsFixedLengthString(this.file.openAttribute(attributeName), bufferSize);
   }
 
-  /**
-   * Read attribute of fixed buffer size as string.
-   *
-   * @param attribute HDF5 attribute to read as string.
-   * @return
-   */
   @Nonnull
   private CharSequence readAttributeAsFixedLengthString(@Nonnull Attribute attribute, int bufferSize) {
     VarLenType vl = attribute.getVarLenType();
@@ -528,27 +422,14 @@ public class Hdf5Archive {
     return s;
   }
 
-  /**
-   * Print.
-   */
   public void print() {
     print(log);
   }
 
-  /**
-   * Print.
-   *
-   * @param log the log
-   */
   public void print(@Nonnull Logger log) {
     print(this, log);
   }
 
-  /**
-   * Gets filename.
-   *
-   * @return the filename
-   */
   @Nonnull
   public File getFilename() {
     return filename;

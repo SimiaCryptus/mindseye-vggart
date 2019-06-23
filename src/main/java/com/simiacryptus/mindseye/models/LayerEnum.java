@@ -21,23 +21,8 @@ package com.simiacryptus.mindseye.models;
 
 import com.simiacryptus.mindseye.network.PipelineNetwork;
 
-/**
- * The interface Strata enum.
- *
- * @param <T> the type parameter
- */
 public interface LayerEnum<T> {
-  /**
-   * Texture pipeline network.
-   *
-   * @return the pipeline network
-   */
   PipelineNetwork network();
 
-  /**
-   * Name char sequence.
-   *
-   * @return the char sequence
-   */
   CharSequence name();
 }

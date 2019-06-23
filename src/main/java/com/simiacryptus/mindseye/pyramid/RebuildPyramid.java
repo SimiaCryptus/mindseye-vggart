@@ -27,9 +27,6 @@ import com.simiacryptus.util.JsonUtil;
 
 import javax.annotation.Nonnull;
 
-/**
- * The type Style survey.
- */
 public class RebuildPyramid extends ImageScript {
 
   private final int tileSize;

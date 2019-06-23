@@ -42,19 +42,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-/**
- * The type Hadoop util.
- */
 public class HadoopUtil {
 
   private static final Logger logger = LoggerFactory.getLogger(HadoopUtil.class);
 
-  /**
-   * Gets files.
-   *
-   * @param file the file
-   * @return the files
-   */
   public static List<CharSequence> getFiles(CharSequence file) {
     try {
       FileSystem fileSystem = getFileSystem(file);
@@ -76,13 +67,6 @@ public class HadoopUtil {
     }
   }
 
-  /**
-   * To stream stream.
-   *
-   * @param <T>            the type parameter
-   * @param remoteIterator the remote iterator
-   * @return the stream
-   */
   @Nonnull
   public static <T> Stream<T> toStream(final RemoteIterator<T> remoteIterator) {
     return StreamSupport.stream(Spliterators.spliterator(new Iterator<T>() {
@@ -107,12 +91,6 @@ public class HadoopUtil {
     }, -1, Spliterator.IMMUTABLE), true);
   }
 
-  /**
-   * Gets png.
-   *
-   * @param file the file
-   * @return the png
-   */
   @Nonnull
   public static BufferedImage getImage(final CharSequence file) {
     if (file.toString().startsWith("http")) {
@@ -139,12 +117,6 @@ public class HadoopUtil {
     }
   }
 
-  /**
-   * Get data byte [ ].
-   *
-   * @param file the file
-   * @return the byte [ ]
-   */
   public static byte[] getData(final CharSequence file) {
     FileSystem fileSystem = getFileSystem(file);
     Path path = new Path(file.toString());
@@ -168,12 +140,6 @@ public class HadoopUtil {
     }
   }
 
-  /**
-   * Gets file system.
-   *
-   * @param file the file
-   * @return the file system
-   */
   public static FileSystem getFileSystem(final CharSequence file) {
     Configuration conf = getHadoopConfig();
     FileSystem fileSystem;
@@ -185,11 +151,6 @@ public class HadoopUtil {
     return fileSystem;
   }
 
-  /**
-   * Gets hadoop config.
-   *
-   * @return the hadoop config
-   */
   @Nonnull
   public static Configuration getHadoopConfig() {
     Configuration configuration = new Configuration(false);

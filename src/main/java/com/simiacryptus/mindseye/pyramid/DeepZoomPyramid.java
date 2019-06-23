@@ -29,9 +29,6 @@ import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
 import java.util.function.Function;
 
-/**
- * The type Style survey.
- */
 public class DeepZoomPyramid extends ImageScript {
 
   private final int tileSize;

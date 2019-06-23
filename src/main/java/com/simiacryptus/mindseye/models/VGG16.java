@@ -28,18 +28,8 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Details about this network architecture can be found in the following arXiv paper: Very Deep Convolutional Networks
- * for Large-Scale Image Recognition K. Simonyan, A. Zisserman arXiv:1409.1556 Please cite the paper if you use the
- * models.
- */
 public abstract class VGG16 extends VGG {
 
-  /**
-   * From s 3 vgg 16 hdf 5.
-   *
-   * @return the vgg 16 hdf 5
-   */
   public static ImageClassifier fromHDF5() {
     try {
       return fromHDF5(Util.cacheFile(TestUtil.S3_ROOT.resolve("vgg16_weights.h5")));
@@ -48,12 +38,6 @@ public abstract class VGG16 extends VGG {
     }
   }
 
-  /**
-   * From s 3 vgg 16 hdf 5.
-   *
-   * @param hdf the hdf
-   * @return the vgg 16 hdf 5
-   */
   public static ImageClassifier fromHDF5(final File hdf) {
     try {
       return new VGG16_HDF5(new Hdf5Archive(hdf));

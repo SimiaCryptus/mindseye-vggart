@@ -27,18 +27,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
-/**
- * The type Image classifier apply base.
- */
 public class ObjectLocation extends ArtistryAppBase_VGG19 {
 
   private static final Logger logger = LoggerFactory.getLogger(ObjectLocation.class);
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     PCAObjectLocation self = new PCAObjectLocation.VGG19();
 

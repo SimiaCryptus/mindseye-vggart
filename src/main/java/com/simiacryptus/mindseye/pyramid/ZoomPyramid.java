@@ -28,9 +28,6 @@ import com.simiacryptus.util.JsonUtil;
 import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
 
-/**
- * The type Style survey.
- */
 public class ZoomPyramid extends ImageScript {
 
   private final int tileSize;

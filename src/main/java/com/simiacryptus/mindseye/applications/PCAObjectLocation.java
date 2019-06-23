@@ -51,23 +51,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * The type Object location.
- */
 public abstract class PCAObjectLocation {
 
   private static final Logger logger = LoggerFactory.getLogger(PCAObjectLocation.class);
 
-  /**
-   * Render alphaList tensor.
-   *
-   * @param alphaPower     the alphaList power
-   * @param img            the img
-   * @param locationResult the location result
-   * @param classification the classification
-   * @param category       the category
-   * @return the tensor
-   */
   public static Tensor renderAlpha(
       final double alphaPower,
       final Tensor img,
@@ -84,25 +71,11 @@ public abstract class PCAObjectLocation {
     return TestUtil.normalizeBands(TestUtil.normalizeBands(delta1d, 1).mapAndFree(x -> Math.pow(x, alphaPower)));
   }
 
-  /**
-   * Blur list.
-   *
-   * @param featureMasks the feature masks
-   * @param iterations   the iterations
-   * @return the list
-   */
   public static List<Tensor> blur(final List<Tensor> featureMasks, final int iterations) {
     if (0 >= iterations) return featureMasks;
     return featureMasks.stream().map(x -> blur(x, iterations)).collect(Collectors.toList());
   }
 
-  /**
-   * Blur tensor.
-   *
-   * @param img        the evalInputDelta 1 d
-   * @param iterations the iterations
-   * @return the tensor
-   */
   @Nonnull
   public static Tensor blur(Tensor img, final int iterations) {
     int[] dimensions = img.getDimensions();
@@ -127,25 +100,10 @@ public abstract class PCAObjectLocation {
     return img;
   }
 
-  /**
-   * Gets locator network.
-   *
-   * @return the locator network
-   */
   public abstract ImageClassifier getLocatorNetwork();
 
-  /**
-   * Gets classifier network.
-   *
-   * @return the classifier network
-   */
   public abstract ImageClassifier getClassifierNetwork();
 
-  /**
-   * Run.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull final NotebookOutput log) {
 //    @Nonnull String logName = "cuda_" + log.getName() + ".log";
 //    log.p(log.file((String) null, logName, "GPU Log"));
@@ -245,11 +203,6 @@ public abstract class PCAObjectLocation {
     log.setFrontMatterProperty("status", "OK");
   }
 
-  /**
-   * Load images 1 tensor [ ] [ ].
-   *
-   * @return the tensor [ ] [ ]
-   */
   public Tensor[][] loadImages_library() {
     return Stream.of(
         "H:\\SimiaCryptus\\Artistry\\cat-and-dog.jpg"
@@ -264,25 +217,12 @@ public abstract class PCAObjectLocation {
     }).toArray(i -> new Tensor[i][]);
   }
 
-  /**
-   * Gets shuffle comparator.
-   *
-   * @param <T> the type parameter
-   * @return the shuffle comparator
-   */
   public <T> Comparator<T> getShuffleComparator() {
     final int seed = (int) ((System.nanoTime() >>> 8) % (Integer.MAX_VALUE - 84));
     return Comparator.comparingInt(a1 -> System.identityHashCode(a1) ^ seed);
   }
 
-  /**
-   * The type Vgg 16.
-   */
   public static class VGG16 extends PCAObjectLocation {
-
-    /**
-     * The Texture netork.
-     */
 
     @Override
     public ImageClassifier getLocatorNetwork() {
@@ -323,14 +263,7 @@ public abstract class PCAObjectLocation {
 
   }
 
-  /**
-   * The type Vgg 19.
-   */
   public static class VGG19 extends PCAObjectLocation {
-
-    /**
-     * The Texture netork.
-     */
 
     @Override
     public ImageClassifier getLocatorNetwork() {

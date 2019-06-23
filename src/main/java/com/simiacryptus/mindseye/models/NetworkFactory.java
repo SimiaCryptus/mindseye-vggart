@@ -23,16 +23,8 @@ import com.simiacryptus.mindseye.lang.Layer;
 
 import javax.annotation.Nonnull;
 
-/**
- * A network factory designed to be called within a report, apply extra details being logged to the report output.
- */
 public interface NetworkFactory {
 
-  /**
-   * Build pipeline network.
-   *
-   * @return the pipeline network
-   */
   @Nonnull
   Layer getNetwork();
 

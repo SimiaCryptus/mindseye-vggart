@@ -36,9 +36,6 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * The type Style survey.
- */
 public class TextureFinishingTest extends ImageScript {
 
   private final int steps;

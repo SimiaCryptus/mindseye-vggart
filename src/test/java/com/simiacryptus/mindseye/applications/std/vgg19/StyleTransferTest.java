@@ -37,16 +37,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-/**
- * The type Style transfer vgg 19.
- */
 public class StyleTransferTest extends ArtistryAppBase_VGG19 {
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     StyleTransfer.VGG19 styleTransfer = new StyleTransfer.VGG19();
     init(log);

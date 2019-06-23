@@ -37,34 +37,15 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/**
- * The type Image classifier apply base.
- */
 public abstract class ImageClassifierTestBase extends NotebookReportBase {
 
-  /**
-   * Test.
-   *
-   * @throws Throwable the throwable
-   */
   @Test(timeout = 30 * 60 * 60 * 1000)
   public void run() {
     run(this::run);
   }
 
-  /**
-   * Gets png classifier.
-   *
-   * @param log the log
-   * @return the png classifier
-   */
   public abstract ImageClassifier getImageClassifier(NotebookOutput log);
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     Future<Tensor[][]> submit = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setDaemon(true).build())
         .submit(() -> Arrays.stream(new Tensor[]{})
@@ -124,15 +105,6 @@ public abstract class ImageClassifierTestBase extends NotebookReportBase {
 
   }
 
-  /**
-   * Predict list.
-   *
-   * @param log     the log
-   * @param vgg16   the vgg 16
-   * @param network the network
-   * @param images  the images
-   * @return the list
-   */
   public List<LinkedHashMap<CharSequence, Double>> predict(@Nonnull NotebookOutput log, @Nonnull ImageClassifier vgg16, @Nonnull Layer network, @Nonnull Tensor[][] images) {
     TestUtil.instrumentPerformance((DAGNetwork) network);
     List<LinkedHashMap<CharSequence, Double>> predictions = log.eval(() -> {
@@ -143,11 +115,6 @@ public abstract class ImageClassifierTestBase extends NotebookReportBase {
     return predictions;
   }
 
-  /**
-   * Gets target class.
-   *
-   * @return the target class
-   */
   @Nonnull
   protected abstract Class<?> getTargetClass();
 

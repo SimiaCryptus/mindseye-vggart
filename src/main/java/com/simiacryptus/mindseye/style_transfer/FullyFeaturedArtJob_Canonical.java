@@ -26,9 +26,6 @@ import com.simiacryptus.aws.exe.LocalNotebookRunner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-/**
- * The type Style survey.
- */
 public class FullyFeaturedArtJob_Canonical extends FullyFeaturedArtJob {
 
   public FullyFeaturedArtJob_Canonical() {
@@ -41,32 +38,14 @@ public class FullyFeaturedArtJob_Canonical extends FullyFeaturedArtJob {
     startResolution = 400;
   }
 
-  /**
-   * The type Local.
-   */
   public static class Local {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       Executors.newScheduledThreadPool(1, new ThreadFactoryBuilder().setDaemon(true).build()).scheduleAtFixedRate(System::gc, 1, 1, TimeUnit.MINUTES);
       LocalNotebookRunner.run(LocalNotebookRunner.getTask(FullyFeaturedArtJob_Canonical.class));
     }
   }
 
-  /**
-   * The type Ec 2.
-   */
   public static class EC2 {
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws Exception the exception
-     */
     public static void main(String... args) throws Exception {
       EC2NotebookRunner.run(LocalNotebookRunner.getTask(FullyFeaturedArtJob_Canonical.class));
     }

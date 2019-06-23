@@ -39,16 +39,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-/**
- * The type Style transfer vgg 19.
- */
 public class SegmentedStyleTransferTest extends ArtistryAppBase_VGG19 {
 
-  /**
-   * Test.
-   *
-   * @param log the log
-   */
   public void run(@Nonnull NotebookOutput log) {
     Executors.newScheduledThreadPool(1, new ThreadFactoryBuilder().setDaemon(true).build()).scheduleAtFixedRate(System::gc, 1, 1, TimeUnit.MINUTES);
     SegmentedStyleTransfer<CVPipe_VGG19.Layer, CVPipe_VGG19> styleTransfer = new SegmentedStyleTransfer.VGG19();

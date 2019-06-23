@@ -23,15 +23,7 @@ import com.simiacryptus.mindseye.models.CVPipe_VGG19;
 
 import javax.annotation.Nonnull;
 
-/**
- * The type Artistry app base vgg 19.
- */
 public abstract class ArtistryAppBase_VGG19 extends ArtistryAppBase {
-  /**
-   * Gets target class.
-   *
-   * @return the target class
-   */
   @Nonnull
   protected final Class<?> getTargetClass() {
     return CVPipe_VGG19.class;
