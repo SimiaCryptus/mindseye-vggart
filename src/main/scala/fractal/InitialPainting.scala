@@ -96,8 +96,6 @@ abstract class InitialPainting
 
   def resolutionSchedule: Array[Int] = Array(100, 160, 220, 300, 400, 512)
 
-  def aspect_ratio: Double = 1.0
-
   def plasma_magnitude: Double = 1.0
 
   def colorAlign
@@ -116,6 +114,8 @@ abstract class InitialPainting
     contentColorTransform.transfer(log, resizedCanvas, styleSetup, trainingMinutes, styleFingerprint, maxIterations, isVerbose)
     contentColorTransform.forwardTransform(inputCanvas)
   }
+
+  def aspect_ratio: Double = 1.0
 
   def trainingMinutes: Int = 10
 
