@@ -296,7 +296,7 @@ public class PyramidUtil {
     );
     SegmentedStyleTransfer.NeuralSetup measureStyle = styleTransfer.measureStyle(imageArtOpParams0.getLog(), styleSetup);
     return image -> {
-      return log.subreport(String.format("Tile_%s", tile.getAndIncrement()), sublog -> {
+      return log.subreport(sublog -> {
         final ImageArtUtil.ImageArtOpParams imageArtOpParams1 = new ImageArtUtil.ImageArtOpParams(
             sublog,
             trainingMinutes,
@@ -339,7 +339,7 @@ public class PyramidUtil {
         BufferedImage resultImage = result.toImage();
         sublog.p(sublog.jpg(resultImage, "Result Image"));
         return resultImage;
-      });
+      }, log.getName() + "_" + String.format("Tile_%s", tile.getAndIncrement()));
     };
   }
 

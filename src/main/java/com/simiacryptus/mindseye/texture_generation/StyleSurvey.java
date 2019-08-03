@@ -87,7 +87,7 @@ public abstract class StyleSurvey extends ImageScript {
 
   public void accept(@Nonnull NotebookOutput log) {
     int index = 0;
-    List<String> filteredSources = log.subreport("load_styles", subreport -> {
+    List<String> filteredSources = log.subreport(subreport -> {
       return Arrays.stream(styleSources).filter(styleSource -> {
         try {
           subreport.p(subreport.png(ArtistryUtil.load(styleSource, style_resolution), "Style Image"));
@@ -97,7 +97,7 @@ public abstract class StyleSurvey extends ImageScript {
           return false;
         }
       }).collect(Collectors.toList());
-    });
+    }, log.getName() + "_" + "load_styles");
     for (final String styleSource : filteredSources) {
       for (final String txt : text) {
         int seedResolution = 200;
@@ -106,7 +106,7 @@ public abstract class StyleSurvey extends ImageScript {
         }
         BufferedImage initialImage = getInitialImage(txt, padding, style, color, fontName, seedResolution);
         final AtomicReference<Tensor> canvas = new AtomicReference<>(Tensor.fromRGB(initialImage));
-        canvas.set(log.subreport("Color_Space_Analog", subreport -> {
+        canvas.set(log.subreport(subreport -> {
           ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception() {
           }.setOrtho(false).setUnit(false);
           //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
@@ -137,19 +137,20 @@ public abstract class StyleSurvey extends ImageScript {
               isVerbose()
           );
           return contentColorTransform.forwardTransform(canvas.get());
-        }));
-        Tensor subresult = log.subreport("Rendering_" + index++, subreport -> {
+        }, log.getName() + "_" + "Color_Space_Analog"));
+        final String reportName = "Rendering_" + index++;
+        Tensor subresult = log.subreport(subreport -> {
           subreport.p(subreport.png(ArtistryUtil.load(styleSource, style_resolution), "Style Image"));
           canvas.set(tiledTexturePaintingPhase(subreport, canvas.get().copy(), styleSource));
           return canvas.get();
-        });
+        }, log.getName() + "_" + reportName);
         log.p(log.png(subresult.toImage(), txt));
       }
     }
   }
 
   public Object fontSurvey(@Nonnull final NotebookOutput log, final String txt, final int textResolution) {
-    return log.subreport("Fonts", subreport -> {
+    return log.subreport(subreport -> {
       Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
           .filter(x -> !x.equals("EmojiOne Color"))
           .forEach(fontname -> {
@@ -159,7 +160,7 @@ public abstract class StyleSurvey extends ImageScript {
             subreport.p(subreport.png(getInitialImage(txt, padding, Font.BOLD, color, fontname, textResolution), fontname));
           });
       return null;
-    });
+    }, log.getName() + "_" + "Fonts");
   }
 
   public Tensor tiledTexturePaintingPhase(

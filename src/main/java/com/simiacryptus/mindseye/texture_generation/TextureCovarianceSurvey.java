@@ -72,7 +72,7 @@ public abstract class TextureCovarianceSurvey extends ImageScript {
 
     final AtomicReference<Tensor> canvas = new AtomicReference<>(ArtistryUtil.paint_Plasma(3, 1000.0, 1.1, resolutionSchedule[0]));
 
-    canvas.set(log.subreport("Color_Space_Analog", sublog -> {
+    canvas.set(log.subreport(sublog -> {
       ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception() {
       }.setOrtho(false).setUnit(true);
       //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
@@ -97,14 +97,14 @@ public abstract class TextureCovarianceSurvey extends ImageScript {
           isVerbose()
       );
       return contentColorTransform.forwardTransform(canvas.get());
-    }));
+    }, log.getName() + "_" + "Color_Space_Analog"));
 
 
     for (final double coeff_style_cov : coeff_style_covs) {
       final List<CVPipe_Inception.Strata> layers = getLayers();
       String reportName = String.format("Cov_%s", coeff_style_cov);
       log.h1(reportName);
-      Tensor subresult = log.subreport(reportName, subreport -> {
+      Tensor subresult = log.subreport(subreport -> {
         final Map<List<CharSequence>, TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata>> styles = TestUtil.buildMap(x -> {
           TextureGeneration.StyleCoefficients<CVPipe_Inception.Strata> styleCoefficients = new TextureGeneration.StyleCoefficients<>(
               TextureGeneration.CenteringMode.Origin);
@@ -154,7 +154,7 @@ public abstract class TextureCovarianceSurvey extends ImageScript {
           ));
         }
         return canvasCopy.get();
-      });
+      }, log.getName() + "_" + reportName);
       log.p(log.png(subresult.toImage(), reportName));
     }
 

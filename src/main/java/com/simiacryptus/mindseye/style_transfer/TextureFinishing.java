@@ -95,7 +95,7 @@ public class TextureFinishing extends ImageScript {
         double[] resolutions = TestUtil.geometricStream(canvasImage.get().getDimensions()[0], resolution, steps + 1).get().skip(1).toArray();
         Arrays.stream(resolutions).forEach(res -> {
           canvasImage.set(Tensor.fromRGB(TestUtil.resize(canvasImage.get().toImage(), (int) res, true)));
-          canvasImage.set(log.subreport(String.format("Phase_%s", index.incrementAndGet()), sublog -> {
+          canvasImage.set(log.subreport(sublog -> {
             SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients = new SegmentedStyleTransfer.ContentCoefficients<>();
             contentCoefficients.set(CVPipe_Inception.Strata.Layer_1, 1e-1);
             Map<CVPipe_Inception.Strata, Double> styleLayers = new HashMap<>();
@@ -173,7 +173,7 @@ public class TextureFinishing extends ImageScript {
             styleTransfer.getMaskCache().clear();
             styleTransfer.getMaskCache().putAll(originalCache);
             return result;
-          }));
+          }, log.getName() + "_" + String.format("Phase_%s", index.incrementAndGet())));
           BufferedImage image = log.eval(() -> {
             return canvasImage.get().toImage();
           });

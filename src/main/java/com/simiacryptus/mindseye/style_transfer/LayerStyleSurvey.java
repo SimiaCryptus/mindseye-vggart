@@ -108,7 +108,7 @@ public class LayerStyleSurvey extends ImageScript {
         List<CharSequence> styleKeys = Arrays.asList(styleSources);
         ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception();
         // Transfer color scheme:
-        Tensor color_space_analog = log.subreport("Color_Space_Analog", sublog -> {
+        Tensor color_space_analog = log.subreport(sublog -> {
           //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
@@ -125,7 +125,7 @@ public class LayerStyleSurvey extends ImageScript {
               startResolution,
               canvasImage.get().copy()
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Analog");
         log.p(log.png(color_space_analog.toImage(), "Style-Aligned Content Color"));
         canvasImage.set(color_space_analog);
 
@@ -157,7 +157,7 @@ public class LayerStyleSurvey extends ImageScript {
           log.h1("Content Strata " + contentLayer.name());
           for (CVPipe_Inception.Strata styleLayer : styleLayers) {
             log.h2("Style Strata " + styleLayer.name());
-            Tensor result = log.subreport(String.format("%s_%s", styleLayer.name(), contentLayer.name()), sublog -> {
+            Tensor result = log.subreport(sublog -> {
               final Tensor canvasImage1 = canvasImage.get().copy();
               int padding = 20;
               final int torroidalOffsetX = false ? -padding : 0;
@@ -238,7 +238,7 @@ public class LayerStyleSurvey extends ImageScript {
               styleTransfer.getMaskCache().clear();
               styleTransfer.getMaskCache().putAll(originalCache);
               return result1;
-            });
+            }, log.getName() + "_" + String.format("%s_%s", styleLayer.name(), contentLayer.name()));
             log.eval(() -> {
               return contentColorTransform.inverseTransform(result).toImage();
             });

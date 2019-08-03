@@ -75,8 +75,9 @@ abstract class InitialPyramid
       val finalTotalWidth = (tileSize * Math.pow(2, destLevel)).toInt
       val targetSize = ((tileSize + 2 * padding) * Math.pow(2, magLevels)).toInt
 
-      val hadoopPrefix = if (null != log.getArchiveHome) {
-        log.getArchiveHome.resolve("etc/" + localPrefix).toString.replaceAll("^s3:", "s3a:")
+      val archiveHome = log.getArchiveHome
+      val hadoopPrefix = if (null != archiveHome) {
+        archiveHome.resolve("etc/" + localPrefix).toString.replaceAll("^s3:", "s3a:")
       } else {
         "file:///" + log.getResourceDir.getAbsolutePath + "/" + localPrefix
       }

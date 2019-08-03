@@ -86,7 +86,7 @@ public class TextureFinishingTest extends ImageScript {
 
         TestUtil.geometricStream(canvasImage.get().getDimensions()[0], resolution, steps + 1).get().skip(1).forEach(res -> {
           canvasImage.set(Tensor.fromRGB(TestUtil.resize(canvasImage.get().toImage(), (int) res, true)));
-          canvasImage.set(log.subreport(String.format("Phase_%s", index.getAndIncrement()), sublog -> {
+          canvasImage.set(log.subreport(sublog -> {
             SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients = new SegmentedStyleTransfer.ContentCoefficients<>();
             contentCoefficients.set(CVPipe_Inception.Strata.Layer_0, 1e-1);
             int padding = 20;
@@ -119,7 +119,7 @@ public class TextureFinishingTest extends ImageScript {
             } else {
               return content;
             }
-          }));
+          }, log.getName() + "_" + String.format("Phase_%s", index.getAndIncrement())));
           log.eval(() -> {
             return canvasImage.get().toImage();
           });

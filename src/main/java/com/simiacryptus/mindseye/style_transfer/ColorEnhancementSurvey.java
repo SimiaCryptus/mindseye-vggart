@@ -76,7 +76,7 @@ public class ColorEnhancementSurvey extends ImageScript {
         }
 
 
-        log.subreport("Color_Space_Enhancement_1", sublog -> {
+        log.subreport(sublog -> {
           ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
           coefficients.set(CVPipe_Inception.Strata.Layer_2, 1e0, 1e0, 1e-1);
           return ImageArtUtil.getColorStyleEnhance(
@@ -87,9 +87,9 @@ public class ColorEnhancementSurvey extends ImageScript {
               coefficients,
               styleSources
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Enhancement_1");
 
-        log.subreport("Color_Space_Enhancement_2", sublog -> {
+        log.subreport(sublog -> {
           ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
           coefficients.set(CVPipe_Inception.Strata.Layer_2, 1e0, 0, 1e-1);
           return ImageArtUtil.getColorStyleEnhance(
@@ -100,9 +100,9 @@ public class ColorEnhancementSurvey extends ImageScript {
               coefficients,
               styleSources
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Enhancement_2");
 
-        log.subreport("Color_Space_Enhancement_3", sublog -> {
+        log.subreport(sublog -> {
           ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
           coefficients.set(CVPipe_Inception.Strata.Layer_2, 1e0, 0, -1e-1);
           return ImageArtUtil.getColorStyleEnhance(
@@ -113,9 +113,9 @@ public class ColorEnhancementSurvey extends ImageScript {
               coefficients,
               styleSources
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Enhancement_3");
 
-        log.subreport("Color_Space_Enhancement_4", sublog -> {
+        log.subreport(sublog -> {
           ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
           coefficients.set(CVPipe_Inception.Strata.Layer_2, 1e0, 1e0, 1e1);
           return ImageArtUtil.getColorStyleEnhance(
@@ -126,9 +126,9 @@ public class ColorEnhancementSurvey extends ImageScript {
               coefficients,
               styleSources
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Enhancement_4");
 
-        log.subreport("Color_Space_Enhancement_5", sublog -> {
+        log.subreport(sublog -> {
           ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
           coefficients.set(CVPipe_Inception.Strata.Layer_2, 1e0, 0, 1e1);
           return ImageArtUtil.getColorStyleEnhance(
@@ -139,9 +139,9 @@ public class ColorEnhancementSurvey extends ImageScript {
               coefficients,
               styleSources
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Enhancement_5");
 
-        log.subreport("Color_Space_Enhancement_6", sublog -> {
+        log.subreport(sublog -> {
           ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
           coefficients.set(CVPipe_Inception.Strata.Layer_2, 1e0, 0, -1e1);
           return ImageArtUtil.getColorStyleEnhance(
@@ -152,9 +152,9 @@ public class ColorEnhancementSurvey extends ImageScript {
               coefficients,
               styleSources
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Enhancement_6");
 
-        log.subreport("Color_Space_Enhancement_7", sublog -> {
+        log.subreport(sublog -> {
           ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
           coefficients.set(CVPipe_Inception.Strata.Layer_2, 1e0, 1e0, -1e-1);
           return ImageArtUtil.getColorStyleEnhance(
@@ -165,7 +165,7 @@ public class ColorEnhancementSurvey extends ImageScript {
               coefficients,
               styleSources
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Enhancement_7");
 
       } catch (Throwable throwable) {
         log.eval(() -> {

@@ -92,7 +92,7 @@ public class FullyFeaturedArtJob extends ImageScript {
         }
 
         // Enhance color scheme:
-        Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms = log.subreport("Color_Space_Enhancement", sublog -> {
+        Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms = log.subreport(sublog -> {
           ColorTransfer.StyleCoefficients<CVPipe_Inception.Strata> coefficients = new ColorTransfer.StyleCoefficients<>(ColorTransfer.CenteringMode.Origin);
           coefficients.set(CVPipe_Inception.Strata.Layer_2, 1e0, 1e0, -1e-1);
 //          coefficients.set(CVPipe_Inception.Strata.Layer_1b, 1e0, 1e-1, -1e0);
@@ -106,7 +106,7 @@ public class FullyFeaturedArtJob extends ImageScript {
               coefficients,
               styleSources
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Enhancement");
 
         Tensor canvasBufferedImage = Tensor.fromRGB(TestUtil.resize(
             ArtistryUtil.load(contentSource),
@@ -117,7 +117,7 @@ public class FullyFeaturedArtJob extends ImageScript {
         final AtomicReference<Tensor> canvasImage = new AtomicReference<>(canvasBufferedImage);
         ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception().setOrtho(false);
         // Transfer color scheme:
-        Tensor color_space_analog = log.subreport("Color_Space_Analog", sublog -> {
+        Tensor color_space_analog = log.subreport(sublog -> {
           //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
@@ -135,7 +135,7 @@ public class FullyFeaturedArtJob extends ImageScript {
               startResolution,
               canvasImage.get().copy()
           );
-        });
+        }, log.getName() + "_" + "Color_Space_Analog");
         log.p(log.png(color_space_analog.toImage(), "Style-Aligned Content Color"));
         canvasImage.set(color_space_analog);
 
@@ -162,7 +162,7 @@ public class FullyFeaturedArtJob extends ImageScript {
           double contentMixingCoeff = 1e0;
           double dreamCoeff = 1e1;
           double coeff_style_cov = 1e1;
-          canvasImage.set(log.subreport("Phase_0", sublog -> {
+          canvasImage.set(log.subreport(sublog -> {
             final Tensor canvasImage1 = canvasImage.get();
             int padding = 20;
             final int torroidalOffsetX = false ? -padding : 0;
@@ -241,7 +241,7 @@ public class FullyFeaturedArtJob extends ImageScript {
             styleTransfer.getMaskCache().clear();
             styleTransfer.getMaskCache().putAll(originalCache);
             return result;
-          }));
+          }, log.getName() + "_" + "Phase_0"));
           log.eval(() -> {
             return contentColorTransform.inverseTransform(canvasImage.get()).toImage();
           });
@@ -253,7 +253,7 @@ public class FullyFeaturedArtJob extends ImageScript {
           double dreamCoeff = 1e0;
           double coeff_style_mean = 1e1;
           double coeff_style_cov = 1e1;
-          canvasImage.set(log.subreport("Phase_1", log2 -> {
+          canvasImage.set(log.subreport(log2 -> {
             final Tensor canvasImage1 = canvasImage.get();
             int padding = 20;
             final int torroidalOffsetX = false ? -padding : 0;
@@ -332,7 +332,7 @@ public class FullyFeaturedArtJob extends ImageScript {
             styleTransfer.getMaskCache().clear();
             styleTransfer.getMaskCache().putAll(originalCache);
             return result;
-          }));
+          }, log.getName() + "_" + "Phase_1"));
           log.eval(() -> {
             return contentColorTransform.inverseTransform(canvasImage.get()).toImage();
           });
@@ -361,7 +361,7 @@ public class FullyFeaturedArtJob extends ImageScript {
             coeff_style_cov = 1e2;
           }
           canvasImage.set(Tensor.fromRGB(TestUtil.resize(canvasImage.get().toImage(), resolution.get(), true)));
-          canvasImage.set(log.subreport("Phase_" + resolution.get(), log2 -> {
+          canvasImage.set(log.subreport(log2 -> {
             final Tensor canvasImage1 = canvasImage.get();
             int padding = 20;
             final int torroidalOffsetX = false ? -padding : 0;
@@ -440,7 +440,7 @@ public class FullyFeaturedArtJob extends ImageScript {
             styleTransfer.getMaskCache().clear();
             styleTransfer.getMaskCache().putAll(originalCache);
             return result;
-          }));
+          }, log.getName() + "_" + "Phase_" + resolution.get()));
           log.eval(() -> {
             return contentColorTransform.inverseTransform(canvasImage.get()).toImage();
           });

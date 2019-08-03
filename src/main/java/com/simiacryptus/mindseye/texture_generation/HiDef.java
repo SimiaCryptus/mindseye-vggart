@@ -88,7 +88,7 @@ public abstract class HiDef extends ImageScript {
 
     final AtomicReference<Tensor> canvas = new AtomicReference<>(ArtistryUtil.paint_Plasma(3, 1000.0, 1.1, resolution));
 
-    canvas.set(log.subreport("Color_Space_Analog", sublog -> {
+    canvas.set(log.subreport(sublog -> {
       ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception() {
       }.setOrtho(false);
       //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
@@ -113,7 +113,7 @@ public abstract class HiDef extends ImageScript {
           isVerbose()
       );
       return contentColorTransform.forwardTransform(canvas.get());
-    }));
+    }, log.getName() + "_" + "Color_Space_Analog"));
 
     TextureGeneration.StyleSetup<CVPipe_Inception.Strata> styleSetup = new TextureGeneration.StyleSetup<>(
         precision,

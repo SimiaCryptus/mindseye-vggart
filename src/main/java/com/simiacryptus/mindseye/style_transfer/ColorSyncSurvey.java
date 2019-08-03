@@ -88,7 +88,7 @@ public class ColorSyncSurvey extends ImageScript {
             true
         ));
 
-        log.p(log.png(log.subreport("Color_Space_Analog_1", sublog -> {
+        log.p(log.png(log.subreport(sublog -> {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
@@ -131,9 +131,9 @@ public class ColorSyncSurvey extends ImageScript {
               startResolution,
               canvasBufferedImage.copy()
           );
-        }).toImage(), "Style-Aligned Content Color"));
+        }, log.getName() + "_" + "Color_Space_Analog_1").toImage(), "Style-Aligned Content Color"));
 
-        log.p(log.png(log.subreport("Color_Space_Analog_2", sublog -> {
+        log.p(log.png(log.subreport(sublog -> {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
@@ -176,9 +176,9 @@ public class ColorSyncSurvey extends ImageScript {
               startResolution,
               canvasBufferedImage.copy()
           );
-        }).toImage(), "Style-Aligned Content Color"));
+        }, log.getName() + "_" + "Color_Space_Analog_2").toImage(), "Style-Aligned Content Color"));
 
-        log.p(log.png(log.subreport("Color_Space_Analog_3", sublog -> {
+        log.p(log.png(log.subreport(sublog -> {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
@@ -221,9 +221,9 @@ public class ColorSyncSurvey extends ImageScript {
               startResolution,
               canvasBufferedImage.copy()
           );
-        }).toImage(), "Style-Aligned Content Color"));
+        }, log.getName() + "_" + "Color_Space_Analog_3").toImage(), "Style-Aligned Content Color"));
 
-        log.p(log.png(log.subreport("Color_Space_Analog_4", sublog -> {
+        log.p(log.png(log.subreport(sublog -> {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
@@ -266,9 +266,9 @@ public class ColorSyncSurvey extends ImageScript {
               startResolution,
               canvasBufferedImage.copy()
           );
-        }).toImage(), "Style-Aligned Content Color"));
+        }, log.getName() + "_" + "Color_Space_Analog_4").toImage(), "Style-Aligned Content Color"));
 
-        log.p(log.png(log.subreport("Color_Space_Analog_5", sublog -> {
+        log.p(log.png(log.subreport(sublog -> {
           canvasBufferedImage.assertAlive();
           return ImageArtUtil.colorTransfer(
               new ImageArtUtil.ImageArtOpParams(sublog, getMaxIterations(), getTrainingMinutes(), isVerbose()),
@@ -311,7 +311,7 @@ public class ColorSyncSurvey extends ImageScript {
               startResolution,
               canvasBufferedImage.copy()
           );
-        }).toImage(), "Style-Aligned Content Color"));
+        }, log.getName() + "_" + "Color_Space_Analog_5").toImage(), "Style-Aligned Content Color"));
 
       } catch (Throwable throwable) {
         log.eval(() -> {

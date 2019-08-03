@@ -165,10 +165,10 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
       if (tiling > 1) frozen = ArtistryUtil.tileCycle(frozen, tiling);
       try {
         PipelineNetwork finalFrozen = frozen;
-        log.subreport("_training_" + UUID.randomUUID().toString(), sublog -> {
+        log.subreport(sublog -> {
           train(sublog, workingImage, finalFrozen, trainingMinutes, maxIterations, precision);
           return null;
-        });
+        }, log.getName() + "_" + "_training_" + UUID.randomUUID().toString());
       } finally {
         try {
           jpeg.close();

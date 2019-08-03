@@ -97,7 +97,7 @@ public abstract class LabelTexture extends ImageScript {
       });
       final AtomicReference<Tensor> canvas = new AtomicReference<>(Tensor.fromRGB(initialImage));
 
-      canvas.set(log.subreport("Color_Space_Analog", sublog -> {
+      canvas.set(log.subreport(sublog -> {
         ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception> contentColorTransform = new ColorTransfer.Inception() {
         }.setOrtho(false).setUnit(true);
         //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
@@ -128,18 +128,19 @@ public abstract class LabelTexture extends ImageScript {
             isVerbose()
         );
         return contentColorTransform.forwardTransform(canvas.get());
-      }));
+      }, log.getName() + "_" + "Color_Space_Analog"));
 
-      Tensor subresult = log.subreport("Rendering_" + index++, subreport -> {
+      final String reportName = "Rendering_" + index++;
+      Tensor subresult = log.subreport(subreport -> {
         canvas.set(tiledTexturePaintingPhase(subreport, canvas.get().copy()));
         return canvas.get();
-      });
+      }, log.getName() + "_" + reportName);
       log.p(log.png(subresult.toImage(), txt));
     }
   }
 
   public Object fontSurvey(@Nonnull final NotebookOutput log, final String txt, final int textResolution) {
-    return log.subreport("Fonts", subreport -> {
+    return log.subreport(subreport -> {
       Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
           .filter(x -> !x.equals("EmojiOne Color"))
           .forEach(fontname -> {
@@ -149,7 +150,7 @@ public abstract class LabelTexture extends ImageScript {
             subreport.p(subreport.png(getInitialImage(txt, padding, Font.BOLD, color, fontname, textResolution), fontname));
           });
       return null;
-    });
+    }, log.getName() + "_" + "Fonts");
   }
 
   public Tensor tiledTexturePaintingPhase(
