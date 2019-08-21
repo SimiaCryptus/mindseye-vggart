@@ -28,6 +28,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -54,9 +55,9 @@ public class Enlarging extends ImageScript {
   public BufferedImage init(final CharSequence contentSource, final int width) {
     BufferedImage canvasImage;
     canvasImage = ArtistryUtil.load(contentSource, width);
-    canvasImage = TestUtil.resize(canvasImage, width, true);
+    canvasImage = ImageUtil.resize(canvasImage, width, true);
     canvasImage = ArtistryUtil.expandPlasma(Tensor.fromRGB(
-        TestUtil.resize(canvasImage, 16, true)),
+        ImageUtil.resize(canvasImage, 16, true)),
         1000.0, 1.1, width
     ).scale(0.9).toImage();
     return canvasImage;
@@ -120,7 +121,7 @@ public class Enlarging extends ImageScript {
       if (null == canvasImage) {
         canvasImage = Tensor.fromRGB(init(contentSource, size));
       } else {
-        canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), size, true));
+        canvasImage = Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), size, true));
       }
       StyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new StyleTransfer.StyleSetup<>(precision,
           ArtistryUtil.loadTensor(

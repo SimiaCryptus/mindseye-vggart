@@ -27,6 +27,7 @@ import com.simiacryptus.mindseye.lang.Tensor
 import com.simiacryptus.mindseye.lang.cudnn.Precision
 import com.simiacryptus.mindseye.models.CVPipe_Inception
 import com.simiacryptus.mindseye.test.TestUtil
+import com.simiacryptus.mindseye.util.ImageUtil
 import com.simiacryptus.notebook.{MarkdownNotebookOutput, NotebookOutput}
 import com.simiacryptus.sparkbook.util.Java8Util._
 import com.simiacryptus.sparkbook.util.ScalaJson
@@ -72,7 +73,7 @@ abstract class InitialPainting
       val height = (aspect_ratio * width).toInt
       val tiling = Math.max(Math.min((2.0 * Math.pow(600, 2)) / (width * height), 9), 2).toInt
       textureGeneration.setTiling(tiling)
-      canvasCopy.set(Tensor.fromRGB(TestUtil.resize(canvasCopy.get.toImage, width, height)))
+      canvasCopy.set(Tensor.fromRGB(ImageUtil.resize(canvasCopy.get.toImage, width, height)))
       log.p("Input Parameters:")
       val style = styleSetup(width)
       log.eval(() => {
@@ -114,7 +115,7 @@ abstract class InitialPainting
     val contentColorTransform: ColorTransfer[CVPipe_Inception.Strata, CVPipe_Inception] = new ColorTransfer.Inception() {}.setOrtho(false).setUnit(true)
     val width = 600
     val height = (aspect_ratio * width).toInt
-    val resizedCanvas: Tensor = Tensor.fromRGB(TestUtil.resize(inputCanvas.toImage, width, height))
+    val resizedCanvas: Tensor = Tensor.fromRGB(ImageUtil.resize(inputCanvas.toImage, width, height))
     val empty = new java.util.HashMap[CharSequence, ColorTransfer[CVPipe_Inception.Strata, CVPipe_Inception]]
     val styleImages = ImageArtUtil.getStyleImages2(styleSources.toArray, empty, width, height)
     val styleSetup = ImageArtUtil.getColorAnalogSetup(styleSources.toList, precision, resizedCanvas, styleImages, CVPipe_Inception.Strata.Layer_1)

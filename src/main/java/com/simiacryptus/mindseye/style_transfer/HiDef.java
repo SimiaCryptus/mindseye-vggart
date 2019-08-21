@@ -31,6 +31,7 @@ import com.simiacryptus.mindseye.layers.java.ImgTileAssemblyLayer;
 import com.simiacryptus.mindseye.layers.java.ImgTileSelectLayer;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -108,7 +109,7 @@ public class HiDef extends ImageScript {
                   )
           ));
       Tensor canvasImage = ArtistryUtil.loadTensor(contentSource, resolution);
-      Tensor canvasSeed = Tensor.fromRGB(TestUtil.resize(
+      Tensor canvasSeed = Tensor.fromRGB(ImageUtil.resize(
           HadoopUtil.getImage(contentSeed),
           canvasImage.getDimensions()[0],
           canvasImage.getDimensions()[1]

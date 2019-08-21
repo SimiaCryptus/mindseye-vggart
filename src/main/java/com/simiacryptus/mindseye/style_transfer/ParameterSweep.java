@@ -28,6 +28,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
 
@@ -116,13 +117,13 @@ public class ParameterSweep extends ImageScript {
                 contentSource,
                 resolution
             );
-            canvasImage = Tensor.fromRGB(TestUtil.resize(
+            canvasImage = Tensor.fromRGB(ImageUtil.resize(
                 canvasImage.toImage(),
                 resolution,
                 true
             ));
             canvasImage = ArtistryUtil.expandPlasma(Tensor.fromRGB(
-                TestUtil.resize(canvasImage.toImage(), 16, true)),
+                ImageUtil.resize(canvasImage.toImage(), 16, true)),
                 1000.0, 1.1, resolution
             ).scale(0.9);
             StyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new StyleTransfer.StyleSetup<>(

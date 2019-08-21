@@ -29,6 +29,7 @@ import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.network.PipelineNetwork;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -85,7 +86,7 @@ public class Enlarging extends ImageScript {
       if (null == canvasImage) {
         canvasImage = Tensor.fromRGB(init(size));
       } else {
-        canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), size, true));
+        canvasImage = Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), size, true));
       }
       TextureGeneration.StyleSetup<CVPipe_Inception.Strata> styleSetup = new TextureGeneration.StyleSetup<CVPipe_Inception.Strata>(precision,
           TestUtil.buildMap(y -> y.putAll(styles.keySet().stream().flatMap(x1 -> x1.stream())

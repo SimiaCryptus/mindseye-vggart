@@ -28,6 +28,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -74,9 +75,9 @@ public class Simple extends ImageScript {
                   .set(CVPipe_Inception.Strata.Layer_1c, coeff_style_mean, coeff_style_cov, dreamCoeff)
           ));
       Tensor canvasImage = ArtistryUtil.loadTensor(contentSource, resolution);
-      canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), resolution, true));
+      canvasImage = Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), resolution, true));
       canvasImage = ArtistryUtil.expandPlasma(
-          Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), 16, true)),
+          Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), 16, true)),
           1000.0, 1.1, resolution
       ).scale(0.9);
       StyleTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = new StyleTransfer.StyleSetup<CVPipe_Inception.Strata>(precision,

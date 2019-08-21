@@ -41,6 +41,7 @@ import com.simiacryptus.mindseye.opt.region.RangeConstraint;
 import com.simiacryptus.mindseye.opt.region.TrustRegion;
 import com.simiacryptus.mindseye.test.StepRecord;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.FileHTTPD;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
@@ -115,7 +116,7 @@ public abstract class DeepDream<T extends LayerEnum<T>, U extends CVPipe<T>> {
         throw new RuntimeException(e);
       }
     });
-    TestUtil.monitorImage(canvasImage, false, false);
+    ImageUtil.monitorImage(canvasImage, false, false);
     network.setFrozen(true);
     MultiPrecision.setPrecision(network, precision);
     TestUtil.instrumentPerformance(network);

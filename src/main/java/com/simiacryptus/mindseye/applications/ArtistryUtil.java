@@ -35,6 +35,7 @@ import com.simiacryptus.mindseye.network.DAGNode;
 import com.simiacryptus.mindseye.network.PipelineNetwork;
 import com.simiacryptus.mindseye.test.PCAUtil;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.FileHTTPD;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.FastRandom;
@@ -101,8 +102,8 @@ public class ArtistryUtil {
 
   public static void paint_LowRes(final Tensor canvas, final int scale) {
     BufferedImage originalImage = canvas.toImage();
-    canvas.set(Tensor.fromRGB(TestUtil.resize(
-        TestUtil.resize(originalImage, originalImage.getWidth() / scale, true),
+    canvas.set(Tensor.fromRGB(ImageUtil.resize(
+        ImageUtil.resize(originalImage, originalImage.getWidth() / scale, true),
         originalImage.getWidth(), originalImage.getHeight()
     )));
   }
@@ -190,7 +191,7 @@ public class ArtistryUtil {
       image.freeRef();
       image = newImage;
     }
-    Tensor tensor = Tensor.fromRGB(TestUtil.resize(image.toImage(), width, height));
+    Tensor tensor = Tensor.fromRGB(ImageUtil.resize(image.toImage(), width, height));
     image.freeRef();
     return tensor;
   }
@@ -203,7 +204,7 @@ public class ArtistryUtil {
       image.freeRef();
       image = newImage;
     }
-    Tensor tensor = Tensor.fromRGB(TestUtil.resize(image.toImage(), size));
+    Tensor tensor = Tensor.fromRGB(ImageUtil.resize(image.toImage(), size));
     image.freeRef();
     return tensor;
   }
@@ -327,13 +328,13 @@ public class ArtistryUtil {
   @Nonnull
   public static BufferedImage load(final CharSequence image, final int imageSize) {
     BufferedImage source = HadoopUtil.getImage(image);
-    return imageSize <= 0 ? source : TestUtil.resize(source, imageSize, true);
+    return imageSize <= 0 ? source : ImageUtil.resize(source, imageSize, true);
   }
 
   @Nonnull
   public static BufferedImage load(final CharSequence image, final int width, final int height) {
     BufferedImage bufferedImage = HadoopUtil.getImage(image);
-    bufferedImage = TestUtil.resize(bufferedImage, width, height);
+    bufferedImage = ImageUtil.resize(bufferedImage, width, height);
     return bufferedImage;
   }
 

@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.DeepDream;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_VGG19;
-import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -53,7 +53,7 @@ public class DeepDreamTest extends ArtistryAppBase_VGG19 {
     CharSequence source = ArtistryData.CLASSIC_CONTENT.get(0);
     BufferedImage canvasImage = ArtistryUtil.load(source, imageSize.get());
     //canvasImage = randomize(canvasImage);
-    canvasImage = TestUtil.resize(canvasImage, imageSize.get(), true);
+    canvasImage = ImageUtil.resize(canvasImage, imageSize.get(), true);
     Tensor contentImage = Tensor.fromRGB(ArtistryUtil.load(source, canvasImage.getWidth(), canvasImage.getHeight()));
     dreamBase.deepDream(
         log.getHttpd(),

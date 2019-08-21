@@ -28,6 +28,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -93,7 +94,7 @@ public abstract class HiDef extends ImageScript {
       }.setOrtho(false);
       //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
       int colorSyncResolution = 600;
-      Tensor resizedCanvas = Tensor.fromRGB(TestUtil.resize(canvas.get().toImage(), colorSyncResolution));
+      Tensor resizedCanvas = Tensor.fromRGB(ImageUtil.resize(canvas.get().toImage(), colorSyncResolution));
       final ColorTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = ImageArtUtil.getColorAnalogSetup(
           Arrays.asList(styleSources),
           precision,

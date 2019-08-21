@@ -38,6 +38,7 @@ import com.simiacryptus.mindseye.opt.region.RangeConstraint;
 import com.simiacryptus.mindseye.opt.region.TrustRegion;
 import com.simiacryptus.mindseye.test.StepRecord;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.FileHTTPD;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
@@ -104,7 +105,7 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
     measureStyle = styleTransfer.measureStyle(styleSetup);
 
     final AtomicReference<Double> currentStyleSize = new AtomicReference<Double>((double) styleSize);
-    canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), imageSize, true));
+    canvasImage = Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), imageSize, true));
     canvasImage = styleTransfer.optimize(log, measureStyle, canvasImage, trainingMinutes, maxIterations, true, styleSetup.precision);
     for (int i = 1; i < phases; i++) {
       imageSize *= growthFactor;
@@ -125,7 +126,7 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
       styleSetup = new StyleSetup<>(precision, styleImages, styles);
       measureStyle = styleTransfer.measureStyle(styleSetup);
 
-      canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), imageSize, true));
+      canvasImage = Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), imageSize, true));
       canvasImage = styleTransfer.optimize(log, measureStyle, canvasImage, trainingMinutes, maxIterations, true, styleSetup.precision);
     }
     return canvasImage;
@@ -148,7 +149,7 @@ public abstract class TextureGeneration<T extends LayerEnum<T>, U extends CVPipe
   ) {
     return ArtistryUtil.logExceptionWithDefault(log, () -> {
       System.gc();
-      TestUtil.monitorImage(workingImage, false, false);
+      ImageUtil.monitorImage(workingImage, false, false);
       String imageName = String.format("etc/image_%s.jpg", Long.toHexString(MarkdownNotebookOutput.random.nextLong()));
       log.p(String.format("<a href=\"%s\"><img src=\"%s\"></a>", imageName, imageName));
       Closeable jpeg = log.getHttpd().addGET(imageName, "image/jpeg", outputStream -> {

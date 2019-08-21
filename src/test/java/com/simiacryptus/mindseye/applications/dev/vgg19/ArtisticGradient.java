@@ -27,6 +27,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_VGG19;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -48,9 +49,9 @@ public class ArtisticGradient extends ArtistryAppBase_VGG19 {
   public static BufferedImage init(final CharSequence contentSource, final int width) {
     BufferedImage canvasImage;
     canvasImage = ArtistryUtil.load(contentSource, width);
-    canvasImage = TestUtil.resize(canvasImage, width, true);
+    canvasImage = ImageUtil.resize(canvasImage, width, true);
     canvasImage = ArtistryUtil.expandPlasma(Tensor.fromRGB(
-        TestUtil.resize(canvasImage, 16, true)),
+        ImageUtil.resize(canvasImage, 16, true)),
         1000.0, 1.1, width
     ).toImage();
     return canvasImage;
@@ -176,7 +177,7 @@ public class ArtisticGradient extends ArtistryAppBase_VGG19 {
     for (int i = 0; i < phases; i++) {
       if (0 < i) {
         imageSize.set((int) (imageSize.get() * growthFactor));
-        canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), imageSize.get(), true));
+        canvasImage = Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), imageSize.get(), true));
       }
       StyleTransfer.StyleSetup<CVPipe_VGG19.Layer> styleSetup = new StyleTransfer.StyleSetup<CVPipe_VGG19.Layer>(
           precision,

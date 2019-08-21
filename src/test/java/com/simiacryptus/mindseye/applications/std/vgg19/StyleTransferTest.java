@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.StyleTransfer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_VGG19;
-import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -63,8 +63,8 @@ public class StyleTransferTest extends ArtistryAppBase_VGG19 {
 
     log.h1("Phase 0");
     Tensor canvasImage = ArtistryUtil.loadTensor(ArtistryData.CLASSIC_STYLES.get(0), imageSize.get());
-    canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), imageSize.get(), true));
-    canvasImage = ArtistryUtil.expandPlasma(Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), 16, true)), 1000.0, 1.1, imageSize.get());
+    canvasImage = Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), imageSize.get(), true));
+    canvasImage = ArtistryUtil.expandPlasma(Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), 16, true)), 1000.0, 1.1, imageSize.get());
     Tensor contentImage = ArtistryUtil.loadTensor(
         ArtistryData.CLASSIC_CONTENT.get(0),
         canvasImage.getDimensions()[0],
@@ -85,7 +85,7 @@ public class StyleTransferTest extends ArtistryAppBase_VGG19 {
     for (int i = 1; i < phases; i++) {
       log.h1("Phase " + i);
       imageSize.set((int) (imageSize.get() * growthFactor));
-      canvasImage = Tensor.fromRGB(TestUtil.resize(canvasImage.toImage(), imageSize.get(), true));
+      canvasImage = Tensor.fromRGB(ImageUtil.resize(canvasImage.toImage(), imageSize.get(), true));
 
       styleImages.clear();
       styleImages.putAll(styles.keySet().stream().flatMap(x -> x.stream()).collect(Collectors.toMap(

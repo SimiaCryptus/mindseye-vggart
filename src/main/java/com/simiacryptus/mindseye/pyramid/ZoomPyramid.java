@@ -21,6 +21,7 @@ package com.simiacryptus.mindseye.pyramid;
 
 import com.simiacryptus.mindseye.ImageScript;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
@@ -77,7 +78,7 @@ public class ZoomPyramid extends ImageScript {
 
   @Nonnull
   public BufferedImage zoom(final BufferedImage image) {
-    return TestUtil.resize(image, (int) (image.getWidth() * Math.pow(2, magLevels)), true);
+    return ImageUtil.resize(image, (int) (image.getWidth() * Math.pow(2, magLevels)), true);
   }
 
 }

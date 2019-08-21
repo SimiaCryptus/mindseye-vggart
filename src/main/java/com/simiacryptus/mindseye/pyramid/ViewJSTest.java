@@ -22,6 +22,7 @@ package com.simiacryptus.mindseye.pyramid;
 import com.simiacryptus.mindseye.ImageScript;
 import com.simiacryptus.mindseye.applications.ArtistryUtil;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
@@ -64,7 +65,7 @@ public class ViewJSTest extends ImageScript {
         String localPrefix = "tile_" + i + "_";
         String globalPrefix = "file:///" + new File(log.getResourceDir(), localPrefix).getAbsolutePath();
         double mag = Math.pow(2, magLevels);
-        Function<BufferedImage, BufferedImage> imageFunction = image -> TestUtil.resize(image, (int) (image.getWidth() * mag));
+        Function<BufferedImage, BufferedImage> imageFunction = image -> ImageUtil.resize(image, (int) (image.getWidth() * mag));
         final double aspect = PyramidUtil.getAspect(styleSources[i]);
         new ImagePyramid(tileSize, startLevel, aspect, globalPrefix).buildNewImagePyramidLayer(magLevels, padding,
             imageFunction,

@@ -30,6 +30,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
 
@@ -98,7 +99,7 @@ public class LayerStyleSurvey extends ImageScript {
         // Enhance color scheme:
         Map<CharSequence, ColorTransfer<CVPipe_Inception.Strata, CVPipe_Inception>> styleColorTransforms = new HashMap<>();
 
-        Tensor canvasBufferedImage = Tensor.fromRGB(TestUtil.resize(
+        Tensor canvasBufferedImage = Tensor.fromRGB(ImageUtil.resize(
             ArtistryUtil.load(contentSource),
             resolution.get(),
             true

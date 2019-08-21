@@ -22,7 +22,7 @@ package fractal
 import java.awt.image.BufferedImage
 import java.util.function.Function
 
-import com.simiacryptus.mindseye.test.TestUtil
+import com.simiacryptus.mindseye.util.ImageUtil
 import com.simiacryptus.notebook.NotebookOutput
 import com.simiacryptus.sparkbook.NotebookRunner
 import com.simiacryptus.sparkbook.util.Java8Util.toJavaFunction
@@ -38,7 +38,7 @@ object InitialPyramid_Test extends InitialPyramid(
   override val maxIterations: Int = 1
 
   override def getImageEnlargingFunction(log: NotebookOutput, width: Int, height: Int, trainingMinutes: Int, maxIterations: Int, verbose: Boolean, magLevels: Int, padding: Int, styleSources: CharSequence*): Function[BufferedImage, BufferedImage] = {
-    toJavaFunction((img: BufferedImage) => TestUtil.resize(img, img.getWidth * 2, true))
+    toJavaFunction((img: BufferedImage) => ImageUtil.resize(img, img.getWidth * 2, true))
   }
 
 }

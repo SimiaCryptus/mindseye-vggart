@@ -28,6 +28,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -90,7 +91,7 @@ public abstract class TextureLayerSurvey extends ImageScript {
       }.setOrtho(false).setUnit(true);
       //colorSyncContentCoeffMap.set(CVPipe_Inception.Strata.Layer_1a, 1e-1);
       int colorSyncResolution = 600;
-      Tensor resizedCanvas = Tensor.fromRGB(TestUtil.resize(canvas.get().toImage(), colorSyncResolution, (int) (aspect_ratio * colorSyncResolution)));
+      Tensor resizedCanvas = Tensor.fromRGB(ImageUtil.resize(canvas.get().toImage(), colorSyncResolution, (int) (aspect_ratio * colorSyncResolution)));
       final ColorTransfer.StyleSetup<CVPipe_Inception.Strata> styleSetup = ImageArtUtil.getColorAnalogSetup(
           Arrays.asList(styleSources),
           precision,
@@ -154,7 +155,7 @@ public abstract class TextureLayerSurvey extends ImageScript {
           textureGeneration.parallelLossFunctions = true;
           int height = (int) (aspect_ratio * width);
           textureGeneration.setTiling((int) Math.max(Math.min((2.0 * Math.pow(600, 2)) / (width * height), 9), 2));
-          canvasCopy.set(Tensor.fromRGB(TestUtil.resize(canvasCopy.get().toImage(), width, height)));
+          canvasCopy.set(Tensor.fromRGB(ImageUtil.resize(canvasCopy.get().toImage(), width, height)));
           subreport.p("Input Parameters:");
           subreport.eval(() -> {
             return ArtistryUtil.toJson(styleSetup);

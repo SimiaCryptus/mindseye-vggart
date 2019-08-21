@@ -21,8 +21,8 @@ package com.simiacryptus.mindseye.applications;
 
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.models.ImageClassifier;
-import com.simiacryptus.mindseye.test.TestUtil;
 import com.simiacryptus.mindseye.test.data.Caltech101;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
 
@@ -76,7 +76,7 @@ public abstract class ImageClassificationBase extends ArtistryAppBase {
     return log.eval(() -> {
       return Caltech101.trainingDataStream().sorted(getShuffleComparator()).map(labeledObj -> {
         @Nullable BufferedImage img = labeledObj.data.get();
-        img = TestUtil.resize(img, 224, false);
+        img = ImageUtil.resize(img, 224, false);
         return Tensor.fromRGB(img);
       }).limit(10).toArray(i1 -> new Tensor[i1]);
     });

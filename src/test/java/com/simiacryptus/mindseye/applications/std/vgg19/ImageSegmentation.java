@@ -26,7 +26,7 @@ import com.simiacryptus.mindseye.applications.PCAObjectLocation;
 import com.simiacryptus.mindseye.lang.Layer;
 import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.models.CVPipe_VGG19;
-import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +89,7 @@ public class ImageSegmentation extends ArtistryAppBase_VGG19 {
     return localFiles.stream().map((CharSequence x1) -> x1.toString()).map(img -> {
       try {
         BufferedImage image = ImageIO.read(new File(img));
-        image = TestUtil.resizePx(image, (long) 700 * 500);
+        image = ImageUtil.resizePx(image, (long) 700 * 500);
         return Tensor.fromRGB(image);
       } catch (Throwable e) {
         return null;

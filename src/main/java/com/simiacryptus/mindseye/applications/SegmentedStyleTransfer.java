@@ -42,6 +42,7 @@ import com.simiacryptus.mindseye.opt.region.RangeConstraint;
 import com.simiacryptus.mindseye.opt.region.TrustRegion;
 import com.simiacryptus.mindseye.test.StepRecord;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.FileHTTPD;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
@@ -94,7 +95,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
     Tensor l = contentMask.sumChannels();
     Tensor r = styleMask.sumChannels();
     int[] dimensions = r.getDimensions();
-    Tensor resize = Tensor.fromRGB(TestUtil.resize(l.toImage(), dimensions[0], dimensions[1])).sumChannels();
+    Tensor resize = Tensor.fromRGB(ImageUtil.resize(l.toImage(), dimensions[0], dimensions[1])).sumChannels();
     Tensor a = resize.unit();
     Tensor b = r.unit();
     double dot = a.dot(b);
@@ -223,7 +224,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       });
     }
     final FileHTTPD server = log.getHttpd();
-    TestUtil.monitorImage(canvas, false, false);
+    ImageUtil.monitorImage(canvas, false, false);
     String imageName = String.format("etc/image_%s.jpg", Long.toHexString(MarkdownNotebookOutput.random.nextLong()));
     log.p(String.format("<a href=\"%s\"><img src=\"%s\"></a>", imageName, imageName));
     Closeable jpeg = server.addGET(imageName, "image/jpeg", r -> {
@@ -527,7 +528,7 @@ public abstract class SegmentedStyleTransfer<T extends LayerEnum<T>, U extends C
       assert null != tensors;
       return tensors;
     }).stream().map(img -> {
-      Tensor tensor = Tensor.fromRGB(TestUtil.resize(img.toImage(), width, height));
+      Tensor tensor = Tensor.fromRGB(ImageUtil.resize(img.toImage(), width, height));
       assert null != tensor;
       return tensor;
     }).collect(Collectors.toSet());

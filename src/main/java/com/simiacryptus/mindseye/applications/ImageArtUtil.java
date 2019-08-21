@@ -25,6 +25,7 @@ import com.simiacryptus.mindseye.layers.java.ImgTileAssemblyLayer;
 import com.simiacryptus.mindseye.layers.java.ImgTileSelectLayer;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 
 import javax.annotation.Nonnull;
@@ -45,7 +46,7 @@ public class ImageArtUtil {
   ) {
     BufferedImage bufferedImage = image.toImage();
     image.freeRef();
-    Tensor lowRes = Tensor.fromRGB(TestUtil.resize(TestUtil.resize(bufferedImage, size, true), lowResolution, true));
+    Tensor lowRes = Tensor.fromRGB(ImageUtil.resize(ImageUtil.resize(bufferedImage, size, true), lowResolution, true));
     image = ArtistryUtil.expandPlasma(lowRes, 1000.0, 1.1, size).scale(0.9);
     lowRes.freeRef();
     return image;
@@ -589,7 +590,7 @@ public class ImageArtUtil {
           x -> x.getKey(),
           x -> x.getValue().stream().map(v -> ImgTileSelectLayer.toTiles(
               getLog(),
-              Tensor.fromRGB(TestUtil.resize(v.toImage(),
+              Tensor.fromRGB(ImageUtil.resize(v.toImage(),
                   tileLayout.getWidth(),
                   tileLayout.getHeight())),
               tileLayout.getTileSizeX(),

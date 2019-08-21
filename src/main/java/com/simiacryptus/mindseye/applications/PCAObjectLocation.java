@@ -32,6 +32,7 @@ import com.simiacryptus.mindseye.models.VGG16_HDF5;
 import com.simiacryptus.mindseye.models.VGG19_HDF5;
 import com.simiacryptus.mindseye.network.DAGNetwork;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.Util;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -68,7 +69,7 @@ public abstract class PCAObjectLocation {
     double[] rawDelta = deltaSet.getMap().entrySet().stream().filter(x -> x.getValue().target == img.getData()).findAny().get().getValue().getDelta();
     Tensor deltaColor = new Tensor(rawDelta, img.getDimensions()).mapAndFree(x -> Math.abs(x));
     Tensor delta1d = blur(deltaColor.sumChannels(), 3);
-    return TestUtil.normalizeBands(TestUtil.normalizeBands(delta1d, 1).mapAndFree(x -> Math.pow(x, alphaPower)));
+    return ImageUtil.normalizeBands(ImageUtil.normalizeBands(delta1d, 1).mapAndFree(x -> Math.pow(x, alphaPower)));
   }
 
   public static List<Tensor> blur(final List<Tensor> featureMasks, final int iterations) {
@@ -209,7 +210,7 @@ public abstract class PCAObjectLocation {
     ).map(img -> {
       try {
         BufferedImage image = ImageIO.read(new File(img));
-        image = TestUtil.resize(image, 400, true);
+        image = ImageUtil.resize(image, 400, true);
         return new Tensor[]{Tensor.fromRGB(image)};
       } catch (IOException e) {
         throw new RuntimeException(e);

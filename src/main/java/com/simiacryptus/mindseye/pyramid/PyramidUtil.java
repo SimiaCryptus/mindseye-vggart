@@ -27,6 +27,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
 import com.simiacryptus.util.Util;
@@ -303,7 +304,7 @@ public class PyramidUtil {
             maxIterations,
             verbose
         );
-        BufferedImage canvas = TestUtil.resize(
+        BufferedImage canvas = ImageUtil.resize(
             image,
             (int) (image.getWidth() * Math.pow(2, magLevels)),
             true

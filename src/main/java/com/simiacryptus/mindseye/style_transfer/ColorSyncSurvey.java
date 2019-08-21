@@ -35,6 +35,7 @@ import com.simiacryptus.mindseye.opt.orient.TrustRegionStrategy;
 import com.simiacryptus.mindseye.opt.region.OrthonormalConstraint;
 import com.simiacryptus.mindseye.opt.region.TrustRegion;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
 
@@ -82,7 +83,7 @@ public class ColorSyncSurvey extends ImageScript {
         for (final CharSequence styleSource : styleSources) {
           log.p(log.png(ArtistryUtil.load(styleSource, resolution.get()), "Style Image"));
         }
-        Tensor canvasBufferedImage = Tensor.fromRGB(TestUtil.resize(
+        Tensor canvasBufferedImage = Tensor.fromRGB(ImageUtil.resize(
             ArtistryUtil.load(contentSource),
             resolution.get(),
             true

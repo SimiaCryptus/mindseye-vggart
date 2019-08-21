@@ -28,6 +28,7 @@ import com.simiacryptus.mindseye.lang.Tensor;
 import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
 
@@ -108,7 +109,7 @@ public class FullyFeaturedArtJob extends ImageScript {
           );
         }, log.getName() + "_" + "Color_Space_Enhancement");
 
-        Tensor canvasBufferedImage = Tensor.fromRGB(TestUtil.resize(
+        Tensor canvasBufferedImage = Tensor.fromRGB(ImageUtil.resize(
             ArtistryUtil.load(contentSource),
             resolution.get(),
             true
@@ -360,7 +361,7 @@ public class FullyFeaturedArtJob extends ImageScript {
             coeff_style_mean = 1e1;
             coeff_style_cov = 1e2;
           }
-          canvasImage.set(Tensor.fromRGB(TestUtil.resize(canvasImage.get().toImage(), resolution.get(), true)));
+          canvasImage.set(Tensor.fromRGB(ImageUtil.resize(canvasImage.get().toImage(), resolution.get(), true)));
           canvasImage.set(log.subreport(log2 -> {
             final Tensor canvasImage1 = canvasImage.get();
             int padding = 20;

@@ -29,6 +29,7 @@ import com.simiacryptus.mindseye.lang.cudnn.Precision;
 import com.simiacryptus.mindseye.models.CVPipe_Inception;
 import com.simiacryptus.mindseye.pyramid.PyramidUtil;
 import com.simiacryptus.mindseye.test.TestUtil;
+import com.simiacryptus.mindseye.util.ImageUtil;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.JsonUtil;
@@ -94,7 +95,7 @@ public class TextureFinishing extends ImageScript {
 
         double[] resolutions = TestUtil.geometricStream(canvasImage.get().getDimensions()[0], resolution, steps + 1).get().skip(1).toArray();
         Arrays.stream(resolutions).forEach(res -> {
-          canvasImage.set(Tensor.fromRGB(TestUtil.resize(canvasImage.get().toImage(), (int) res, true)));
+          canvasImage.set(Tensor.fromRGB(ImageUtil.resize(canvasImage.get().toImage(), (int) res, true)));
           canvasImage.set(log.subreport(sublog -> {
             SegmentedStyleTransfer.ContentCoefficients<CVPipe_Inception.Strata> contentCoefficients = new SegmentedStyleTransfer.ContentCoefficients<>();
             contentCoefficients.set(CVPipe_Inception.Strata.Layer_1, 1e-1);
